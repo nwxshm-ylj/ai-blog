@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from typing import Annotated
 from urllib.parse import parse_qs
 
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.dependencies import get_session
 from app.schemas.admin import AdminPost, AdminProject
 from app.services.admin import (
     create_admin_post,
@@ -26,23 +29,24 @@ from app.services.admin import (
 from app.web.templating import templates
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+SessionDependency = Annotated[AsyncSession, Depends(get_session)]
 
 
 @router.get("", response_class=HTMLResponse)
-async def admin_dashboard(request: Request) -> HTMLResponse:
+async def admin_dashboard(request: Request, session: SessionDependency) -> HTMLResponse:
     return templates.TemplateResponse(
         request=request,
         name="admin/index.html",
         context={
             "title": "Admin Dashboard | AI Blog",
             "active_admin_nav": "dashboard",
-            "dashboard_stats": get_dashboard_stats(),
+            "dashboard_stats": await get_dashboard_stats(session),
         },
     )
 
 
 @router.get("/posts", response_class=HTMLResponse)
-async def admin_posts(request: Request) -> HTMLResponse:
+async def admin_posts(request: Request, session: SessionDependency) -> HTMLResponse:
     message = request.query_params.get("message")
     return templates.TemplateResponse(
         request=request,
@@ -50,7 +54,7 @@ async def admin_posts(request: Request) -> HTMLResponse:
         context={
             "title": "Post Management | AI Blog",
             "active_admin_nav": "posts",
-            "posts": get_admin_posts(),
+            "posts": await get_admin_posts(session),
             "message": message,
         },
     )
@@ -74,8 +78,15 @@ async def admin_new_post(request: Request) -> HTMLResponse:
 
 
 @router.get("/posts/{slug}/edit", response_class=HTMLResponse)
-async def admin_edit_post(request: Request, slug: str) -> HTMLResponse:
-    post = get_admin_post_by_slug(slug) or get_empty_admin_post()
+async def admin_edit_post(
+    request: Request,
+    slug: str,
+    session: SessionDependency,
+) -> HTMLResponse:
+    post = await get_admin_post_by_slug(session, slug)
+    if post is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
     return templates.TemplateResponse(
         request=request,
         name="admin/post_form.html",
@@ -94,9 +105,10 @@ async def admin_edit_post(request: Request, slug: str) -> HTMLResponse:
 @router.post("/posts")
 async def admin_create_post(
     request: Request,
+    session: SessionDependency,
 ) -> Response:
     post = await _read_admin_post_form(request)
-    errors = validate_admin_post(post)
+    errors = await validate_admin_post(session, post)
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -113,7 +125,7 @@ async def admin_create_post(
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    create_admin_post(post)
+    await create_admin_post(session, post)
     return RedirectResponse(
         url="/admin/posts?message=created",
         status_code=status.HTTP_303_SEE_OTHER,
@@ -124,9 +136,14 @@ async def admin_create_post(
 async def admin_update_post(
     request: Request,
     slug: str,
+    session: SessionDependency,
 ) -> Response:
+    existing = await get_admin_post_by_slug(session, slug)
+    if existing is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
     post = await _read_admin_post_form(request)
-    errors = validate_admin_post(post)
+    errors = await validate_admin_post(session, post, current_slug=slug)
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -143,7 +160,7 @@ async def admin_update_post(
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    update_admin_post(slug, post)
+    await update_admin_post(session, slug, post)
     return RedirectResponse(
         url="/admin/posts?message=updated",
         status_code=status.HTTP_303_SEE_OTHER,
@@ -151,8 +168,11 @@ async def admin_update_post(
 
 
 @router.post("/posts/{slug}/delete")
-async def admin_delete_post(slug: str) -> RedirectResponse:
-    delete_admin_post(slug)
+async def admin_delete_post(slug: str, session: SessionDependency) -> RedirectResponse:
+    deleted = await delete_admin_post(session, slug)
+    if not deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
     return RedirectResponse(
         url="/admin/posts?message=deleted",
         status_code=status.HTTP_303_SEE_OTHER,
@@ -160,7 +180,7 @@ async def admin_delete_post(slug: str) -> RedirectResponse:
 
 
 @router.get("/projects", response_class=HTMLResponse)
-async def admin_projects(request: Request) -> HTMLResponse:
+async def admin_projects(request: Request, session: SessionDependency) -> HTMLResponse:
     message = request.query_params.get("message")
     return templates.TemplateResponse(
         request=request,
@@ -168,7 +188,7 @@ async def admin_projects(request: Request) -> HTMLResponse:
         context={
             "title": "Project Management | AI Blog",
             "active_admin_nav": "projects",
-            "projects": get_admin_projects(),
+            "projects": await get_admin_projects(session),
             "message": message,
         },
     )
@@ -192,8 +212,15 @@ async def admin_new_project(request: Request) -> HTMLResponse:
 
 
 @router.get("/projects/{slug}/edit", response_class=HTMLResponse)
-async def admin_edit_project(request: Request, slug: str) -> HTMLResponse:
-    project = get_admin_project_by_slug(slug) or get_empty_admin_project()
+async def admin_edit_project(
+    request: Request,
+    slug: str,
+    session: SessionDependency,
+) -> HTMLResponse:
+    project = await get_admin_project_by_slug(session, slug)
+    if project is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
     return templates.TemplateResponse(
         request=request,
         name="admin/project_form.html",
@@ -212,9 +239,10 @@ async def admin_edit_project(request: Request, slug: str) -> HTMLResponse:
 @router.post("/projects")
 async def admin_create_project(
     request: Request,
+    session: SessionDependency,
 ) -> Response:
     project = await _read_admin_project_form(request)
-    errors = validate_admin_project(project)
+    errors = await validate_admin_project(session, project)
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -231,7 +259,7 @@ async def admin_create_project(
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    create_admin_project(project)
+    await create_admin_project(session, project)
     return RedirectResponse(
         url="/admin/projects?message=created",
         status_code=status.HTTP_303_SEE_OTHER,
@@ -242,9 +270,14 @@ async def admin_create_project(
 async def admin_update_project(
     request: Request,
     slug: str,
+    session: SessionDependency,
 ) -> Response:
+    existing = await get_admin_project_by_slug(session, slug)
+    if existing is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
     project = await _read_admin_project_form(request)
-    errors = validate_admin_project(project)
+    errors = await validate_admin_project(session, project, current_slug=slug)
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -261,7 +294,7 @@ async def admin_update_project(
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    update_admin_project(slug, project)
+    await update_admin_project(session, slug, project)
     return RedirectResponse(
         url="/admin/projects?message=updated",
         status_code=status.HTTP_303_SEE_OTHER,
@@ -269,8 +302,11 @@ async def admin_update_project(
 
 
 @router.post("/projects/{slug}/delete")
-async def admin_delete_project(slug: str) -> RedirectResponse:
-    delete_admin_project(slug)
+async def admin_delete_project(slug: str, session: SessionDependency) -> RedirectResponse:
+    deleted = await delete_admin_project(session, slug)
+    if not deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
     return RedirectResponse(
         url="/admin/projects?message=deleted",
         status_code=status.HTTP_303_SEE_OTHER,
