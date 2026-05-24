@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% set admin_nav_items = [
+  {"key": "dashboard", "label": "Dashboard", "href": "/admin", "icon": "grid"},
+  {"key": "posts", "label": "Posts", "href": "/admin/posts", "icon": "posts"},
+  {"key": "projects", "label": "Projects", "href": "/admin/projects", "icon": "projects"}
+] %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="border-b border-white/10 bg-slate-950/95 lg:hidden">
+    <div class="flex items-center justify-between px-5 py-4">
+      <a href="/admin" class="text-base font-semibold tracking-tight text-white">AI Blog Admin</a>
+      <a href="/" class="rounded-md border border-white/10 px-3 py-2 text-sm text-slate-300 transition hover:border-teal-300/50 hover:text-white">View site</a>
+    </div>
+    <nav class="flex gap-2 overflow-x-auto px-5 pb-4" aria-label="Admin navigation">
+      {% for item in admin_nav_items %}
+        <a href="{{ item.href }}" class="shrink-0 rounded-md border px-3 py-2 text-sm font-medium transition {% if active_admin_nav == item.key %}border-teal-300/50 bg-teal-400/10 text-teal-100{% else %}border-white/10 text-slate-300 hover:border-white/20 hover:text-white{% endif %}">
+          {{ item.label }}
+        </a>
+      {% endfor %}
+    </nav>
+  </div>
+
+  <div class="lg:grid lg:min-h-screen lg:grid-cols-[17rem_minmax(0,1fr)]">
+    <aside class="hidden border-r border-white/10 bg-slate-950/95 lg:block">
+      <div class="sticky top-0 flex h-screen flex-col px-5 py-6">
+        <div>
+          <a href="/admin" class="text-lg font-semibold tracking-tight text-white">AI Blog Admin</a>
+          <p class="mt-2 text-sm leading-6 text-slate-500">Publishing operations</p>
+        </div>
+
+        <nav class="mt-8 space-y-1" aria-label="Admin navigation">
+          {% for item in admin_nav_items %}
+            <a href="{{ item.href }}" class="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition {% if active_admin_nav == item.key %}bg-teal-400/10 text-teal-100 ring-1 ring-inset ring-teal-300/30{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+              <span class="grid h-7 w-7 place-items-center rounded-md border {% if active_admin_nav == item.key %}border-teal-300/30 bg-teal-300/10 text-teal-100{% else %}border-white/10 bg-white/[0.03] text-slate-500{% endif %}" aria-hidden="true">
+                {% if item.icon == "grid" %}
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4.5A1.5 1.5 0 0 1 4.5 3h3A1.5 1.5 0 0 1 9 4.5v3A1.5 1.5 0 0 1 7.5 9h-3A1.5 1.5 0 0 1 3 7.5v-3Zm8 0A1.5 1.5 0 0 1 12.5 3h3A1.5 1.5 0 0 1 17 4.5v3A1.5 1.5 0 0 1 15.5 9h-3A1.5 1.5 0 0 1 11 7.5v-3Zm-8 8A1.5 1.5 0 0 1 4.5 11h3A1.5 1.5 0 0 1 9 12.5v3A1.5 1.5 0 0 1 7.5 17h-3A1.5 1.5 0 0 1 3 15.5v-3Zm8 0a1.5 1.5 0 0 1 1.5-1.5h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5v-3Z"/></svg>
+                {% elif item.icon == "posts" %}
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3.5A1.5 1.5 0 0 1 6.5 2h5.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12A1.5 1.5 0 0 1 16 5.622V16.5a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 16.5v-13ZM7.5 9a.75.75 0 0 0 0 1.5h5a.75.75 0 0 0 0-1.5h-5Zm0 3a.75.75 0 0 0 0 1.5h5a.75.75 0 0 0 0-1.5h-5Z"/></svg>
+                {% else %}
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 6.25A2.25 2.25 0 0 1 5.25 4h2.19a2.25 2.25 0 0 1 1.59.659l.781.78c.14.141.331.22.53.22h4.409A2.25 2.25 0 0 1 17 7.91v5.84A2.25 2.25 0 0 1 14.75 16H5.25A2.25 2.25 0 0 1 3 13.75v-7.5Z"/></svg>
+                {% endif %}
+              </span>
+              {{ item.label }}
+            </a>
+          {% endfor %}
+        </nav>
+
+        <div class="mt-auto border-t border-white/10 pt-5">
+          <a href="/" class="text-sm font-medium text-slate-400 transition hover:text-white">View public site</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="min-w-0">
+      <div class="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-10">
+        {% block admin_content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+</div>
+{% endblock %}
+

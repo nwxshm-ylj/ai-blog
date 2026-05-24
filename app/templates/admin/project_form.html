@@ -1,0 +1,59 @@
+{% extends "admin/layout.html" %}
+
+{% block admin_content %}
+<div class="mb-8">
+  <p class="text-sm font-medium uppercase tracking-wide text-indigo-200">Portfolio</p>
+  <h1 class="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{{ form_title }}</h1>
+  <p class="mt-3 max-w-2xl text-base leading-7 text-slate-400">Read-only foundation form using mock data. Save actions are intentionally not wired yet.</p>
+</div>
+
+<form action="{{ form_action }}" method="post" class="space-y-6 rounded-lg border border-white/10 bg-slate-900/55 p-5 sm:p-6">
+  <div class="grid gap-5 lg:grid-cols-2">
+    <label class="block">
+      <span class="text-sm font-medium text-slate-300">Title</span>
+      <input name="title" value="{{ project.title }}" type="text" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+    </label>
+    <label class="block">
+      <span class="text-sm font-medium text-slate-300">Slug</span>
+      <input name="slug" value="{{ project.slug }}" type="text" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+    </label>
+  </div>
+
+  <label class="block">
+    <span class="text-sm font-medium text-slate-300">Description</span>
+    <textarea name="description" rows="4" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">{{ project.description }}</textarea>
+  </label>
+
+  <label class="block">
+    <span class="text-sm font-medium text-slate-300">Tech stack</span>
+    <input name="tech_stack" value="{{ project.tech_stack }}" type="text" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+  </label>
+
+  <div class="grid gap-5 lg:grid-cols-2">
+    <label class="block">
+      <span class="text-sm font-medium text-slate-300">GitHub URL</span>
+      <input name="github_url" value="{{ project.github_url }}" type="url" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+    </label>
+    <label class="block">
+      <span class="text-sm font-medium text-slate-300">Demo URL</span>
+      <input name="demo_url" value="{{ project.demo_url }}" type="url" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+    </label>
+  </div>
+
+  <div class="grid gap-5 lg:grid-cols-2">
+    <label class="block">
+      <span class="text-sm font-medium text-slate-300">Cover image</span>
+      <input name="cover_image" value="{{ project.cover_image }}" type="text" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+    </label>
+    <label class="flex items-center gap-3 pt-8">
+      <input name="featured" type="checkbox" value="true" {% if project.featured %}checked{% endif %} class="h-4 w-4 rounded border-white/10 bg-slate-950 text-teal-400 focus:ring-teal-300/30">
+      <span class="text-sm font-medium text-slate-300">Featured</span>
+    </label>
+  </div>
+
+  <div class="flex flex-col-reverse gap-3 border-t border-white/10 pt-5 sm:flex-row sm:justify-end">
+    <a href="/admin/projects" class="inline-flex items-center justify-center rounded-md border border-white/10 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:text-white">Cancel</a>
+    <button type="submit" disabled class="inline-flex cursor-not-allowed items-center justify-center rounded-md bg-teal-400/60 px-4 py-2.5 text-sm font-semibold text-slate-950">{{ submit_label }}</button>
+  </div>
+</form>
+{% endblock %}
