@@ -12,8 +12,14 @@
   </div>
 </div>
 
+{% if message %}
+  <div class="mb-6 rounded-md border border-emerald-300/20 bg-emerald-400/10 px-4 py-3 text-sm font-medium text-emerald-100">
+    Post {{ message }}.
+  </div>
+{% endif %}
+
 <section class="overflow-hidden rounded-lg border border-white/10 bg-slate-900/55">
-  <div class="grid border-b border-white/10 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_8rem_6rem]">
+  <div class="grid border-b border-white/10 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_8rem_9rem]">
     <span>Title</span>
     <span class="hidden md:block">Slug</span>
     <span class="hidden md:block">Status</span>
@@ -21,7 +27,7 @@
   </div>
   <div class="divide-y divide-white/10">
     {% for post in posts %}
-      <article class="grid gap-4 px-5 py-4 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_8rem_6rem] md:items-center">
+      <article class="grid gap-4 px-5 py-4 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_8rem_9rem] md:items-center">
         <div>
           <h2 class="font-medium text-white">{{ post.title }}</h2>
           <p class="mt-1 text-sm leading-6 text-slate-400">{{ post.summary }}</p>
@@ -32,10 +38,15 @@
             {{ "Published" if post.is_published else "Draft" }}
           </span>
         </div>
-        <div class="md:text-right">
+        <div class="flex items-center gap-3 md:justify-end">
           <a href="/admin/posts/{{ post.slug }}/edit" class="text-sm font-medium text-teal-200 transition hover:text-teal-100">Edit</a>
+          <form action="/admin/posts/{{ post.slug }}/delete" method="post">
+            <button type="submit" class="text-sm font-medium text-rose-200 transition hover:text-rose-100">Delete</button>
+          </form>
         </div>
       </article>
+    {% else %}
+      <p class="px-5 py-6 text-sm text-slate-400">No posts found.</p>
     {% endfor %}
   </div>
 </section>

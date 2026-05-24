@@ -4,8 +4,19 @@
 <div class="mb-8">
   <p class="text-sm font-medium uppercase tracking-wide text-indigo-200">Portfolio</p>
   <h1 class="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{{ form_title }}</h1>
-  <p class="mt-3 max-w-2xl text-base leading-7 text-slate-400">Read-only foundation form using mock data. Save actions are intentionally not wired yet.</p>
+  <p class="mt-3 max-w-2xl text-base leading-7 text-slate-400">Mock form workflow using in-memory admin data.</p>
 </div>
+
+{% if errors %}
+  <div class="mb-6 rounded-md border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+    <p class="font-semibold">Please fix the following fields:</p>
+    <ul class="mt-2 list-disc space-y-1 pl-5">
+      {% for error in errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
 <form action="{{ form_action }}" method="post" class="space-y-6 rounded-lg border border-white/10 bg-slate-900/55 p-5 sm:p-6">
   <div class="grid gap-5 lg:grid-cols-2">
@@ -53,7 +64,13 @@
 
   <div class="flex flex-col-reverse gap-3 border-t border-white/10 pt-5 sm:flex-row sm:justify-end">
     <a href="/admin/projects" class="inline-flex items-center justify-center rounded-md border border-white/10 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:text-white">Cancel</a>
-    <button type="submit" disabled class="inline-flex cursor-not-allowed items-center justify-center rounded-md bg-teal-400/60 px-4 py-2.5 text-sm font-semibold text-slate-950">{{ submit_label }}</button>
+    <button type="submit" class="inline-flex items-center justify-center rounded-md bg-teal-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-teal-300">{{ submit_label }}</button>
   </div>
 </form>
+
+{% if project.slug %}
+  <form action="/admin/projects/{{ project.slug }}/delete" method="post" class="mt-4 flex justify-end">
+    <button type="submit" class="inline-flex items-center justify-center rounded-md border border-rose-300/20 px-4 py-2.5 text-sm font-semibold text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100">Delete project</button>
+  </form>
+{% endif %}
 {% endblock %}
