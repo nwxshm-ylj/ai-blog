@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-950">
+  {% include "components/site_header.html" %}
+
+  <main>
+    <article>
+      <header class="border-b border-white/10 bg-slate-900/35">
+        <div class="mx-auto max-w-6xl px-5 py-12 sm:px-6 lg:py-16">
+          <a href="/blog" class="text-sm font-medium text-teal-200 hover:text-teal-100">Back to blog</a>
+          <div class="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+            <time datetime="{{ post.published_at.isoformat() }}">{{ post.published_at.strftime("%B %d, %Y") }}</time>
+            <span aria-hidden="true">/</span>
+            <a href="/blog?category={{ post.category | urlencode }}" class="text-teal-200 hover:text-teal-100">{{ post.category }}</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ post.reading_time_minutes }} min read</span>
+          </div>
+          <h1 class="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">{{ post.title }}</h1>
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-400">{{ post.description }}</p>
+          <div class="mt-6 flex flex-wrap gap-2">
+            {% for tag in post.tags %}
+              {% include "components/tag_pill.html" %}
+            {% endfor %}
+          </div>
+        </div>
+      </header>
+
+      <div class="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:py-12">
+        <div class="min-w-0">
+          <div class="prose-blog">
+            {{ post_html | safe }}
+          </div>
+        </div>
+
+        {% include "components/blog_sidebar.html" %}
+      </div>
+    </article>
+  </main>
+</div>
+{% endblock %}
+

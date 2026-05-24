@@ -3,9 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ meta_description | default('AI Blog: notes on AI systems, software architecture, and product engineering.') }}">
+    <meta name="color-scheme" content="dark">
     <title>{{ title | default("AI Blog") }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', path='/css/app.css') }}">
+    {% block extra_head %}{% endblock %}
   </head>
   <body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
     {% block content %}{% endblock %}

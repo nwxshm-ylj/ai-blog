@@ -1,0 +1,41 @@
+<aside class="space-y-6 lg:sticky lg:top-6">
+  <section class="rounded-lg border border-white/10 bg-slate-900/45 p-5">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-300">Search</h2>
+    <form class="mt-4" action="/blog" method="get" role="search">
+      <label for="blog-search" class="sr-only">Search posts</label>
+      <input id="blog-search" name="q" type="search" placeholder="Search coming soon" disabled class="w-full rounded-md border-white/10 bg-slate-950/80 text-sm text-slate-300 placeholder:text-slate-600 focus:border-teal-300 focus:ring-teal-300">
+      <p class="mt-3 text-xs leading-5 text-slate-500">Search is reserved for the database-backed version.</p>
+    </form>
+  </section>
+
+  <section class="rounded-lg border border-white/10 bg-slate-900/45 p-5">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-300">Recent Posts</h2>
+    <div class="mt-4 space-y-4">
+      {% for recent_post in recent_posts %}
+      <a href="/blog/{{ recent_post.slug }}" class="block border-b border-white/10 pb-4 last:border-0 last:pb-0">
+        <span class="text-sm font-medium leading-6 text-white hover:text-teal-100">{{ recent_post.title }}</span>
+        <span class="mt-1 block text-xs text-slate-500">{{ recent_post.published_at.strftime("%b %d, %Y") }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="rounded-lg border border-white/10 bg-slate-900/45 p-5">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-300">Categories</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {% for category in categories %}
+      <a href="/blog?category={{ category | urlencode }}" class="rounded-md border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-blue-300/50 hover:text-white">{{ category }}</a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="rounded-lg border border-white/10 bg-slate-900/45 p-5">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-300">Tags</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {% for tag in tags %}
+        {% include "components/tag_pill.html" %}
+      {% endfor %}
+    </div>
+  </section>
+</aside>
+
