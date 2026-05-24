@@ -18,3 +18,4 @@ class Project(BaseModel):
     status: str
     impact: str
     highlights: list[str]
+    view_count: int = 0

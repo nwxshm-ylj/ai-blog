@@ -1,0 +1,15 @@
+<section class="relative overflow-hidden border-b border-white/10 bg-white/[0.025]">
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_30%_0%,rgba(34,211,238,0.12),transparent_26rem),radial-gradient(circle_at_75%_10%,rgba(99,102,241,0.1),transparent_24rem)]"></div>
+  <div class="container-page relative py-14 lg:py-20">
+    {% if back_href and back_label %}
+      <a href="{{ back_href }}" class="text-sm font-medium text-cyan-200 transition hover:text-cyan-100">{{ back_label }}</a>
+    {% endif %}
+    {% if eyebrow %}
+      <p class="eyebrow {% if back_href and back_label %}mt-6{% endif %}">{{ eyebrow }}</p>
+    {% endif %}
+    <h1 class="page-title text-balance mt-3 max-w-4xl">{{ heading }}</h1>
+    {% if description %}
+      <p class="mt-5 max-w-3xl text-lg leading-8 text-zinc-400">{{ description }}</p>
+    {% endif %}
+  </div>
+</section>

@@ -1,10 +1,20 @@
-<header class="border-b border-white/10 bg-slate-950/85 backdrop-blur">
-  <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6" aria-label="Main navigation">
-    <a href="/" class="text-base font-semibold tracking-tight text-white">AI Blog</a>
-    <div class="flex items-center gap-5 text-sm text-slate-300">
-      <a href="/blog" class="transition hover:text-white">Blog</a>
-      <a href="/projects" class="transition hover:text-white">Projects</a>
-      <a href="/health" class="rounded-md border border-white/10 px-3 py-2 transition hover:border-teal-300/50 hover:text-white">Status</a>
+<header class="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/70 backdrop-blur-2xl">
+  <nav class="container-page flex flex-wrap items-center justify-between gap-3 py-4" aria-label="Main navigation">
+    <a href="{{ url_with_lang(request, '/') }}" class="group inline-flex items-center gap-3 text-sm font-semibold tracking-tight text-white">
+      <span class="grid h-9 w-9 place-items-center rounded-lg border border-cyan-200/20 bg-cyan-200/10 text-xs text-cyan-50 shadow-[0_0_28px_rgba(34,211,238,0.18)] transition group-hover:border-cyan-200/50 group-hover:bg-cyan-200/15">{{ t(request, "brand.short") }}</span>
+      <span class="leading-tight">
+        <span class="block">{{ t(request, "brand.name") }}</span>
+        <span class="hidden text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500 sm:block">{{ t(request, "brand.tagline") }}</span>
+      </span>
+    </a>
+    <div class="flex min-w-0 flex-1 items-center justify-end gap-2">
+      <div class="flex items-center gap-1 overflow-x-auto rounded-full border border-white/10 bg-white/[0.045] p-1 text-sm text-zinc-300 shadow-sm shadow-black/30">
+        <a href="{{ url_with_lang(request, '/blog') }}" class="rounded-full px-3 py-1.5 transition hover:bg-white/[0.06] hover:text-white">{{ t(request, "nav.blog") }}</a>
+        <a href="{{ url_with_lang(request, '/projects') }}" class="rounded-full px-3 py-1.5 transition hover:bg-white/[0.06] hover:text-white">{{ t(request, "nav.projects") }}</a>
+        <a href="{{ url_with_lang(request, '/admin') }}" class="hidden rounded-full px-3 py-1.5 transition hover:bg-white/[0.06] hover:text-white sm:inline-flex">{{ t(request, "nav.admin") }}</a>
+        <a href="/health" class="hidden rounded-full px-3 py-1.5 transition hover:bg-white/[0.06] hover:text-white md:inline-flex">{{ t(request, "nav.status") }}</a>
+      </div>
+      {% include "components/language_switcher.html" %}
     </div>
   </nav>
 </header>

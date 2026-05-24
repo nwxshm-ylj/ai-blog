@@ -1,34 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-950">
+<div class="site-shell">
   {% include "components/site_header.html" %}
 
-  <main>
-    <section class="border-b border-white/10 bg-slate-900/35">
-      <div class="mx-auto max-w-6xl px-5 py-14 sm:px-6 lg:py-16">
-        <p class="text-sm font-medium uppercase tracking-wide text-teal-200">Public Blog</p>
-        <h1 class="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">Notes on AI systems and production software</h1>
-        <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-400">Implementation notes, design decisions, and practical patterns for building useful AI products.</p>
-      </div>
-    </section>
+  <main class="relative z-10">
+    {% set eyebrow = t(request, "blog.eyebrow") %}
+    {% set heading = t(request, "blog.title") %}
+    {% set description = t(request, "blog.subtitle") %}
+    {% set back_href = "" %}
+    {% set back_label = "" %}
+    {% include "components/page_header.html" %}
 
-    <section class="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:py-12">
+    <section class="container-page grid gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:py-12">
       <div class="space-y-5">
         {% for post in posts %}
           {% include "components/post_card.html" %}
+        {% else %}
+          <div class="empty-state">{{ t(request, "blog.empty") }}</div>
         {% endfor %}
 
-        <nav class="flex items-center justify-between rounded-lg border border-dashed border-white/10 px-5 py-4 text-sm text-slate-500" aria-label="Pagination">
-          <span>Previous</span>
-          <span>Pagination placeholder</span>
-          <span>Next</span>
+        <nav class="flex items-center justify-between rounded-lg border border-dashed border-white/15 bg-white/[0.02] px-5 py-4 text-sm text-zinc-500" aria-label="Pagination">
+          <span>{{ t(request, "blog.previous") }}</span>
+          <span>{{ t(request, "blog.pagination") }}</span>
+          <span>{{ t(request, "blog.next") }}</span>
         </nav>
       </div>
 
       {% include "components/blog_sidebar.html" %}
     </section>
   </main>
+  {% include "components/site_footer.html" %}
 </div>
 {% endblock %}
-

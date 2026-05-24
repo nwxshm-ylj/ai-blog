@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="{{ current_lang(request) | default('en') }}" class="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{{ url_for('static', path='/css/app.css') }}">
     {% block extra_head %}{% endblock %}
   </head>
-  <body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
+  <body class="min-h-screen bg-zinc-950 text-zinc-100 antialiased">
     {% block content %}{% endblock %}
   </body>
 </html>

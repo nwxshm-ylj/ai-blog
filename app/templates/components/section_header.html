@@ -1,0 +1,16 @@
+<div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+  <div>
+    {% if eyebrow %}
+      <p class="eyebrow">{{ eyebrow }}</p>
+    {% endif %}
+    <h2 class="section-title mt-2">{{ heading }}</h2>
+    {% if description %}
+      <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{{ description }}</p>
+    {% endif %}
+  </div>
+  {% if action_href and action_label %}
+    <a href="{{ action_href }}" class="text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">{{ action_label }}</a>
+  {% elif meta %}
+    <span class="text-sm text-zinc-500">{{ meta }}</span>
+  {% endif %}
+</div>

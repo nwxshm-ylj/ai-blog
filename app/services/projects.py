@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.project import Project as ProjectModel
 from app.schemas.projects import Project
 
 
@@ -95,9 +99,56 @@ def list_projects() -> list[Project]:
     return _PROJECTS
 
 
+async def list_public_projects(session: AsyncSession) -> list[Project]:
+    counts = await _get_view_counts(session)
+    return [_with_view_count(project, counts.get(project.slug, project.view_count)) for project in list_projects()]
+
+
 def list_featured_projects() -> list[Project]:
     return [project for project in _PROJECTS if project.featured]
 
 
+async def list_public_featured_projects(session: AsyncSession) -> list[Project]:
+    return [project for project in await list_public_projects(session) if project.featured]
+
+
 def get_project_by_slug(slug: str) -> Project | None:
     return next((project for project in _PROJECTS if project.slug == slug), None)
+
+
+async def get_public_project_by_slug(session: AsyncSession, slug: str) -> Project | None:
+    project = get_project_by_slug(slug)
+    if project is None:
+        return None
+
+    view_count = await increment_project_view_count(session, slug)
+    if view_count is None:
+        view_count = project.view_count + 1
+        project.view_count = view_count
+
+    return _with_view_count(project, view_count)
+
+
+async def increment_project_view_count(session: AsyncSession, slug: str) -> int | None:
+    statement = (
+        update(ProjectModel)
+        .where(ProjectModel.slug == slug)
+        .values(view_count=ProjectModel.view_count + 1)
+        .returning(ProjectModel.view_count)
+    )
+    result = await session.execute(statement)
+    view_count = result.scalar_one_or_none()
+    if view_count is not None:
+        await session.commit()
+    return view_count
+
+
+async def _get_view_counts(session: AsyncSession) -> dict[str, int]:
+    slugs = [project.slug for project in _PROJECTS]
+    statement = select(ProjectModel.slug, ProjectModel.view_count).where(ProjectModel.slug.in_(slugs))
+    result = await session.execute(statement)
+    return dict(result.all())
+
+
+def _with_view_count(project: Project, view_count: int) -> Project:
+    return project.model_copy(update={"view_count": view_count})

@@ -1,48 +1,55 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-950">
+<div class="site-shell">
   {% include "components/site_header.html" %}
 
-  <main>
-    <section class="border-b border-white/10 bg-slate-900/35">
-      <div class="mx-auto max-w-6xl px-5 py-14 sm:px-6 lg:py-16">
-        <p class="text-sm font-medium uppercase tracking-wide text-teal-200">AI Projects</p>
-        <h1 class="mt-3 max-w-4xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">Developer portfolio for practical AI systems</h1>
-        <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-400">Selected builds across retrieval, agent operations, automation, and developer experience. Each project focuses on production constraints, clear interfaces, and measurable outcomes.</p>
-      </div>
-    </section>
+  <main class="relative z-10">
+    {% set eyebrow = t(request, "projects.eyebrow") %}
+    {% set heading = t(request, "projects.title") %}
+    {% set description = t(request, "projects.subtitle") %}
+    {% set back_href = "" %}
+    {% set back_label = "" %}
+    {% include "components/page_header.html" %}
 
-    <section class="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:py-12">
-      <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p class="text-sm font-medium uppercase tracking-wide text-blue-200">Featured</p>
-          <h2 class="mt-2 text-3xl font-semibold tracking-tight text-white">Built for real AI workflows</h2>
-        </div>
-        <span class="text-sm text-slate-500">{{ featured_projects | length }} highlighted projects</span>
-      </div>
+    <section class="container-page py-10 lg:py-12">
+      {% set eyebrow = t(request, "projects.featured") %}
+      {% set heading = t(request, "projects.featured_title") %}
+      {% set description = "" %}
+      {% set action_href = "" %}
+      {% set action_label = "" %}
+      {% set meta = (featured_projects | length) ~ " " ~ t(request, "projects.highlighted") %}
+      {% include "components/section_header.html" %}
 
       <div class="grid gap-5 lg:grid-cols-2">
         {% for project in featured_projects %}
           {% include "components/project_card.html" %}
+        {% else %}
+          <div class="empty-state lg:col-span-2">{{ t(request, "projects.empty_featured") }}</div>
         {% endfor %}
       </div>
     </section>
 
-    <section class="border-t border-white/10 bg-slate-900/25">
-      <div class="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:py-12">
-        <div class="mb-8">
-          <p class="text-sm font-medium uppercase tracking-wide text-slate-400">All projects</p>
-          <h2 class="mt-2 text-3xl font-semibold tracking-tight text-white">Portfolio index</h2>
-        </div>
+    <section class="border-t border-white/10 bg-white/[0.025]">
+      <div class="container-page py-10 lg:py-12">
+        {% set eyebrow = t(request, "projects.all") %}
+        {% set heading = t(request, "projects.index") %}
+        {% set description = "" %}
+        {% set action_href = "" %}
+        {% set action_label = "" %}
+        {% set meta = "" %}
+        {% include "components/section_header.html" %}
 
         <div class="grid gap-5 md:grid-cols-2">
           {% for project in projects %}
             {% include "components/project_card.html" %}
+          {% else %}
+            <div class="empty-state md:col-span-2">{{ t(request, "projects.empty") }}</div>
           {% endfor %}
         </div>
       </div>
     </section>
   </main>
+  {% include "components/site_footer.html" %}
 </div>
 {% endblock %}

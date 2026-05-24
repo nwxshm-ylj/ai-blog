@@ -1,11 +1,11 @@
 <div class="flex flex-wrap gap-3">
   {% if project.github_url %}
-    <a href="{{ project.github_url }}" class="inline-flex items-center rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/25 hover:bg-white/[0.04]" rel="noreferrer" target="_blank">
+    <a href="{{ project.github_url }}" class="btn-secondary px-3 py-2" rel="noreferrer" target="_blank">
       GitHub
     </a>
   {% endif %}
   {% if project.demo_url %}
-    <a href="{{ project.demo_url }}" class="inline-flex items-center rounded-md bg-teal-300 px-3 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-200" rel="noreferrer" target="_blank">
+    <a href="{{ project.demo_url }}" class="btn-primary px-3 py-2" rel="noreferrer" target="_blank">
       Live demo
     </a>
   {% endif %}

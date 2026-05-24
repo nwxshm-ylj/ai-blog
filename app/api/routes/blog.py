@@ -3,10 +3,11 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
+from app.dependencies import SessionDependency
 from app.services.blog import (
-    get_post_by_slug,
+    get_public_post_by_slug,
     list_categories,
-    list_posts,
+    list_public_posts,
     list_recent_posts,
     list_tags,
 )
@@ -18,8 +19,8 @@ router = APIRouter(prefix="/blog", tags=["blog"])
 
 
 @router.get("", response_class=HTMLResponse)
-async def blog_index(request: Request) -> HTMLResponse:
-    posts = list_posts()
+async def blog_index(request: Request, session: SessionDependency) -> HTMLResponse:
+    posts = await list_public_posts(session)
     return templates.TemplateResponse(
         request=request,
         name="blog/index.html",
@@ -39,8 +40,8 @@ async def blog_index(request: Request) -> HTMLResponse:
 
 
 @router.get("/{slug}", response_class=HTMLResponse)
-async def blog_detail(request: Request, slug: str) -> HTMLResponse:
-    post = get_post_by_slug(slug)
+async def blog_detail(request: Request, slug: str, session: SessionDependency) -> HTMLResponse:
+    post = await get_public_post_by_slug(session, slug)
     if post is None:
         raise HTTPException(status_code=404, detail="Post not found")
 

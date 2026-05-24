@@ -1,103 +1,165 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-screen overflow-hidden bg-slate-950">
-  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.18),transparent_32rem),radial-gradient(circle_at_top_right,rgba(59,130,246,0.16),transparent_30rem)]"></div>
+<div class="site-shell">
+  {% include "components/site_header.html" %}
 
-  <header class="border-b border-white/10 bg-slate-950/75 backdrop-blur">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5" aria-label="Main navigation">
-      <a href="/" class="text-lg font-semibold tracking-tight text-white">AI Blog</a>
-      <div class="flex items-center gap-6 text-sm text-slate-300">
-        <a href="/blog" class="transition hover:text-white">Blog</a>
-        <a href="/projects" class="transition hover:text-white">Projects</a>
-        <a href="/health" class="rounded-md border border-white/10 px-3 py-2 transition hover:border-teal-300/50 hover:text-white">Status</a>
-      </div>
-    </nav>
-  </header>
+  <main class="relative z-10">
+    <section class="container-page relative grid gap-12 py-14 sm:py-18 lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-center lg:py-24">
+      <div class="ambient-glow -left-20 top-8 h-64 w-64 bg-cyan-400/15"></div>
+      <div class="ambient-glow right-8 top-28 h-72 w-72 bg-indigo-500/10 [animation-delay:2s]"></div>
 
-  <main>
-    <section class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-[1.1fr_0.9fr] md:items-center md:py-28">
-      <div>
-        <p class="mb-5 inline-flex rounded-full border border-teal-300/20 bg-teal-300/10 px-3 py-1 text-sm font-medium text-teal-200">
-          Notes on AI systems, software, and products
+      <div class="relative max-w-4xl">
+        <p class="mb-6 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-medium text-cyan-100 shadow-sm shadow-cyan-950/30">
+          {{ t(request, "home.eyebrow") }}
         </p>
-        <h1 class="max-w-3xl text-5xl font-semibold tracking-tight text-white sm:text-6xl">
-          Building useful AI tools with production-grade engineering.
+        <h1 class="hero-gradient-text text-balance text-5xl font-semibold leading-[1.03] tracking-tight sm:text-6xl lg:text-7xl">
+          {{ t(request, "home.title") }}
         </h1>
-        <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-          A minimal home for essays, implementation notes, and project updates from the AI engineering stack.
+        <p class="mt-7 max-w-2xl text-lg leading-8 text-zinc-300 sm:text-xl">
+          {{ t(request, "home.subtitle") }}
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href="/blog" class="rounded-md bg-teal-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-200">
-            View recent posts
+          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary">
+            {{ t(request, "home.cta.projects") }}
           </a>
-          <a href="/projects" class="rounded-md border border-white/10 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-white/25 hover:bg-white/5">
-            Browse projects
+          <a href="{{ url_with_lang(request, '/blog') }}" class="btn-secondary">
+            {{ t(request, "home.cta.posts") }}
           </a>
+        </div>
+        <div class="mt-10 grid max-w-3xl gap-3 text-sm text-zinc-400 sm:grid-cols-3">
+          <div class="metric-panel">
+            <p class="text-2xl font-semibold text-white">AI</p>
+            <p class="mt-1">{{ t(request, "home.capability.1") }}</p>
+          </div>
+          <div class="metric-panel">
+            <p class="text-2xl font-semibold text-white">CV</p>
+            <p class="mt-1">{{ t(request, "home.capability.2") }}</p>
+          </div>
+          <div class="metric-panel">
+            <p class="text-2xl font-semibold text-white">Py</p>
+            <p class="mt-1">{{ t(request, "home.capability.3") }}</p>
+          </div>
         </div>
       </div>
 
-      <div class="rounded-lg border border-white/10 bg-white/[0.03] p-6 shadow-2xl shadow-black/30">
-        <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
-          <span class="text-sm font-medium text-slate-300">Workspace</span>
-          <span class="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">Live</span>
-        </div>
-        <div class="space-y-4">
-          <div class="rounded-md bg-slate-900/80 p-4">
-            <p class="text-sm text-slate-400">Current focus</p>
-            <p class="mt-2 text-xl font-semibold text-white">FastAPI, PostgreSQL, Jinja2, TailwindCSS</p>
-          </div>
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div class="rounded-md border border-white/10 p-4">
-              <p class="text-3xl font-semibold text-white">03</p>
-              <p class="mt-1 text-sm text-slate-400">Post slots ready</p>
+      <div class="premium-panel relative overflow-hidden p-4 sm:p-5">
+        <div class="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl"></div>
+        <div class="relative rounded-lg border border-white/10 bg-zinc-950/80">
+          <div class="flex items-center justify-between border-b border-white/10 px-4 py-3">
+            <div class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-rose-300/80"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber-300/80"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300/80"></span>
             </div>
-            <div class="rounded-md border border-white/10 p-4">
-              <p class="text-3xl font-semibold text-white">02</p>
-              <p class="mt-1 text-sm text-slate-400">Project slots ready</p>
+            <span class="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">{{ t(request, "home.live") }}</span>
+          </div>
+
+          <div class="grid gap-4 p-4">
+            <div class="rounded-lg border border-cyan-300/15 bg-cyan-300/[0.04] p-4">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.16em] text-cyan-200/80">{{ t(request, "home.workspace") }}</p>
+                  <p class="mt-2 text-xl font-semibold text-white">{{ t(request, "home.focus") }}</p>
+                </div>
+                <div class="grid h-14 w-14 shrink-0 place-items-center rounded-lg border border-cyan-200/20 bg-cyan-200/10 text-sm font-semibold text-cyan-50">AI</div>
+              </div>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div class="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+                <p class="text-xs text-zinc-500">{{ t(request, "home.metric.posts") }}</p>
+                <p class="mt-2 text-3xl font-semibold text-white">05</p>
+                <div class="dashboard-line mt-4 w-10/12"></div>
+              </div>
+              <div class="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+                <p class="text-xs text-zinc-500">{{ t(request, "home.metric.projects") }}</p>
+                <p class="mt-2 text-3xl font-semibold text-white">04</p>
+                <div class="dashboard-line mt-4 w-8/12"></div>
+              </div>
+            </div>
+
+            <div class="rounded-lg border border-white/10 bg-black/30 p-4">
+              <div class="mb-4 flex items-center justify-between">
+                <p class="text-sm font-medium text-zinc-300">{{ t(request, "home.pipeline") }}</p>
+                <span class="text-xs text-zinc-500">p95 84ms</span>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <span class="h-2 w-2 rounded-full bg-cyan-300"></span>
+                  <div class="dashboard-line w-11/12"></div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="h-2 w-2 rounded-full bg-indigo-300"></span>
+                  <div class="dashboard-line w-9/12 from-indigo-300/80 via-cyan-300/50"></div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="h-2 w-2 rounded-full bg-emerald-300"></span>
+                  <div class="dashboard-line w-7/12 from-emerald-300/80 via-cyan-300/50"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-3 text-sm text-zinc-400">
+              <div class="rounded-md border border-white/10 bg-white/[0.025] px-3 py-2">{{ t(request, "home.signal.1") }}</div>
+              <div class="rounded-md border border-white/10 bg-white/[0.025] px-3 py-2">{{ t(request, "home.signal.2") }}</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="posts" class="border-y border-white/10 bg-slate-900/40">
-      <div class="mx-auto max-w-6xl px-6 py-16">
-        <div class="mb-8 flex items-end justify-between gap-6">
-          <div>
-            <p class="text-sm font-medium uppercase tracking-wide text-teal-200">Recent posts</p>
-            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-white">Latest writing</h2>
-          </div>
-          <span class="hidden text-sm text-slate-400 sm:block">Placeholder content</span>
+    <section id="projects" class="relative border-y border-white/10 bg-white/[0.025]">
+      <div class="container-page section-y">
+        {% set eyebrow = t(request, "home.projects.eyebrow") %}
+        {% set heading = t(request, "home.projects.title") %}
+        {% set description = t(request, "home.projects.note") %}
+        {% set action_href = url_with_lang(request, "/projects") %}
+        {% set action_label = t(request, "home.projects.link") %}
+        {% include "components/section_header.html" %}
+        <div class="grid gap-5 md:grid-cols-2">
+          {% for project in featured_projects %}
+            {% include "components/project_card.html" %}
+          {% else %}
+            <div class="empty-state md:col-span-2">{{ t(request, "home.projects.empty") }}</div>
+          {% endfor %}
         </div>
+      </div>
+    </section>
+
+    <section id="posts">
+      <div class="container-page section-y">
+        {% set eyebrow = t(request, "home.posts.eyebrow") %}
+        {% set heading = t(request, "home.posts.title") %}
+        {% set description = t(request, "home.posts.note") %}
+        {% set meta = "" %}
+        {% include "components/section_header.html" %}
         <div class="grid gap-4 md:grid-cols-3">
-          {% for title in ["Designing AI blog architecture", "Async FastAPI patterns", "Shipping small AI products"] %}
-          <article class="rounded-lg border border-white/10 bg-slate-950/60 p-5 transition hover:border-teal-300/40">
-            <p class="text-sm text-slate-500">Coming soon</p>
+          {% for title in ["Industrial AI vision notes", "Production AI infrastructure", "Semiconductor analytics systems"] %}
+          <article class="panel card-hover p-5">
+            <p class="text-xs uppercase tracking-[0.16em] text-cyan-200/80">{{ t(request, "home.posts.eyebrow") }}</p>
             <h3 class="mt-3 text-lg font-semibold text-white">{{ title }}</h3>
-            <p class="mt-3 text-sm leading-6 text-slate-400">A placeholder for future notes, tutorials, and implementation details.</p>
+            <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.posts.note") }}</p>
           </article>
           {% endfor %}
         </div>
       </div>
     </section>
 
-    <section id="projects">
-      <div class="mx-auto max-w-6xl px-6 py-16">
-        <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <section class="container-page pb-16 lg:pb-24">
+      <div class="premium-panel relative overflow-hidden p-6 sm:p-8">
+        <div class="pointer-events-none absolute right-0 top-0 h-44 w-44 rounded-full bg-cyan-300/10 blur-3xl"></div>
+        <div class="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <p class="text-sm font-medium uppercase tracking-wide text-blue-200">Projects</p>
-            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-white">Featured AI builds</h2>
+            <p class="eyebrow">{{ t(request, "home.cta.eyebrow") }}</p>
+            <h2 class="section-title mt-2">{{ t(request, "home.cta.title") }}</h2>
+            <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{{ t(request, "home.cta.copy") }}</p>
           </div>
-          <a href="/projects" class="text-sm font-semibold text-teal-200 transition hover:text-teal-100">View all projects</a>
-        </div>
-        <div class="grid gap-4 md:grid-cols-2">
-          {% for project in featured_projects %}
-            {% include "components/project_card.html" %}
-          {% endfor %}
+          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary shrink-0">{{ t(request, "home.cta.projects") }}</a>
         </div>
       </div>
     </section>
   </main>
+  {% include "components/site_footer.html" %}
 </div>
 {% endblock %}

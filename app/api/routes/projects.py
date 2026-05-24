@@ -3,7 +3,12 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
-from app.services.projects import get_project_by_slug, list_featured_projects, list_projects
+from app.dependencies import SessionDependency
+from app.services.projects import (
+    get_public_project_by_slug,
+    list_public_featured_projects,
+    list_public_projects,
+)
 from app.services.seo import build_page_seo
 from app.web.templating import templates
 
@@ -11,8 +16,8 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 
 @router.get("", response_class=HTMLResponse)
-async def projects_index(request: Request) -> HTMLResponse:
-    projects = list_projects()
+async def projects_index(request: Request, session: SessionDependency) -> HTMLResponse:
+    projects = await list_public_projects(session)
     return templates.TemplateResponse(
         request=request,
         name="projects/index.html",
@@ -27,14 +32,14 @@ async def projects_index(request: Request) -> HTMLResponse:
                 path="/projects",
             ),
             "projects": projects,
-            "featured_projects": list_featured_projects(),
+            "featured_projects": await list_public_featured_projects(session),
         },
     )
 
 
 @router.get("/{slug}", response_class=HTMLResponse)
-async def project_detail(request: Request, slug: str) -> HTMLResponse:
-    project = get_project_by_slug(slug)
+async def project_detail(request: Request, slug: str, session: SessionDependency) -> HTMLResponse:
+    project = await get_public_project_by_slug(session, slug)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -52,7 +57,7 @@ async def project_detail(request: Request, slug: str) -> HTMLResponse:
             "project": project,
             "related_projects": [
                 related
-                for related in list_projects()
+                for related in await list_public_projects(session)
                 if related.slug != project.slug and related.category == project.category
             ][:2],
         },

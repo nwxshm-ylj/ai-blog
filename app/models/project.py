@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import Boolean, Index, String, Text, false, text
+from sqlalchemy import Boolean, Index, Integer, String, Text, false, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -32,5 +32,11 @@ class Project(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         Boolean,
         default=False,
         server_default=false(),
+        nullable=False,
+    )
+    view_count: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default="0",
         nullable=False,
     )

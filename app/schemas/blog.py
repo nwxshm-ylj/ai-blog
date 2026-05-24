@@ -15,4 +15,4 @@ class BlogPost(BaseModel):
     published_at: date
     reading_time_minutes: int
     content_markdown: str
-
+    view_count: int = 0

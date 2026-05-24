@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from datetime import date
 
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.post import Post
 from app.schemas.blog import BlogPost
 
 
@@ -112,8 +116,40 @@ def list_posts() -> list[BlogPost]:
     return sorted(_POSTS, key=lambda post: post.published_at, reverse=True)
 
 
+async def list_public_posts(session: AsyncSession) -> list[BlogPost]:
+    counts = await _get_view_counts(session)
+    return [_with_view_count(post, counts.get(post.slug, post.view_count)) for post in list_posts()]
+
+
 def get_post_by_slug(slug: str) -> BlogPost | None:
     return next((post for post in _POSTS if post.slug == slug), None)
+
+
+async def get_public_post_by_slug(session: AsyncSession, slug: str) -> BlogPost | None:
+    post = get_post_by_slug(slug)
+    if post is None:
+        return None
+
+    view_count = await increment_post_view_count(session, slug)
+    if view_count is None:
+        view_count = post.view_count + 1
+        post.view_count = view_count
+
+    return _with_view_count(post, view_count)
+
+
+async def increment_post_view_count(session: AsyncSession, slug: str) -> int | None:
+    statement = (
+        update(Post)
+        .where(Post.slug == slug, Post.is_published.is_(True))
+        .values(view_count=Post.view_count + 1)
+        .returning(Post.view_count)
+    )
+    result = await session.execute(statement)
+    view_count = result.scalar_one_or_none()
+    if view_count is not None:
+        await session.commit()
+    return view_count
 
 
 def list_recent_posts(limit: int = 4) -> list[BlogPost]:
@@ -127,3 +163,13 @@ def list_categories() -> list[str]:
 def list_tags() -> list[str]:
     return sorted({tag for post in _POSTS for tag in post.tags})
 
+
+async def _get_view_counts(session: AsyncSession) -> dict[str, int]:
+    slugs = [post.slug for post in _POSTS]
+    statement = select(Post.slug, Post.view_count).where(Post.slug.in_(slugs))
+    result = await session.execute(statement)
+    return dict(result.all())
+
+
+def _with_view_count(post: BlogPost, view_count: int) -> BlogPost:
+    return post.model_copy(update={"view_count": view_count})
