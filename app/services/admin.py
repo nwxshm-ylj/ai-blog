@@ -10,10 +10,9 @@ from app.repositories.posts import PostRepository
 from app.repositories.projects import ProjectRepository
 from app.repositories.users import UserRepository
 from app.schemas.admin import AdminDashboardStat, AdminPost, AdminProject
+from app.services.auth import LOCAL_DEV_ADMIN_EMAIL
 
-DEFAULT_ADMIN_EMAIL = "admin@local.invalid"
-DEFAULT_ADMIN_USERNAME = "admin"
-DEFAULT_ADMIN_PASSWORD_HASH = "not-used"
+DEFAULT_AUTHOR_EMAIL = LOCAL_DEV_ADMIN_EMAIL
 
 
 async def get_dashboard_stats(session: AsyncSession) -> list[AdminDashboardStat]:
@@ -255,17 +254,13 @@ async def _count(session: AsyncSession, model: type[Post] | type[Project], *filt
 
 async def _get_or_create_default_admin_user(session: AsyncSession) -> User:
     repository = UserRepository(session)
-    user = await repository.get_by(email=DEFAULT_ADMIN_EMAIL)
+    user = await repository.get_by(email=DEFAULT_AUTHOR_EMAIL)
     if user is not None:
         return user
 
-    user = User(
-        email=DEFAULT_ADMIN_EMAIL,
-        username=DEFAULT_ADMIN_USERNAME,
-        hashed_password=DEFAULT_ADMIN_PASSWORD_HASH,
-        is_admin=True,
+    raise RuntimeError(
+        "No admin author exists. Run the local development admin seed command first."
     )
-    return await repository.add(user)
 
 
 def _post_to_admin(post: Post) -> AdminPost:

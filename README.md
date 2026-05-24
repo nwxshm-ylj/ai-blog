@@ -64,3 +64,18 @@ alembic revision --autogenerate -m "initial"
 alembic upgrade head
 ```
 
+## Local Development Admin
+
+This helper creates or resets a local-only admin account:
+
+```bash
+python -m app.scripts.create_dev_admin
+```
+
+Credentials:
+
+```text
+email: admin@example.com
+username: admin
+password: admin123
+```

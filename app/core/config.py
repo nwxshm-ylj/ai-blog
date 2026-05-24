@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     )
 
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+    secret_key: str = Field(
+        default="change-me-for-local-development-only",
+        alias="SECRET_KEY",
+    )
+    session_cookie_name: str = Field(default="ai_blog_session", alias="SESSION_COOKIE_NAME")
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -33,4 +38,3 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
-

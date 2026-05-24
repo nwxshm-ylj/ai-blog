@@ -18,7 +18,7 @@
   </div>
 {% endif %}
 
-<form action="{{ form_action }}" method="post" class="space-y-6 rounded-lg border border-white/10 bg-slate-900/55 p-5 sm:p-6">
+<form action="{{ form_action }}" method="post" enctype="multipart/form-data" class="space-y-6 rounded-lg border border-white/10 bg-slate-900/55 p-5 sm:p-6">
   <div class="grid gap-5 lg:grid-cols-2">
     <label class="block">
       <span class="text-sm font-medium text-slate-300">Title</span>
@@ -43,7 +43,13 @@
   <div class="grid gap-5 lg:grid-cols-2">
     <label class="block">
       <span class="text-sm font-medium text-slate-300">Cover image</span>
-      <input name="cover_image" value="{{ post.cover_image }}" type="text" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+      <input name="cover_image" value="{{ post.cover_image }}" type="hidden">
+      <input name="cover_image_upload" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" class="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-slate-300 outline-none transition file:mr-4 file:rounded-md file:border-0 file:bg-slate-800 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-100 hover:file:bg-slate-700 focus:border-teal-300/50 focus:ring-2 focus:ring-teal-300/20">
+      {% if post.cover_image %}
+        <div class="mt-3 overflow-hidden rounded-md border border-white/10 bg-slate-950">
+          <img src="{{ post.cover_image }}" alt="Current post cover image" class="h-40 w-full object-cover">
+        </div>
+      {% endif %}
     </label>
     <label class="flex items-center gap-3 pt-8">
       <input name="is_published" type="checkbox" value="true" {% if post.is_published %}checked{% endif %} class="h-4 w-4 rounded border-white/10 bg-slate-950 text-teal-400 focus:ring-teal-300/30">

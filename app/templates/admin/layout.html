@@ -11,7 +11,9 @@
   <div class="border-b border-white/10 bg-slate-950/95 lg:hidden">
     <div class="flex items-center justify-between px-5 py-4">
       <a href="/admin" class="text-base font-semibold tracking-tight text-white">AI Blog Admin</a>
-      <a href="/" class="rounded-md border border-white/10 px-3 py-2 text-sm text-slate-300 transition hover:border-teal-300/50 hover:text-white">View site</a>
+      <form action="/auth/logout" method="post">
+        <button type="submit" class="rounded-md border border-white/10 px-3 py-2 text-sm text-slate-300 transition hover:border-teal-300/50 hover:text-white">Sign out</button>
+      </form>
     </div>
     <nav class="flex gap-2 overflow-x-auto px-5 pb-4" aria-label="Admin navigation">
       {% for item in admin_nav_items %}
@@ -48,7 +50,12 @@
         </nav>
 
         <div class="mt-auto border-t border-white/10 pt-5">
-          <a href="/" class="text-sm font-medium text-slate-400 transition hover:text-white">View public site</a>
+          <div class="flex items-center justify-between gap-4">
+            <a href="/" class="text-sm font-medium text-slate-400 transition hover:text-white">View public site</a>
+            <form action="/auth/logout" method="post">
+              <button type="submit" class="text-sm font-medium text-slate-400 transition hover:text-white">Sign out</button>
+            </form>
+          </div>
         </div>
       </div>
     </aside>
@@ -61,4 +68,3 @@
   </div>
 </div>
 {% endblock %}
-

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from typing import Annotated
-from urllib.parse import parse_qs
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, status
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.datastructures import FormData, UploadFile as StarletteUploadFile
 
-from app.dependencies import get_session
+from app.dependencies import get_session, require_admin_user
 from app.schemas.admin import AdminPost, AdminProject
 from app.services.admin import (
     create_admin_post,
@@ -26,9 +26,14 @@ from app.services.admin import (
     validate_admin_post,
     validate_admin_project,
 )
+from app.utils.uploads import UploadValidationError, save_cover_image
 from app.web.templating import templates
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(
+    prefix="/admin",
+    tags=["admin"],
+    dependencies=[Depends(require_admin_user)],
+)
 SessionDependency = Annotated[AsyncSession, Depends(get_session)]
 
 
@@ -107,8 +112,8 @@ async def admin_create_post(
     request: Request,
     session: SessionDependency,
 ) -> Response:
-    post = await _read_admin_post_form(request)
-    errors = await validate_admin_post(session, post)
+    post, upload_errors = await _read_admin_post_form(request)
+    errors = upload_errors + await validate_admin_post(session, post)
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -142,8 +147,15 @@ async def admin_update_post(
     if existing is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
-    post = await _read_admin_post_form(request)
-    errors = await validate_admin_post(session, post, current_slug=slug)
+    post, upload_errors = await _read_admin_post_form(
+        request,
+        existing_cover_image=existing.cover_image,
+    )
+    errors = upload_errors + await validate_admin_post(
+        session,
+        post,
+        current_slug=slug,
+    )
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -241,8 +253,8 @@ async def admin_create_project(
     request: Request,
     session: SessionDependency,
 ) -> Response:
-    project = await _read_admin_project_form(request)
-    errors = await validate_admin_project(session, project)
+    project, upload_errors = await _read_admin_project_form(request)
+    errors = upload_errors + await validate_admin_project(session, project)
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -276,8 +288,15 @@ async def admin_update_project(
     if existing is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
 
-    project = await _read_admin_project_form(request)
-    errors = await validate_admin_project(session, project, current_slug=slug)
+    project, upload_errors = await _read_admin_project_form(
+        request,
+        existing_cover_image=existing.cover_image,
+    )
+    errors = upload_errors + await validate_admin_project(
+        session,
+        project,
+        current_slug=slug,
+    )
     if errors:
         return templates.TemplateResponse(
             request=request,
@@ -313,35 +332,71 @@ async def admin_delete_project(slug: str, session: SessionDependency) -> Redirec
     )
 
 
-async def _read_admin_post_form(request: Request) -> AdminPost:
-    form = await _read_urlencoded_form(request)
-    return AdminPost(
-        title=form.get("title", "").strip(),
-        slug=form.get("slug", "").strip(),
-        summary=form.get("summary", "").strip(),
-        markdown_content=form.get("markdown_content", "").strip(),
-        cover_image=form.get("cover_image", "").strip(),
-        is_published=form.get("is_published") == "true",
-        seo_title=form.get("seo_title", "").strip(),
-        seo_description=form.get("seo_description", "").strip(),
+async def _read_admin_post_form(
+    request: Request,
+    *,
+    existing_cover_image: str = "",
+) -> tuple[AdminPost, list[str]]:
+    form = await request.form()
+    cover_image, upload_errors = await _read_cover_image(
+        form,
+        existing_cover_image=existing_cover_image,
+    )
+    return (
+        AdminPost(
+            title=_form_text(form, "title").strip(),
+            slug=_form_text(form, "slug").strip(),
+            summary=_form_text(form, "summary").strip(),
+            markdown_content=_form_text(form, "markdown_content").strip(),
+            cover_image=cover_image,
+            is_published=_form_text(form, "is_published") == "true",
+            seo_title=_form_text(form, "seo_title").strip(),
+            seo_description=_form_text(form, "seo_description").strip(),
+        ),
+        upload_errors,
     )
 
 
-async def _read_admin_project_form(request: Request) -> AdminProject:
-    form = await _read_urlencoded_form(request)
-    return AdminProject(
-        title=form.get("title", "").strip(),
-        slug=form.get("slug", "").strip(),
-        description=form.get("description", "").strip(),
-        tech_stack=form.get("tech_stack", "").strip(),
-        github_url=form.get("github_url", "").strip(),
-        demo_url=form.get("demo_url", "").strip(),
-        cover_image=form.get("cover_image", "").strip(),
-        featured=form.get("featured") == "true",
+async def _read_admin_project_form(
+    request: Request,
+    *,
+    existing_cover_image: str = "",
+) -> tuple[AdminProject, list[str]]:
+    form = await request.form()
+    cover_image, upload_errors = await _read_cover_image(
+        form,
+        existing_cover_image=existing_cover_image,
+    )
+    return (
+        AdminProject(
+            title=_form_text(form, "title").strip(),
+            slug=_form_text(form, "slug").strip(),
+            description=_form_text(form, "description").strip(),
+            tech_stack=_form_text(form, "tech_stack").strip(),
+            github_url=_form_text(form, "github_url").strip(),
+            demo_url=_form_text(form, "demo_url").strip(),
+            cover_image=cover_image,
+            featured=_form_text(form, "featured") == "true",
+        ),
+        upload_errors,
     )
 
 
-async def _read_urlencoded_form(request: Request) -> dict[str, str]:
-    body = (await request.body()).decode("utf-8")
-    parsed = parse_qs(body, keep_blank_values=True)
-    return {key: values[-1] if values else "" for key, values in parsed.items()}
+async def _read_cover_image(
+    form: FormData,
+    *,
+    existing_cover_image: str = "",
+) -> tuple[str, list[str]]:
+    upload = form.get("cover_image_upload")
+    if isinstance(upload, (UploadFile, StarletteUploadFile)) and upload.filename:
+        try:
+            return await save_cover_image(upload), []
+        except UploadValidationError as exc:
+            return existing_cover_image or _form_text(form, "cover_image").strip(), [str(exc)]
+
+    return existing_cover_image or _form_text(form, "cover_image").strip(), []
+
+
+def _form_text(form: FormData, key: str) -> str:
+    value = form.get(key)
+    return value if isinstance(value, str) else ""
