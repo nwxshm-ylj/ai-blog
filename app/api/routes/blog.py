@@ -10,6 +10,7 @@ from app.services.blog import (
     list_recent_posts,
     list_tags,
 )
+from app.services.seo import build_page_seo
 from app.web.markdown import render_markdown
 from app.web.templating import templates
 
@@ -23,8 +24,12 @@ async def blog_index(request: Request) -> HTMLResponse:
         request=request,
         name="blog/index.html",
         context={
-            "title": "Blog | AI Blog",
-            "meta_description": "Developer notes on AI systems, FastAPI, architecture, and product engineering.",
+            **build_page_seo(
+                request,
+                title="Blog | AI Blog",
+                description="Developer notes on AI systems, FastAPI, architecture, and product engineering.",
+                path="/blog",
+            ),
             "posts": posts,
             "recent_posts": list_recent_posts(),
             "categories": list_categories(),
@@ -43,8 +48,13 @@ async def blog_detail(request: Request, slug: str) -> HTMLResponse:
         request=request,
         name="blog/detail.html",
         context={
-            "title": f"{post.title} | AI Blog",
-            "meta_description": post.description,
+            **build_page_seo(
+                request,
+                title=f"{post.title} | AI Blog",
+                description=post.description,
+                path=f"/blog/{post.slug}",
+                og_type="article",
+            ),
             "post": post,
             "post_html": render_markdown(post.content_markdown),
             "recent_posts": [recent for recent in list_recent_posts() if recent.slug != post.slug],
@@ -52,4 +62,3 @@ async def blog_detail(request: Request, slug: str) -> HTMLResponse:
             "tags": list_tags(),
         },
     )
-

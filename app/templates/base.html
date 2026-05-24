@@ -6,6 +6,16 @@
     <meta name="description" content="{{ meta_description | default('AI Blog: notes on AI systems, software architecture, and product engineering.') }}">
     <meta name="color-scheme" content="dark">
     <title>{{ title | default("AI Blog") }}</title>
+    {% if canonical_url %}<link rel="canonical" href="{{ canonical_url }}">{% endif %}
+    <meta property="og:title" content="{{ og_title | default(title | default('AI Blog')) }}">
+    <meta property="og:description" content="{{ og_description | default(meta_description | default('AI Blog: notes on AI systems, software architecture, and product engineering.')) }}">
+    <meta property="og:type" content="{{ og_type | default('website') }}">
+    <meta property="og:url" content="{{ og_url | default(canonical_url | default('')) }}">
+    <meta property="og:image" content="{{ og_image | default('https://placehold.co/1200x630/0f172a/99f6e4.png?text=AI+Blog') }}">
+    <meta name="twitter:card" content="{{ twitter_card | default('summary_large_image') }}">
+    <meta name="twitter:title" content="{{ twitter_title | default(og_title | default(title | default('AI Blog'))) }}">
+    <meta name="twitter:description" content="{{ twitter_description | default(og_description | default(meta_description | default('AI Blog: notes on AI systems, software architecture, and product engineering.'))) }}">
+    <meta name="twitter:image" content="{{ twitter_image | default(og_image | default('https://placehold.co/1200x630/0f172a/99f6e4.png?text=AI+Blog')) }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', path='/css/app.css') }}">
     {% block extra_head %}{% endblock %}

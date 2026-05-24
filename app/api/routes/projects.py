@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.services.projects import get_project_by_slug, list_featured_projects, list_projects
+from app.services.seo import build_page_seo
 from app.web.templating import templates
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -16,10 +17,14 @@ async def projects_index(request: Request) -> HTMLResponse:
         request=request,
         name="projects/index.html",
         context={
-            "title": "AI Projects | AI Blog",
-            "meta_description": (
-                "A portfolio of AI engineering projects covering agents, retrieval, "
-                "automation, developer tooling, and production FastAPI systems."
+            **build_page_seo(
+                request,
+                title="AI Projects | AI Blog",
+                description=(
+                    "A portfolio of AI engineering projects covering agents, retrieval, "
+                    "automation, developer tooling, and production FastAPI systems."
+                ),
+                path="/projects",
             ),
             "projects": projects,
             "featured_projects": list_featured_projects(),
@@ -37,8 +42,13 @@ async def project_detail(request: Request, slug: str) -> HTMLResponse:
         request=request,
         name="projects/detail.html",
         context={
-            "title": f"{project.title} | AI Projects",
-            "meta_description": project.description,
+            **build_page_seo(
+                request,
+                title=f"{project.title} | AI Projects",
+                description=project.description,
+                path=f"/projects/{project.slug}",
+                og_type="article",
+            ),
             "project": project,
             "related_projects": [
                 related
