@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-950">
+  {% include "components/site_header.html" %}
+
+  <main>
+    <article>
+      <header class="border-b border-white/10 bg-slate-900/35">
+        <div class="mx-auto max-w-6xl px-5 py-12 sm:px-6 lg:py-16">
+          <a href="/projects" class="text-sm font-medium text-teal-200 hover:text-teal-100">Back to projects</a>
+          <div class="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+            <span>{{ project.category }}</span>
+            <span aria-hidden="true">/</span>
+            <span>{{ project.status }}</span>
+          </div>
+          <h1 class="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">{{ project.title }}</h1>
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-400">{{ project.description }}</p>
+          <div class="mt-7">
+            {% include "components/project_links.html" %}
+          </div>
+        </div>
+      </header>
+
+      <div class="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:py-12">
+        <div class="min-w-0 space-y-8">
+          <section>
+            <p class="text-sm font-medium uppercase tracking-wide text-teal-200">Impact</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-white">What it solves</h2>
+            <p class="mt-4 text-lg leading-8 text-slate-400">{{ project.impact }}</p>
+          </section>
+
+          <section>
+            <p class="text-sm font-medium uppercase tracking-wide text-blue-200">Highlights</p>
+            <div class="mt-4 grid gap-3">
+              {% for highlight in project.highlights %}
+                <div class="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+                  <p class="leading-7 text-slate-300">{{ highlight }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          </section>
+        </div>
+
+        <aside class="space-y-6">
+          <section class="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-300">Tech stack</h2>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {% for tech in project.tech_stack %}
+                {% include "components/tech_tag.html" %}
+              {% endfor %}
+            </div>
+          </section>
+
+          {% if related_projects %}
+            <section class="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+              <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-300">Related</h2>
+              <div class="mt-4 space-y-3">
+                {% for related in related_projects %}
+                  <a href="/projects/{{ related.slug }}" class="block rounded-md border border-white/10 p-3 transition hover:border-teal-300/40 hover:bg-white/[0.04]">
+                    <span class="text-sm font-semibold text-white">{{ related.title }}</span>
+                    <span class="mt-1 block text-xs text-slate-500">{{ related.category }}</span>
+                  </a>
+                {% endfor %}
+              </div>
+            </section>
+          {% endif %}
+        </aside>
+      </div>
+    </article>
+  </main>
+</div>
+{% endblock %}
