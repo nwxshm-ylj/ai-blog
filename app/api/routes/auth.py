@@ -8,7 +8,15 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies import get_session
-from app.services.auth import SESSION_USER_ID_KEY, authenticate_admin_user
+from app.models.user import User
+from app.services.auth import (
+    SESSION_IS_ADMIN_KEY,
+    SESSION_USER_ID_KEY,
+    SESSION_USERNAME_KEY,
+    RegistrationData,
+    authenticate_user,
+    register_public_user,
+)
 from app.web.templating import templates
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -21,10 +29,10 @@ async def login_page(request: Request) -> HTMLResponse:
         request=request,
         name="auth/login.html",
         context={
-            "title": "Admin Login | AI Blog",
+            "title": "Sign In | AI Blog",
             "error": None,
             "identifier": "",
-            "next_url": _safe_next_url(request.query_params.get("next")),
+            "next_url": _safe_next_url(request.query_params.get("next"), default="/"),
         },
     )
 
@@ -32,9 +40,9 @@ async def login_page(request: Request) -> HTMLResponse:
 @router.post("/login")
 async def login_action(request: Request, session: SessionDependency) -> Response:
     form = await _read_urlencoded_form(request)
-    next_url = _safe_next_url(form.get("next"))
+    next_url = _safe_next_url(form.get("next"), default="/")
     identifier = form.get("identifier", "").strip()
-    result = await authenticate_admin_user(
+    result = await authenticate_user(
         session,
         identifier=identifier,
         password=form.get("password", ""),
@@ -44,7 +52,7 @@ async def login_action(request: Request, session: SessionDependency) -> Response
             request=request,
             name="auth/login.html",
             context={
-                "title": "Admin Login | AI Blog",
+                "title": "Sign In | AI Blog",
                 "error": result.error,
                 "identifier": identifier,
                 "next_url": next_url,
@@ -52,14 +60,68 @@ async def login_action(request: Request, session: SessionDependency) -> Response
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    request.session[SESSION_USER_ID_KEY] = str(result.user.id)
+    _login_session(request, result.user)
+    return RedirectResponse(url=next_url, status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        request=request,
+        name="auth/register.html",
+        context={
+            "title": "Create Account | AI Blog",
+            "errors": [],
+            "email": "",
+            "username": "",
+            "next_url": _safe_next_url(request.query_params.get("next"), default="/"),
+        },
+    )
+
+
+@router.post("/register")
+async def register_action(request: Request, session: SessionDependency) -> Response:
+    form = await _read_urlencoded_form(request)
+    next_url = _safe_next_url(form.get("next"), default="/")
+    email = form.get("email", "").strip()
+    username = form.get("username", "").strip()
+    result = await register_public_user(
+        session,
+        RegistrationData(
+            email=email,
+            username=username,
+            password=form.get("password", ""),
+            password_confirm=form.get("password_confirm", ""),
+        ),
+    )
+    if result.user is None:
+        return templates.TemplateResponse(
+            request=request,
+            name="auth/register.html",
+            context={
+                "title": "Create Account | AI Blog",
+                "errors": result.errors,
+                "email": email,
+                "username": username,
+                "next_url": next_url,
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    _login_session(request, result.user)
     return RedirectResponse(url=next_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.post("/logout")
 async def logout_action(request: Request) -> RedirectResponse:
     request.session.clear()
-    return RedirectResponse(url="/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+
+def _login_session(request: Request, user: User) -> None:
+    request.session[SESSION_USER_ID_KEY] = str(user.id)
+    request.session[SESSION_USERNAME_KEY] = user.username
+    request.session[SESSION_IS_ADMIN_KEY] = user.is_admin
 
 
 async def _read_urlencoded_form(request: Request) -> dict[str, str]:
@@ -68,7 +130,7 @@ async def _read_urlencoded_form(request: Request) -> dict[str, str]:
     return {key: values[-1] if values else "" for key, values in parsed.items()}
 
 
-def _safe_next_url(next_url: str | None) -> str:
+def _safe_next_url(next_url: str | None, *, default: str) -> str:
     if not next_url or not next_url.startswith("/") or next_url.startswith("//"):
-        return "/admin"
+        return default
     return next_url

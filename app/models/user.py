@@ -26,3 +26,7 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         back_populates="author",
         cascade="all, delete-orphan",
     )
+    comments: Mapped[List["Comment"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

@@ -6,7 +6,6 @@ from fastapi.responses import HTMLResponse
 from app.dependencies import SessionDependency
 from app.services.projects import (
     get_public_project_by_slug,
-    list_public_featured_projects,
     list_public_projects,
 )
 from app.services.seo import build_page_seo
@@ -18,6 +17,7 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 @router.get("", response_class=HTMLResponse)
 async def projects_index(request: Request, session: SessionDependency) -> HTMLResponse:
     projects = await list_public_projects(session)
+    featured_projects = [project for project in projects if project.featured]
     return templates.TemplateResponse(
         request=request,
         name="projects/index.html",
@@ -32,7 +32,7 @@ async def projects_index(request: Request, session: SessionDependency) -> HTMLRe
                 path="/projects",
             ),
             "projects": projects,
-            "featured_projects": await list_public_featured_projects(session),
+            "featured_projects": featured_projects,
         },
     )
 

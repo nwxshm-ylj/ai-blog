@@ -34,6 +34,64 @@
           <div id="content" class="prose-blog premium-panel p-5 sm:p-8 lg:p-10">
             {{ post_html | safe }}
           </div>
+
+          <section id="comments" class="mt-8 premium-panel p-5 sm:p-8">
+            <div class="flex flex-col gap-2 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="eyebrow text-blue-200">Discussion</p>
+                <h2 class="mt-2 text-2xl font-semibold tracking-tight text-white">Comments</h2>
+              </div>
+              <span class="text-sm text-zinc-500">{{ comments | length }} approved</span>
+            </div>
+
+            {% if comment_message == "submitted" %}
+              <div class="mt-5 rounded-md border border-emerald-300/20 bg-emerald-400/10 px-4 py-3 text-sm font-medium text-emerald-100">
+                Comment submitted for review.
+              </div>
+            {% endif %}
+
+            <div class="mt-6 space-y-4">
+              {% for comment in comments %}
+                <article class="rounded-lg border border-white/10 bg-black/20 p-4">
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h3 class="text-sm font-semibold text-white">{{ comment.author_name }}</h3>
+                    <time datetime="{{ comment.created_at.isoformat() }}" class="text-xs text-zinc-500">{{ comment.created_at.strftime("%b %d, %Y") }}</time>
+                  </div>
+                  <p class="mt-3 whitespace-pre-line text-sm leading-6 text-zinc-300">{{ comment.content }}</p>
+                </article>
+              {% else %}
+                <p class="rounded-lg border border-dashed border-white/10 bg-white/[0.02] px-4 py-5 text-sm text-zinc-500">No approved comments yet.</p>
+              {% endfor %}
+            </div>
+
+            <div class="mt-7 border-t border-white/10 pt-6">
+              {% if request.session.get("user_id") %}
+                <form action="{{ url_with_lang(request, '/blog/' ~ post.slug ~ '/comments') }}" method="post" class="space-y-4">
+                  <div>
+                    <label for="comment-content" class="text-sm font-medium text-zinc-200">Add a comment</label>
+                    <textarea id="comment-content" name="content" rows="5" maxlength="2000" class="field mt-2 min-h-32" required>{{ comment_content }}</textarea>
+                  </div>
+                  {% if comment_errors %}
+                    <div class="rounded-md border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+                      {% for error in comment_errors %}
+                        <p>{{ error }}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  <button type="submit" class="btn-primary">Submit for review</button>
+                </form>
+              {% else %}
+                <div class="rounded-lg border border-white/10 bg-white/[0.025] p-5">
+                  <h3 class="font-semibold text-white">Join the discussion</h3>
+                  <p class="mt-2 text-sm leading-6 text-zinc-400">Sign in or create an account before commenting.</p>
+                  <div class="mt-4 flex flex-wrap gap-3">
+                    <a href="{{ url_with_lang(request, '/auth/login', {'next': '/blog/' ~ post.slug}) }}" class="btn-primary">Sign in</a>
+                    <a href="{{ url_with_lang(request, '/auth/register', {'next': '/blog/' ~ post.slug}) }}" class="btn-secondary">Register</a>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </section>
         </div>
 
         {% include "components/blog_sidebar.html" %}

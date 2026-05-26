@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.post import Post
 from app.schemas.blog import BlogPost
+from app.services.db_guard import run_optional_db_operation
 
 
 _POSTS: list[BlogPost] = [
@@ -117,7 +118,7 @@ def list_posts() -> list[BlogPost]:
 
 
 async def list_public_posts(session: AsyncSession) -> list[BlogPost]:
-    counts = await _get_view_counts(session)
+    counts = await run_optional_db_operation(lambda: _get_view_counts(session), {})
     return [_with_view_count(post, counts.get(post.slug, post.view_count)) for post in list_posts()]
 
 
@@ -130,7 +131,10 @@ async def get_public_post_by_slug(session: AsyncSession, slug: str) -> BlogPost 
     if post is None:
         return None
 
-    view_count = await increment_post_view_count(session, slug)
+    view_count = await run_optional_db_operation(
+        lambda: increment_post_view_count(session, slug),
+        None,
+    )
     if view_count is None:
         view_count = post.view_count + 1
         post.view_count = view_count

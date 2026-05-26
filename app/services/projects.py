@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.project import Project as ProjectModel
 from app.schemas.projects import Project
+from app.services.db_guard import run_optional_db_operation
 
 
 _PROJECTS: list[Project] = [
@@ -100,7 +101,7 @@ def list_projects() -> list[Project]:
 
 
 async def list_public_projects(session: AsyncSession) -> list[Project]:
-    counts = await _get_view_counts(session)
+    counts = await run_optional_db_operation(lambda: _get_view_counts(session), {})
     return [_with_view_count(project, counts.get(project.slug, project.view_count)) for project in list_projects()]
 
 
@@ -121,7 +122,10 @@ async def get_public_project_by_slug(session: AsyncSession, slug: str) -> Projec
     if project is None:
         return None
 
-    view_count = await increment_project_view_count(session, slug)
+    view_count = await run_optional_db_operation(
+        lambda: increment_project_view_count(session, slug),
+        None,
+    )
     if view_count is None:
         view_count = project.view_count + 1
         project.view_count = view_count

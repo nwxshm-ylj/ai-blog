@@ -97,6 +97,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "admin.brand": "AI Blog Admin",
         "admin.dashboard": "Dashboard",
         "admin.posts": "Posts",
+        "admin.comments": "Comments",
         "admin.projects": "Projects",
         "admin.publishing": "Publishing operations",
         "admin.dashboard_eyebrow": "Admin Dashboard",

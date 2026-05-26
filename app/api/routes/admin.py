@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, status
@@ -26,6 +27,12 @@ from app.services.admin import (
     validate_admin_post,
     validate_admin_project,
 )
+from app.services.comments import (
+    approve_comment,
+    delete_comment,
+    hide_comment,
+    list_admin_comments,
+)
 from app.utils.uploads import UploadValidationError, save_cover_image
 from app.web.templating import templates
 
@@ -47,6 +54,57 @@ async def admin_dashboard(request: Request, session: SessionDependency) -> HTMLR
             "active_admin_nav": "dashboard",
             "dashboard_stats": await get_dashboard_stats(session),
         },
+    )
+
+
+@router.get("/comments", response_class=HTMLResponse)
+async def admin_comments(request: Request, session: SessionDependency) -> HTMLResponse:
+    message = request.query_params.get("message")
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/comments.html",
+        context={
+            "title": "Comment Moderation | AI Blog",
+            "active_admin_nav": "comments",
+            "comments": await list_admin_comments(session),
+            "message": message,
+        },
+    )
+
+
+@router.post("/comments/{comment_id}/approve")
+async def admin_approve_comment(comment_id: str, session: SessionDependency) -> RedirectResponse:
+    updated = await approve_comment(session, _parse_comment_id(comment_id))
+    if not updated:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+
+    return RedirectResponse(
+        url="/admin/comments?message=approved",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/comments/{comment_id}/hide")
+async def admin_hide_comment(comment_id: str, session: SessionDependency) -> RedirectResponse:
+    updated = await hide_comment(session, _parse_comment_id(comment_id))
+    if not updated:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+
+    return RedirectResponse(
+        url="/admin/comments?message=hidden",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/comments/{comment_id}/delete")
+async def admin_delete_comment(comment_id: str, session: SessionDependency) -> RedirectResponse:
+    deleted = await delete_comment(session, _parse_comment_id(comment_id))
+    if not deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+
+    return RedirectResponse(
+        url="/admin/comments?message=deleted",
+        status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
@@ -400,3 +458,13 @@ async def _read_cover_image(
 def _form_text(form: FormData, key: str) -> str:
     value = form.get(key)
     return value if isinstance(value, str) else ""
+
+
+def _parse_comment_id(comment_id: str) -> uuid.UUID:
+    try:
+        return uuid.UUID(comment_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Comment not found",
+        ) from None
