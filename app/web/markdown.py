@@ -3,6 +3,8 @@ from __future__ import annotations
 import html
 import re
 
+import bleach
+
 
 def render_markdown(content: str) -> str:
     try:
@@ -27,7 +29,50 @@ def render_markdown(content: str) -> str:
         },
         output_format="html5",
     )
-    return renderer.convert(content)
+    return _sanitize_html(renderer.convert(content))
+
+
+def _sanitize_html(value: str) -> str:
+    allowed_tags = set(bleach.sanitizer.ALLOWED_TAGS).union(
+        {
+            "p",
+            "div",
+            "pre",
+            "code",
+            "span",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "table",
+            "thead",
+            "tbody",
+            "tr",
+            "th",
+            "td",
+            "blockquote",
+            "hr",
+        }
+    )
+    allowed_attributes = {
+        **bleach.sanitizer.ALLOWED_ATTRIBUTES,
+        "a": ["href", "title", "rel"],
+        "code": ["class"],
+        "div": ["class"],
+        "span": ["class"],
+        "pre": ["class"],
+        "th": ["align"],
+        "td": ["align"],
+    }
+    return bleach.clean(
+        value,
+        tags=allowed_tags,
+        attributes=allowed_attributes,
+        protocols={"http", "https", "mailto"},
+        strip=True,
+    )
 
 
 def _render_fallback_markdown(content: str) -> str:
@@ -99,4 +144,3 @@ def _render_fallback_markdown(content: str) -> str:
 def _render_inline(value: str) -> str:
     escaped = html.escape(value)
     return re.sub(r"`([^`]+)`", r"<code>\1</code>", escaped)
-

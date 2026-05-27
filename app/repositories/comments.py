@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from typing import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -35,6 +35,19 @@ class CommentRepository(BaseRepository[Comment]):
         )
         result = await self.session.execute(statement)
         return result.scalars().all()
+
+    async def count_approved_by_post_slugs(self, slugs: Sequence[str]) -> dict[str, int]:
+        if not slugs:
+            return {}
+
+        statement = (
+            select(Post.slug, func.count(Comment.id))
+            .join(Comment, Comment.post_id == Post.id)
+            .where(Post.slug.in_(slugs), Comment.is_approved.is_(True))
+            .group_by(Post.slug)
+        )
+        result = await self.session.execute(statement)
+        return {slug: count for slug, count in result.all()}
 
     async def get_with_context(self, comment_id: uuid.UUID) -> Comment | None:
         statement = (

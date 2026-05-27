@@ -65,7 +65,7 @@ class RegistrationResult:
 
 def hash_password(password: str) -> str:
     if len(password.encode("utf-8")) > PASSWORD_MAX_BYTES:
-        raise ValueError("Password must be 72 bytes or fewer.")
+        raise ValueError("密码不能超过 72 字节。")
     return PASSWORD_CONTEXT.hash(password)
 
 
@@ -102,7 +102,7 @@ async def register_public_user(
         await session.rollback()
         return RegistrationResult(
             user=None,
-            errors=["An account with this email or username already exists."],
+            errors=["该邮箱或用户名已被注册。"],
         )
     return RegistrationResult(user=user, errors=[])
 
@@ -114,12 +114,12 @@ async def authenticate_user(
 ) -> LoginResult:
     normalized_identifier = identifier.strip()
     if not normalized_identifier or not password:
-        return LoginResult(user=None, error="Email or username and password are required.")
+        return LoginResult(user=None, error="请输入邮箱或用户名和密码。")
 
     repository = UserRepository(session)
     user = await repository.get_by_email_or_username(normalized_identifier)
     if user is None or not verify_password(password, user.hashed_password):
-        return LoginResult(user=None, error="Invalid email, username, or password.")
+        return LoginResult(user=None, error="邮箱、用户名或密码不正确。")
 
     return LoginResult(user=user)
 
@@ -134,7 +134,7 @@ async def authenticate_admin_user(
         return result
     user = result.user
     if not user.is_admin:
-        return LoginResult(user=None, error="This account cannot access the admin area.")
+        return LoginResult(user=None, error="该账号无权访问后台。")
 
     return LoginResult(user=user)
 
@@ -181,34 +181,34 @@ async def _validate_registration(
 ) -> list[str]:
     errors: list[str] = []
     if not email:
-        errors.append("Email is required.")
+        errors.append("请输入邮箱。")
     elif "@" not in email or "." not in email.rsplit("@", maxsplit=1)[-1]:
-        errors.append("Enter a valid email address.")
+        errors.append("请输入有效的邮箱地址。")
 
     if not username:
-        errors.append("Username is required.")
+        errors.append("请输入用户名。")
     elif len(username) < 3:
-        errors.append("Username must be at least 3 characters.")
+        errors.append("用户名至少需要 3 个字符。")
     elif len(username) > 100:
-        errors.append("Username must be 100 characters or fewer.")
+        errors.append("用户名不能超过 100 个字符。")
     elif fullmatch(r"[A-Za-z0-9_-]+", username) is None:
-        errors.append("Username can only use letters, numbers, underscores, and hyphens.")
+        errors.append("用户名只能包含字母、数字、下划线和连字符。")
 
     if not password:
-        errors.append("Password is required.")
+        errors.append("请输入密码。")
     elif len(password) < 8:
-        errors.append("Password must be at least 8 characters.")
+        errors.append("密码至少需要 8 个字符。")
     elif len(password.encode("utf-8")) > PASSWORD_MAX_BYTES:
-        errors.append("Password must be 72 bytes or fewer.")
+        errors.append("密码不能超过 72 字节。")
     if password != password_confirm:
-        errors.append("Password confirmation does not match.")
+        errors.append("两次输入的密码不一致。")
 
     if errors:
         return errors
 
     repository = UserRepository(session)
     if await repository.get_by_email(email) is not None:
-        errors.append("An account with this email already exists.")
+        errors.append("该邮箱已被注册。")
     if await repository.get_by_username(username) is not None:
-        errors.append("An account with this username already exists.")
+        errors.append("该用户名已被注册。")
     return errors

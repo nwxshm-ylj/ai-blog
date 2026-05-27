@@ -23,24 +23,24 @@ async def get_dashboard_stats(session: AsyncSession) -> list[AdminDashboardStat]
 
     return [
         AdminDashboardStat(
-            label="Total posts",
+            label="文章总数",
             value=total_posts,
-            description="All posts in the content workspace",
+            description="内容工作区中的全部文章",
         ),
         AdminDashboardStat(
-            label="Total projects",
+            label="项目总数",
             value=total_projects,
-            description="Portfolio projects tracked for publishing",
+            description="当前管理的作品集项目",
         ),
         AdminDashboardStat(
-            label="Published posts",
+            label="已发布文章",
             value=published_posts,
-            description="Posts visible on the public blog",
+            description="前台博客中可见的文章",
         ),
         AdminDashboardStat(
-            label="Draft posts",
+            label="草稿文章",
             value=draft_posts,
-            description="Posts waiting for editorial review",
+            description="等待编辑和审核的文章",
         ),
     ]
 
@@ -113,18 +113,18 @@ async def validate_admin_post(
 ) -> list[str]:
     errors: list[str] = []
     if not post.title.strip():
-        errors.append("Title is required.")
+        errors.append("请输入标题。")
     if not post.slug.strip():
-        errors.append("Slug is required.")
+        errors.append("请输入链接标识。")
     if not post.summary.strip():
-        errors.append("Summary is required.")
+        errors.append("请输入摘要。")
     if not post.markdown_content.strip():
-        errors.append("Markdown content is required.")
+        errors.append("请输入 Markdown 内容。")
 
     if post.slug.strip() and post.slug != current_slug:
         existing = await PostRepository(session).get_by_slug(post.slug)
         if existing is not None:
-            errors.append("Slug is already in use.")
+            errors.append("链接标识已被使用。")
 
     return errors
 
@@ -164,6 +164,11 @@ async def create_admin_project(session: AsyncSession, project: AdminProject) -> 
             title=project.title,
             slug=project.slug,
             description=_optional(project.description),
+            summary=_optional(project.summary),
+            category=project.category or "AI 项目",
+            status=project.status or "已发布",
+            impact=_optional(project.impact),
+            highlights=_split_lines(project.highlights),
             tech_stack=_split_tech_stack(project.tech_stack),
             github_url=_optional(project.github_url),
             demo_url=_optional(project.demo_url),
@@ -187,6 +192,11 @@ async def update_admin_project(
     existing.title = project.title
     existing.slug = project.slug
     existing.description = _optional(project.description)
+    existing.summary = _optional(project.summary)
+    existing.category = project.category or "AI 项目"
+    existing.status = project.status or "已发布"
+    existing.impact = _optional(project.impact)
+    existing.highlights = _split_lines(project.highlights)
     existing.tech_stack = _split_tech_stack(project.tech_stack)
     existing.github_url = _optional(project.github_url)
     existing.demo_url = _optional(project.demo_url)
@@ -215,18 +225,22 @@ async def validate_admin_project(
 ) -> list[str]:
     errors: list[str] = []
     if not project.title.strip():
-        errors.append("Title is required.")
+        errors.append("请输入标题。")
     if not project.slug.strip():
-        errors.append("Slug is required.")
+        errors.append("请输入链接标识。")
     if not project.description.strip():
-        errors.append("Description is required.")
+        errors.append("请输入描述。")
+    if not project.category.strip():
+        errors.append("请输入分类。")
+    if not project.status.strip():
+        errors.append("请输入状态。")
     if not project.tech_stack.strip():
-        errors.append("Tech stack is required.")
+        errors.append("请输入技术栈。")
 
     if project.slug.strip() and project.slug != current_slug:
         existing = await ProjectRepository(session).get_by_slug(project.slug)
         if existing is not None:
-            errors.append("Slug is already in use.")
+            errors.append("链接标识已被使用。")
 
     return errors
 
@@ -236,6 +250,11 @@ def get_empty_admin_project() -> AdminProject:
         title="",
         slug="",
         description="",
+        summary="",
+        category="AI 项目",
+        status="已发布",
+        impact="",
+        highlights="",
         tech_stack="",
         github_url="",
         demo_url="",
@@ -259,7 +278,7 @@ async def _get_or_create_default_admin_user(session: AsyncSession) -> User:
         return user
 
     raise RuntimeError(
-        "No admin author exists. Run the local development admin seed command first."
+        "缺少默认管理员作者。请先运行本地开发管理员初始化命令。"
     )
 
 
@@ -281,6 +300,11 @@ def _project_to_admin(project: Project) -> AdminProject:
         title=project.title,
         slug=project.slug,
         description=project.description or "",
+        summary=project.summary or "",
+        category=project.category,
+        status=project.status,
+        impact=project.impact or "",
+        highlights="\n".join(project.highlights or []),
         tech_stack=", ".join(project.tech_stack),
         github_url=project.github_url or "",
         demo_url=project.demo_url or "",
@@ -291,6 +315,10 @@ def _project_to_admin(project: Project) -> AdminProject:
 
 def _split_tech_stack(tech_stack: str) -> list[str]:
     return [item.strip() for item in tech_stack.split(",") if item.strip()]
+
+
+def _split_lines(value: str) -> list[str]:
+    return [line.strip() for line in value.splitlines() if line.strip()]
 
 
 def _optional(value: str) -> str | None:

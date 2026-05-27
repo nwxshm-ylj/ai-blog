@@ -18,5 +18,20 @@ class ProjectRepository(BaseRepository[Project]):
         result = await self.session.execute(statement)
         return result.scalars().all()
 
+    async def list_public(self, *, offset: int = 0, limit: int = 12) -> Sequence[Project]:
+        statement = select(Project).order_by(Project.created_at.desc()).offset(offset).limit(limit)
+        result = await self.session.execute(statement)
+        return result.scalars().all()
+
+    async def list_featured(self, *, limit: int = 4) -> Sequence[Project]:
+        statement = (
+            select(Project)
+            .where(Project.featured.is_(True))
+            .order_by(Project.created_at.desc())
+            .limit(limit)
+        )
+        result = await self.session.execute(statement)
+        return result.scalars().all()
+
     async def get_by_slug(self, slug: str) -> Project | None:
         return await self.get_by(slug=slug)

@@ -1,4 +1,8 @@
-<article class="panel card-hover group p-5 sm:p-6">
+<article class="panel card-hover group overflow-hidden p-5 sm:p-6">
+  <div class="mb-5 flex items-center justify-between">
+    <div class="h-1.5 w-24 rounded-full bg-gradient-to-r from-indigo-300/80 via-cyan-300/50 to-transparent"></div>
+    <span class="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">note</span>
+  </div>
   <div class="flex flex-wrap items-center gap-3 text-xs text-zinc-500">
     <time datetime="{{ post.published_at.isoformat() }}">{{ post.published_at.strftime("%b %d, %Y") }}</time>
     <span aria-hidden="true">/</span>
@@ -6,9 +10,11 @@
     <span aria-hidden="true">/</span>
     <span>{{ post.reading_time_minutes }} {{ t(request, "blog.min_read") }}</span>
     <span aria-hidden="true">/</span>
-    <span>{{ post.view_count }} views</span>
+    <span>{{ post.view_count }} 次浏览</span>
+    <span aria-hidden="true">/</span>
+    <span>{{ post.comment_count }} 条评论</span>
   </div>
-  <h2 class="mt-4 text-2xl font-semibold tracking-tight text-white">
+  <h2 class="mt-4 text-2xl font-semibold leading-tight tracking-tight text-white">
     <a href="{{ url_with_lang(request, '/blog/' ~ post.slug) }}" class="transition hover:text-cyan-100">{{ post.title }}</a>
   </h2>
   <p class="muted-copy mt-3">{{ post.description }}</p>

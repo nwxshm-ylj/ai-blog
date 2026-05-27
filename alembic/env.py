@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from logging.config import fileConfig
+from urllib.parse import urlparse
 
 from alembic import context
 from sqlalchemy import pool
@@ -19,6 +20,13 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
+
+def _connect_args() -> dict[str, bool]:
+    host = urlparse(settings.database_url).hostname
+    if host in {"localhost", "127.0.0.1", "::1"}:
+        return {"ssl": False}
+    return {}
 
 
 def run_migrations_offline() -> None:
@@ -49,6 +57,7 @@ async def run_async_migrations() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=_connect_args(),
     )
 
     async with connectable.connect() as connection:

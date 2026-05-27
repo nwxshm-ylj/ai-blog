@@ -1,0 +1,12 @@
+{% set flash_messages = get_flashed_messages(request) %}
+{% if flash_messages %}
+  <div class="fixed inset-x-0 top-20 z-50 mx-auto w-full max-w-3xl px-5">
+    <div class="space-y-3">
+      {% for flash in flash_messages %}
+        <div class="rounded-md border px-4 py-3 text-sm font-medium shadow-xl shadow-black/30 {% if flash.category == 'error' %}border-rose-300/20 bg-rose-500/15 text-rose-100{% elif flash.category == 'success' %}border-emerald-300/20 bg-emerald-500/15 text-emerald-100{% else %}border-cyan-300/20 bg-cyan-500/15 text-cyan-100{% endif %}">
+          {{ flash.message }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

@@ -17,6 +17,8 @@ from app.services.auth import (
     authenticate_user,
     register_public_user,
 )
+from app.web.flash import flash
+from app.web.security import verify_csrf_token
 from app.web.templating import templates
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -29,7 +31,7 @@ async def login_page(request: Request) -> HTMLResponse:
         request=request,
         name="auth/login.html",
         context={
-            "title": "Sign In | AI Blog",
+            "title": "登录 | AI Blog",
             "error": None,
             "identifier": "",
             "next_url": _safe_next_url(request.query_params.get("next"), default="/"),
@@ -40,6 +42,7 @@ async def login_page(request: Request) -> HTMLResponse:
 @router.post("/login")
 async def login_action(request: Request, session: SessionDependency) -> Response:
     form = await _read_urlencoded_form(request)
+    verify_csrf_token(request, form.get("csrf_token"))
     next_url = _safe_next_url(form.get("next"), default="/")
     identifier = form.get("identifier", "").strip()
     result = await authenticate_user(
@@ -52,7 +55,7 @@ async def login_action(request: Request, session: SessionDependency) -> Response
             request=request,
             name="auth/login.html",
             context={
-                "title": "Sign In | AI Blog",
+                "title": "登录 | AI Blog",
                 "error": result.error,
                 "identifier": identifier,
                 "next_url": next_url,
@@ -61,6 +64,7 @@ async def login_action(request: Request, session: SessionDependency) -> Response
         )
 
     _login_session(request, result.user)
+    flash(request, "已登录。", "success")
     return RedirectResponse(url=next_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -70,7 +74,7 @@ async def register_page(request: Request) -> HTMLResponse:
         request=request,
         name="auth/register.html",
         context={
-            "title": "Create Account | AI Blog",
+            "title": "创建账号 | AI Blog",
             "errors": [],
             "email": "",
             "username": "",
@@ -82,6 +86,7 @@ async def register_page(request: Request) -> HTMLResponse:
 @router.post("/register")
 async def register_action(request: Request, session: SessionDependency) -> Response:
     form = await _read_urlencoded_form(request)
+    verify_csrf_token(request, form.get("csrf_token"))
     next_url = _safe_next_url(form.get("next"), default="/")
     email = form.get("email", "").strip()
     username = form.get("username", "").strip()
@@ -99,7 +104,7 @@ async def register_action(request: Request, session: SessionDependency) -> Respo
             request=request,
             name="auth/register.html",
             context={
-                "title": "Create Account | AI Blog",
+                "title": "创建账号 | AI Blog",
                 "errors": result.errors,
                 "email": email,
                 "username": username,
@@ -109,16 +114,24 @@ async def register_action(request: Request, session: SessionDependency) -> Respo
         )
 
     _login_session(request, result.user)
+    flash(request, "账号已创建。", "success")
     return RedirectResponse(url=next_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.post("/logout")
 async def logout_action(request: Request) -> RedirectResponse:
+    form = await _read_urlencoded_form(request)
+    verify_csrf_token(request, form.get("csrf_token"))
     request.session.clear()
+    flash(request, "已退出登录。", "success")
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 def _login_session(request: Request, user: User) -> None:
+    csrf_token = request.session.get("csrf_token")
+    request.session.clear()
+    if isinstance(csrf_token, str):
+        request.session["csrf_token"] = csrf_token
     request.session[SESSION_USER_ID_KEY] = str(user.id)
     request.session[SESSION_USERNAME_KEY] = user.username
     request.session[SESSION_IS_ADMIN_KEY] = user.is_admin

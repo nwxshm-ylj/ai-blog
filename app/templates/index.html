@@ -4,162 +4,137 @@
 <div class="site-shell">
   {% include "components/site_header.html" %}
 
-  <main class="relative z-10">
-    <section class="container-page relative grid gap-12 py-14 sm:py-18 lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-center lg:py-24">
-      <div class="ambient-glow -left-20 top-8 h-64 w-64 bg-cyan-400/15"></div>
-      <div class="ambient-glow right-8 top-28 h-72 w-72 bg-indigo-500/10 [animation-delay:2s]"></div>
+  <main>
+    <section class="relative mx-auto grid max-w-6xl gap-12 px-6 py-24 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:px-8">
+      <div class="ambient-glow -left-24 top-16 h-72 w-72 bg-cyan-300/10"></div>
+      <div class="ambient-glow right-0 top-20 h-80 w-80 bg-blue-400/10"></div>
 
-      <div class="relative max-w-4xl">
-        <p class="mb-6 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-medium text-cyan-100 shadow-sm shadow-cyan-950/30">
+      <div class="relative">
+        <div class="pointer-events-none absolute -inset-x-8 -top-10 h-72 rounded-full bg-gradient-to-br from-cyan-300/10 via-blue-400/5 to-transparent blur-3xl"></div>
+        <p class="relative inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
           {{ t(request, "home.eyebrow") }}
         </p>
-        <h1 class="hero-gradient-text text-balance text-5xl font-semibold leading-[1.03] tracking-tight sm:text-6xl lg:text-7xl">
+        <h1 class="relative mt-6 max-w-3xl text-4xl font-medium leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
           {{ t(request, "home.title") }}
         </h1>
-        <p class="mt-7 max-w-2xl text-lg leading-8 text-zinc-300 sm:text-xl">
+        <p class="relative mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
           {{ t(request, "home.subtitle") }}
         </p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary">
+        <div class="relative mt-8 flex flex-wrap gap-3">
+          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary h-11 px-5 py-0">
             {{ t(request, "home.cta.projects") }}
           </a>
-          <a href="{{ url_with_lang(request, '/blog') }}" class="btn-secondary">
+          <a href="{{ url_with_lang(request, '/blog') }}" class="btn-secondary h-11 px-5 py-0">
             {{ t(request, "home.cta.posts") }}
           </a>
         </div>
-        <div class="mt-10 grid max-w-3xl gap-3 text-sm text-zinc-400 sm:grid-cols-3">
-          <div class="metric-panel">
-            <p class="text-2xl font-semibold text-white">AI</p>
-            <p class="mt-1">{{ t(request, "home.capability.1") }}</p>
-          </div>
-          <div class="metric-panel">
-            <p class="text-2xl font-semibold text-white">CV</p>
-            <p class="mt-1">{{ t(request, "home.capability.2") }}</p>
-          </div>
-          <div class="metric-panel">
-            <p class="text-2xl font-semibold text-white">Py</p>
-            <p class="mt-1">{{ t(request, "home.capability.3") }}</p>
-          </div>
-        </div>
       </div>
 
-      <div class="premium-panel relative overflow-hidden p-4 sm:p-5">
-        <div class="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl"></div>
-        <div class="relative rounded-lg border border-white/10 bg-zinc-950/80">
-          <div class="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <div class="flex items-center gap-2">
-              <span class="h-2.5 w-2.5 rounded-full bg-rose-300/80"></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-amber-300/80"></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300/80"></span>
-            </div>
-            <span class="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">{{ t(request, "home.live") }}</span>
+      <aside class="operations-console relative p-5">
+        <div class="pointer-events-none absolute -inset-12 -z-10 rounded-full bg-cyan-300/10 blur-3xl"></div>
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">{{ t(request, "home.workspace") }}</p>
+            <h2 class="mt-1 text-lg font-medium text-white">{{ t(request, "home.focus_label") }}</h2>
           </div>
+          <span class="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-1 text-xs font-medium text-emerald-100">
+            {{ t(request, "home.live") }}
+          </span>
+        </div>
 
-          <div class="grid gap-4 p-4">
-            <div class="rounded-lg border border-cyan-300/15 bg-cyan-300/[0.04] p-4">
-              <div class="flex items-center justify-between gap-4">
-                <div>
-                  <p class="text-xs uppercase tracking-[0.16em] text-cyan-200/80">{{ t(request, "home.workspace") }}</p>
-                  <p class="mt-2 text-xl font-semibold text-white">{{ t(request, "home.focus") }}</p>
-                </div>
-                <div class="grid h-14 w-14 shrink-0 place-items-center rounded-lg border border-cyan-200/20 bg-cyan-200/10 text-sm font-semibold text-cyan-50">AI</div>
-              </div>
-            </div>
+        <p class="mt-4 text-sm leading-6 text-zinc-300">{{ t(request, "home.focus") }}</p>
 
-            <div class="grid gap-3 sm:grid-cols-2">
-              <div class="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-                <p class="text-xs text-zinc-500">{{ t(request, "home.metric.posts") }}</p>
-                <p class="mt-2 text-3xl font-semibold text-white">05</p>
-                <div class="dashboard-line mt-4 w-10/12"></div>
-              </div>
-              <div class="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-                <p class="text-xs text-zinc-500">{{ t(request, "home.metric.projects") }}</p>
-                <p class="mt-2 text-3xl font-semibold text-white">04</p>
-                <div class="dashboard-line mt-4 w-8/12"></div>
-              </div>
-            </div>
-
-            <div class="rounded-lg border border-white/10 bg-black/30 p-4">
-              <div class="mb-4 flex items-center justify-between">
-                <p class="text-sm font-medium text-zinc-300">{{ t(request, "home.pipeline") }}</p>
-                <span class="text-xs text-zinc-500">p95 84ms</span>
-              </div>
-              <div class="space-y-3">
-                <div class="flex items-center gap-3">
-                  <span class="h-2 w-2 rounded-full bg-cyan-300"></span>
-                  <div class="dashboard-line w-11/12"></div>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="h-2 w-2 rounded-full bg-indigo-300"></span>
-                  <div class="dashboard-line w-9/12 from-indigo-300/80 via-cyan-300/50"></div>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="h-2 w-2 rounded-full bg-emerald-300"></span>
-                  <div class="dashboard-line w-7/12 from-emerald-300/80 via-cyan-300/50"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid gap-3 text-sm text-zinc-400">
-              <div class="rounded-md border border-white/10 bg-white/[0.025] px-3 py-2">{{ t(request, "home.signal.1") }}</div>
-              <div class="rounded-md border border-white/10 bg-white/[0.025] px-3 py-2">{{ t(request, "home.signal.2") }}</div>
-            </div>
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="console-tile">
+            <p class="text-xs text-zinc-500">Latency</p>
+            <p class="mt-1 text-2xl font-medium text-white">84ms</p>
+          </div>
+          <div class="console-tile">
+            <p class="text-xs text-zinc-500">Eval pass</p>
+            <p class="mt-1 text-2xl font-medium text-white">98%</p>
+          </div>
+          <div class="console-tile">
+            <p class="text-xs text-zinc-500">{{ t(request, "home.metric.posts") }}</p>
+            <p class="mt-1 text-2xl font-medium text-white">05</p>
+          </div>
+          <div class="console-tile">
+            <p class="text-xs text-zinc-500">{{ t(request, "home.metric.projects") }}</p>
+            <p class="mt-1 text-2xl font-medium text-white">04</p>
           </div>
         </div>
-      </div>
+
+        <div class="mt-5 space-y-2 border-t border-white/10 pt-4">
+          <div class="flex items-center justify-between gap-3 text-sm">
+            <span class="text-zinc-400">{{ t(request, "home.pipeline") }}</span>
+            <span class="text-cyan-100">online</span>
+          </div>
+          <div class="flex items-center justify-between gap-3 text-sm">
+            <span class="text-zinc-400">{{ t(request, "home.signal.1") }}</span>
+            <span class="h-2 w-2 shrink-0 rounded-full bg-emerald-300"></span>
+          </div>
+          <div class="flex items-center justify-between gap-3 text-sm">
+            <span class="text-zinc-400">{{ t(request, "home.signal.2") }}</span>
+            <span class="h-2 w-2 shrink-0 rounded-full bg-cyan-300"></span>
+          </div>
+        </div>
+      </aside>
     </section>
 
-    <section id="projects" class="relative border-y border-white/10 bg-white/[0.025]">
-      <div class="container-page section-y">
+    <section class="border-y border-white/10 bg-zinc-950/30 backdrop-blur-sm">
+      <div class="mx-auto max-w-6xl px-6 py-20 lg:px-8">
         {% set eyebrow = t(request, "home.projects.eyebrow") %}
         {% set heading = t(request, "home.projects.title") %}
         {% set description = t(request, "home.projects.note") %}
         {% set action_href = url_with_lang(request, "/projects") %}
         {% set action_label = t(request, "home.projects.link") %}
         {% include "components/section_header.html" %}
-        <div class="grid gap-5 md:grid-cols-2">
+
+        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {% for project in featured_projects %}
             {% include "components/project_card.html" %}
           {% else %}
-            <div class="empty-state md:col-span-2">{{ t(request, "home.projects.empty") }}</div>
+            <div class="empty-state md:col-span-2 lg:col-span-3">{{ t(request, "home.projects.empty") }}</div>
           {% endfor %}
         </div>
       </div>
     </section>
 
-    <section id="posts">
-      <div class="container-page section-y">
+    <section>
+      <div class="mx-auto max-w-6xl px-6 py-20 lg:px-8">
         {% set eyebrow = t(request, "home.posts.eyebrow") %}
         {% set heading = t(request, "home.posts.title") %}
         {% set description = t(request, "home.posts.note") %}
         {% set meta = "" %}
         {% include "components/section_header.html" %}
-        <div class="grid gap-4 md:grid-cols-3">
-          {% for title in ["Industrial AI vision notes", "Production AI infrastructure", "Semiconductor analytics systems"] %}
-          <article class="panel card-hover p-5">
-            <p class="text-xs uppercase tracking-[0.16em] text-cyan-200/80">{{ t(request, "home.posts.eyebrow") }}</p>
-            <h3 class="mt-3 text-lg font-semibold text-white">{{ title }}</h3>
-            <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.posts.note") }}</p>
-          </article>
+
+        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {% for title in ["工业 AI 视觉笔记", "生产级 AI 基础设施", "半导体分析系统"] %}
+            <article class="panel card-hover flex h-full flex-col p-6">
+              <p class="text-xs font-medium uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.posts.eyebrow") }}</p>
+              <h3 class="mt-4 text-xl font-medium leading-snug text-white">{{ title }}</h3>
+              <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.posts.note") }}</p>
+            </article>
           {% endfor %}
         </div>
       </div>
     </section>
 
-    <section class="container-page pb-16 lg:pb-24">
-      <div class="premium-panel relative overflow-hidden p-6 sm:p-8">
-        <div class="pointer-events-none absolute right-0 top-0 h-44 w-44 rounded-full bg-cyan-300/10 blur-3xl"></div>
-        <div class="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+    <section>
+      <div class="mx-auto max-w-6xl px-6 pb-20 lg:px-8">
+        <div class="premium-panel flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p class="eyebrow">{{ t(request, "home.cta.eyebrow") }}</p>
-            <h2 class="section-title mt-2">{{ t(request, "home.cta.title") }}</h2>
+            <p class="text-xs font-medium uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.cta.eyebrow") }}</p>
+            <h2 class="mt-3 text-2xl font-medium tracking-tight text-white sm:text-3xl">{{ t(request, "home.cta.title") }}</h2>
             <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{{ t(request, "home.cta.copy") }}</p>
           </div>
-          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary shrink-0">{{ t(request, "home.cta.projects") }}</a>
+          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary h-11 shrink-0 px-5 py-0">
+            {{ t(request, "home.cta.projects") }}
+          </a>
         </div>
       </div>
     </section>
   </main>
+
   {% include "components/site_footer.html" %}
 </div>
 {% endblock %}

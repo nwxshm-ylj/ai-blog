@@ -2,21 +2,23 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass
+from time import monotonic
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.comment import Comment
-from app.models.post import Post
 from app.repositories.comments import CommentRepository
 from app.repositories.posts import PostRepository
 from app.repositories.users import UserRepository
 from app.schemas.blog import BlogPost
 from app.schemas.comments import AdminComment, PublicComment
-from app.services.admin import DEFAULT_AUTHOR_EMAIL
 from app.services.db_guard import run_optional_db_operation
 
 COMMENT_MAX_LENGTH = 2000
+COMMENT_RATE_LIMIT_COUNT = 5
+COMMENT_RATE_LIMIT_WINDOW_SECONDS = 60.0
+_comment_submission_times: dict[uuid.UUID, list[float]] = {}
 
 
 @dataclass(frozen=True)
@@ -45,16 +47,24 @@ async def submit_blog_comment(
     errors = validate_comment_content(normalized_content)
     if errors:
         return CommentSubmissionResult(created=False, errors=errors)
+    rate_limit_error = _check_comment_rate_limit(user_id)
+    if rate_limit_error:
+        return CommentSubmissionResult(created=False, errors=[rate_limit_error])
 
     try:
         user = await UserRepository(session).get(user_id)
         if user is None:
             return CommentSubmissionResult(
                 created=False,
-                errors=["Sign in again before commenting."],
+                errors=["请重新登录后再发表评论。"],
             )
 
-        post_model = await _get_or_create_comment_post(session, post)
+        post_model = await PostRepository(session).get_public_by_slug(post.slug)
+        if post_model is None:
+            return CommentSubmissionResult(
+                created=False,
+                errors=["文章不存在或尚未发布。"],
+            )
         await CommentRepository(session).add(
             Comment(
                 post_id=post_model.id,
@@ -68,7 +78,7 @@ async def submit_blog_comment(
         await session.rollback()
         return CommentSubmissionResult(
             created=False,
-            errors=["Comments are temporarily unavailable. Try again later."],
+            errors=["评论功能暂时不可用，请稍后再试。"],
         )
 
     return CommentSubmissionResult(created=True, errors=[])
@@ -77,6 +87,16 @@ async def submit_blog_comment(
 async def list_admin_comments(session: AsyncSession) -> list[AdminComment]:
     comments = await CommentRepository(session).list_admin()
     return [_to_admin_comment(comment) for comment in comments]
+
+
+async def list_approved_comment_counts(
+    session: AsyncSession,
+    slugs: list[str],
+) -> dict[str, int]:
+    return await run_optional_db_operation(
+        lambda: CommentRepository(session).count_approved_by_post_slugs(slugs),
+        {},
+    )
 
 
 async def approve_comment(session: AsyncSession, comment_id: uuid.UUID) -> bool:
@@ -101,9 +121,9 @@ async def delete_comment(session: AsyncSession, comment_id: uuid.UUID) -> bool:
 def validate_comment_content(content: str) -> list[str]:
     errors: list[str] = []
     if not content:
-        errors.append("Comment content is required.")
+        errors.append("请输入评论内容。")
     elif len(content) > COMMENT_MAX_LENGTH:
-        errors.append(f"Comment must be {COMMENT_MAX_LENGTH} characters or fewer.")
+        errors.append(f"评论不能超过 {COMMENT_MAX_LENGTH} 个字符。")
     return errors
 
 
@@ -113,32 +133,6 @@ async def _list_approved_comments_for_post(
 ) -> list[PublicComment]:
     comments = await CommentRepository(session).list_approved_by_post_slug(slug)
     return [_to_public_comment(comment) for comment in comments]
-
-
-async def _get_or_create_comment_post(session: AsyncSession, post: BlogPost) -> Post:
-    repository = PostRepository(session)
-    existing = await repository.get_by_slug(post.slug)
-    if existing is not None:
-        return existing
-
-    author = await UserRepository(session).get_by(email=DEFAULT_AUTHOR_EMAIL)
-    if author is None:
-        raise SQLAlchemyError(
-            "Default admin author is required before comments can mirror static posts."
-        )
-
-    return await repository.add(
-        Post(
-            author_id=author.id,
-            title=post.title,
-            slug=post.slug,
-            summary=post.description,
-            markdown_content=post.content_markdown,
-            is_published=True,
-            seo_title=post.title,
-            seo_description=post.description,
-        )
-    )
 
 
 async def _set_comment_approval(
@@ -158,6 +152,22 @@ async def _set_comment_approval(
 
 def _normalize_content(content: str) -> str:
     return " ".join(content.strip().split())
+
+
+def _check_comment_rate_limit(user_id: uuid.UUID) -> str | None:
+    now = monotonic()
+    recent_times = [
+        submitted_at
+        for submitted_at in _comment_submission_times.get(user_id, [])
+        if now - submitted_at < COMMENT_RATE_LIMIT_WINDOW_SECONDS
+    ]
+    if len(recent_times) >= COMMENT_RATE_LIMIT_COUNT:
+        _comment_submission_times[user_id] = recent_times
+        return "评论提交过于频繁，请稍后再试。"
+
+    recent_times.append(now)
+    _comment_submission_times[user_id] = recent_times
+    return None
 
 
 def _to_public_comment(comment: Comment) -> PublicComment:

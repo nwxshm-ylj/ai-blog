@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import api_router
-from app.core.config import settings
+from app.core.config import settings, validate_production_settings
 from app.core.logging import configure_logging
 from app.middleware import register_middleware
 from app.web.templating import templates
@@ -15,6 +15,7 @@ from app.web.templating import templates
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    validate_production_settings()
     configure_logging()
     app.state.templates = templates
     yield
@@ -35,4 +36,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-

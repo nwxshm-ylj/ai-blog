@@ -14,7 +14,7 @@ from app.schemas.blog import BlogPost
 from app.schemas.projects import Project
 
 DEFAULT_OG_IMAGE = "https://placehold.co/1200x630/0f172a/99f6e4.png?text=AI+Blog"
-DEFAULT_DESCRIPTION = "AI Blog: notes on AI systems, software architecture, and product engineering."
+DEFAULT_DESCRIPTION = "AI Blog：AI 系统、软件架构与产品工程笔记。"
 
 
 @dataclass(frozen=True)
@@ -70,7 +70,7 @@ def build_rss_feed(base_url: str, posts: list[BlogPost]) -> str:
     SubElement(channel, "title").text = "AI Blog"
     SubElement(channel, "link").text = absolute_url(base_url, "/blog")
     SubElement(channel, "description").text = DEFAULT_DESCRIPTION
-    SubElement(channel, "language").text = "en-us"
+    SubElement(channel, "language").text = "zh-cn"
     SubElement(channel, "lastBuildDate").text = format_datetime(datetime.now(timezone.utc))
 
     for post in posts:

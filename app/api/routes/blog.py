@@ -19,7 +19,9 @@ from app.services.blog import (
 )
 from app.services.comments import list_approved_comments_for_post, submit_blog_comment
 from app.services.seo import build_page_seo
+from app.web.flash import flash
 from app.web.markdown import render_markdown
+from app.web.security import verify_csrf_token
 from app.web.templating import templates
 
 router = APIRouter(prefix="/blog", tags=["blog"])
@@ -34,14 +36,14 @@ async def blog_index(request: Request, session: SessionDependency) -> HTMLRespon
         context={
             **build_page_seo(
                 request,
-                title="Blog | AI Blog",
-                description="Developer notes on AI systems, FastAPI, architecture, and product engineering.",
+                title="博客 | AI Blog",
+                description="关于 AI 系统、FastAPI、架构和产品工程的开发笔记。",
                 path="/blog",
             ),
             "posts": posts,
-            "recent_posts": list_recent_posts(),
-            "categories": list_categories(),
-            "tags": list_tags(),
+            "recent_posts": await list_recent_posts(session),
+            "categories": await list_categories(session),
+            "tags": await list_tags(session),
         },
     )
 
@@ -50,7 +52,7 @@ async def blog_index(request: Request, session: SessionDependency) -> HTMLRespon
 async def blog_detail(request: Request, slug: str, session: SessionDependency) -> HTMLResponse:
     post = await get_public_post_by_slug(session, slug)
     if post is None:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="文章不存在")
 
     return templates.TemplateResponse(
         request=request,
@@ -67,7 +69,11 @@ async def submit_comment(
 ) -> Response:
     post = await get_public_post_by_slug(session, slug)
     if post is None:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="文章不存在")
+
+    form = await request.form()
+    csrf_value = form.get("csrf_token")
+    verify_csrf_token(request, csrf_value if isinstance(csrf_value, str) else None)
 
     user_id = _current_user_id(request)
     if user_id is None:
@@ -77,13 +83,13 @@ async def submit_comment(
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
-    form = await request.form()
     content = form.get("content")
     submitted_content = content if isinstance(content, str) else ""
     result = await submit_blog_comment(session, post, user_id, submitted_content)
     if result.created:
+        flash(request, "评论已提交，等待审核。", "success")
         return RedirectResponse(
-            url=f"/blog/{post.slug}?comment=submitted",
+            url=f"/blog/{post.slug}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -112,20 +118,19 @@ async def _build_blog_detail_context(
     return {
         **build_page_seo(
             request,
-            title=f"{post.title} | AI Blog",
+                title=f"{post.title} | AI Blog",
             description=post.description,
             path=f"/blog/{post.slug}",
             og_type="article",
         ),
         "post": post,
         "post_html": render_markdown(post.content_markdown),
-        "recent_posts": [recent for recent in list_recent_posts() if recent.slug != post.slug],
-        "categories": list_categories(),
-        "tags": list_tags(),
+        "recent_posts": [recent for recent in await list_recent_posts(session) if recent.slug != post.slug],
+        "categories": await list_categories(session),
+        "tags": await list_tags(session),
         "comments": await list_approved_comments_for_post(session, post.slug),
         "comment_errors": comment_errors or [],
         "comment_content": comment_content,
-        "comment_message": request.query_params.get("comment"),
     }
 
 

@@ -34,6 +34,8 @@ from app.services.comments import (
     list_admin_comments,
 )
 from app.utils.uploads import UploadValidationError, save_cover_image
+from app.web.flash import flash
+from app.web.security import verify_csrf_token
 from app.web.templating import templates
 
 router = APIRouter(
@@ -50,7 +52,7 @@ async def admin_dashboard(request: Request, session: SessionDependency) -> HTMLR
         request=request,
         name="admin/index.html",
         context={
-            "title": "Admin Dashboard | AI Blog",
+            "title": "后台仪表盘 | AI Blog",
             "active_admin_nav": "dashboard",
             "dashboard_stats": await get_dashboard_stats(session),
         },
@@ -64,7 +66,7 @@ async def admin_comments(request: Request, session: SessionDependency) -> HTMLRe
         request=request,
         name="admin/comments.html",
         context={
-            "title": "Comment Moderation | AI Blog",
+            "title": "评论审核 | AI Blog",
             "active_admin_nav": "comments",
             "comments": await list_admin_comments(session),
             "message": message,
@@ -73,37 +75,55 @@ async def admin_comments(request: Request, session: SessionDependency) -> HTMLRe
 
 
 @router.post("/comments/{comment_id}/approve")
-async def admin_approve_comment(comment_id: str, session: SessionDependency) -> RedirectResponse:
+async def admin_approve_comment(
+    request: Request,
+    comment_id: str,
+    session: SessionDependency,
+) -> RedirectResponse:
+    await _verify_form_token(request)
     updated = await approve_comment(session, _parse_comment_id(comment_id))
     if not updated:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="评论不存在")
 
+    flash(request, "评论已通过。", "success")
     return RedirectResponse(
-        url="/admin/comments?message=approved",
+        url="/admin/comments",
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
 @router.post("/comments/{comment_id}/hide")
-async def admin_hide_comment(comment_id: str, session: SessionDependency) -> RedirectResponse:
+async def admin_hide_comment(
+    request: Request,
+    comment_id: str,
+    session: SessionDependency,
+) -> RedirectResponse:
+    await _verify_form_token(request)
     updated = await hide_comment(session, _parse_comment_id(comment_id))
     if not updated:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="评论不存在")
 
+    flash(request, "评论已隐藏。", "success")
     return RedirectResponse(
-        url="/admin/comments?message=hidden",
+        url="/admin/comments",
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
 @router.post("/comments/{comment_id}/delete")
-async def admin_delete_comment(comment_id: str, session: SessionDependency) -> RedirectResponse:
+async def admin_delete_comment(
+    request: Request,
+    comment_id: str,
+    session: SessionDependency,
+) -> RedirectResponse:
+    await _verify_form_token(request)
     deleted = await delete_comment(session, _parse_comment_id(comment_id))
     if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="评论不存在")
 
+    flash(request, "评论已删除。", "success")
     return RedirectResponse(
-        url="/admin/comments?message=deleted",
+        url="/admin/comments",
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
@@ -115,7 +135,7 @@ async def admin_posts(request: Request, session: SessionDependency) -> HTMLRespo
         request=request,
         name="admin/posts.html",
         context={
-            "title": "Post Management | AI Blog",
+            "title": "文章管理 | AI Blog",
             "active_admin_nav": "posts",
             "posts": await get_admin_posts(session),
             "message": message,
@@ -129,11 +149,11 @@ async def admin_new_post(request: Request) -> HTMLResponse:
         request=request,
         name="admin/post_form.html",
         context={
-            "title": "New Post | AI Blog",
+            "title": "新建文章 | AI Blog",
             "active_admin_nav": "posts",
-            "form_title": "New post",
+            "form_title": "新建文章",
             "form_action": "/admin/posts",
-            "submit_label": "Create post",
+            "submit_label": "创建文章",
             "post": get_empty_admin_post(),
             "errors": [],
         },
@@ -148,17 +168,17 @@ async def admin_edit_post(
 ) -> HTMLResponse:
     post = await get_admin_post_by_slug(session, slug)
     if post is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="文章不存在")
 
     return templates.TemplateResponse(
         request=request,
         name="admin/post_form.html",
         context={
-            "title": f"Edit {post.title or slug} | AI Blog",
+            "title": f"编辑 {post.title or slug} | AI Blog",
             "active_admin_nav": "posts",
-            "form_title": "Edit post",
+            "form_title": "编辑文章",
             "form_action": f"/admin/posts/{slug}",
-            "submit_label": "Save post",
+            "submit_label": "保存文章",
             "post": post,
             "errors": [],
         },
@@ -170,6 +190,7 @@ async def admin_create_post(
     request: Request,
     session: SessionDependency,
 ) -> Response:
+    await _verify_form_token(request)
     post, upload_errors = await _read_admin_post_form(request)
     errors = upload_errors + await validate_admin_post(session, post)
     if errors:
@@ -177,11 +198,11 @@ async def admin_create_post(
             request=request,
             name="admin/post_form.html",
             context={
-                "title": "New Post | AI Blog",
+                "title": "新建文章 | AI Blog",
                 "active_admin_nav": "posts",
-                "form_title": "New post",
+                "form_title": "新建文章",
                 "form_action": "/admin/posts",
-                "submit_label": "Create post",
+                "submit_label": "创建文章",
                 "post": post,
                 "errors": errors,
             },
@@ -201,9 +222,10 @@ async def admin_update_post(
     slug: str,
     session: SessionDependency,
 ) -> Response:
+    await _verify_form_token(request)
     existing = await get_admin_post_by_slug(session, slug)
     if existing is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="文章不存在")
 
     post, upload_errors = await _read_admin_post_form(
         request,
@@ -219,11 +241,11 @@ async def admin_update_post(
             request=request,
             name="admin/post_form.html",
             context={
-                "title": f"Edit {post.title or slug} | AI Blog",
+                "title": f"编辑 {post.title or slug} | AI Blog",
                 "active_admin_nav": "posts",
-                "form_title": "Edit post",
+                "form_title": "编辑文章",
                 "form_action": f"/admin/posts/{slug}",
-                "submit_label": "Save post",
+                "submit_label": "保存文章",
                 "post": post,
                 "errors": errors,
             },
@@ -238,10 +260,11 @@ async def admin_update_post(
 
 
 @router.post("/posts/{slug}/delete")
-async def admin_delete_post(slug: str, session: SessionDependency) -> RedirectResponse:
+async def admin_delete_post(request: Request, slug: str, session: SessionDependency) -> RedirectResponse:
+    await _verify_form_token(request)
     deleted = await delete_admin_post(session, slug)
     if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="文章不存在")
 
     return RedirectResponse(
         url="/admin/posts?message=deleted",
@@ -256,7 +279,7 @@ async def admin_projects(request: Request, session: SessionDependency) -> HTMLRe
         request=request,
         name="admin/projects.html",
         context={
-            "title": "Project Management | AI Blog",
+            "title": "项目管理 | AI Blog",
             "active_admin_nav": "projects",
             "projects": await get_admin_projects(session),
             "message": message,
@@ -270,11 +293,11 @@ async def admin_new_project(request: Request) -> HTMLResponse:
         request=request,
         name="admin/project_form.html",
         context={
-            "title": "New Project | AI Blog",
+            "title": "新建项目 | AI Blog",
             "active_admin_nav": "projects",
-            "form_title": "New project",
+            "form_title": "新建项目",
             "form_action": "/admin/projects",
-            "submit_label": "Create project",
+            "submit_label": "创建项目",
             "project": get_empty_admin_project(),
             "errors": [],
         },
@@ -289,17 +312,17 @@ async def admin_edit_project(
 ) -> HTMLResponse:
     project = await get_admin_project_by_slug(session, slug)
     if project is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="项目不存在")
 
     return templates.TemplateResponse(
         request=request,
         name="admin/project_form.html",
         context={
-            "title": f"Edit {project.title or slug} | AI Blog",
+            "title": f"编辑 {project.title or slug} | AI Blog",
             "active_admin_nav": "projects",
-            "form_title": "Edit project",
+            "form_title": "编辑项目",
             "form_action": f"/admin/projects/{slug}",
-            "submit_label": "Save project",
+            "submit_label": "保存项目",
             "project": project,
             "errors": [],
         },
@@ -311,6 +334,7 @@ async def admin_create_project(
     request: Request,
     session: SessionDependency,
 ) -> Response:
+    await _verify_form_token(request)
     project, upload_errors = await _read_admin_project_form(request)
     errors = upload_errors + await validate_admin_project(session, project)
     if errors:
@@ -318,11 +342,11 @@ async def admin_create_project(
             request=request,
             name="admin/project_form.html",
             context={
-                "title": "New Project | AI Blog",
+                "title": "新建项目 | AI Blog",
                 "active_admin_nav": "projects",
-                "form_title": "New project",
+                "form_title": "新建项目",
                 "form_action": "/admin/projects",
-                "submit_label": "Create project",
+                "submit_label": "创建项目",
                 "project": project,
                 "errors": errors,
             },
@@ -342,9 +366,10 @@ async def admin_update_project(
     slug: str,
     session: SessionDependency,
 ) -> Response:
+    await _verify_form_token(request)
     existing = await get_admin_project_by_slug(session, slug)
     if existing is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="项目不存在")
 
     project, upload_errors = await _read_admin_project_form(
         request,
@@ -360,11 +385,11 @@ async def admin_update_project(
             request=request,
             name="admin/project_form.html",
             context={
-                "title": f"Edit {project.title or slug} | AI Blog",
+                "title": f"编辑 {project.title or slug} | AI Blog",
                 "active_admin_nav": "projects",
-                "form_title": "Edit project",
+                "form_title": "编辑项目",
                 "form_action": f"/admin/projects/{slug}",
-                "submit_label": "Save project",
+                "submit_label": "保存项目",
                 "project": project,
                 "errors": errors,
             },
@@ -379,10 +404,11 @@ async def admin_update_project(
 
 
 @router.post("/projects/{slug}/delete")
-async def admin_delete_project(slug: str, session: SessionDependency) -> RedirectResponse:
+async def admin_delete_project(request: Request, slug: str, session: SessionDependency) -> RedirectResponse:
+    await _verify_form_token(request)
     deleted = await delete_admin_project(session, slug)
     if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="项目不存在")
 
     return RedirectResponse(
         url="/admin/projects?message=deleted",
@@ -430,6 +456,11 @@ async def _read_admin_project_form(
             title=_form_text(form, "title").strip(),
             slug=_form_text(form, "slug").strip(),
             description=_form_text(form, "description").strip(),
+            summary=_form_text(form, "summary").strip(),
+            category=_form_text(form, "category").strip(),
+            status=_form_text(form, "status").strip(),
+            impact=_form_text(form, "impact").strip(),
+            highlights=_form_text(form, "highlights").strip(),
             tech_stack=_form_text(form, "tech_stack").strip(),
             github_url=_form_text(form, "github_url").strip(),
             demo_url=_form_text(form, "demo_url").strip(),
@@ -466,5 +497,11 @@ def _parse_comment_id(comment_id: str) -> uuid.UUID:
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Comment not found",
+            detail="评论不存在",
         ) from None
+
+
+async def _verify_form_token(request: Request) -> None:
+    form = await request.form()
+    token = form.get("csrf_token")
+    verify_csrf_token(request, token if isinstance(token, str) else None)

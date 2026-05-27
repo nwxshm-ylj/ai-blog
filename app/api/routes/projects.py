@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from app.dependencies import SessionDependency
 from app.services.projects import (
     get_public_project_by_slug,
+    list_public_featured_projects,
     list_public_projects,
 )
 from app.services.seo import build_page_seo
@@ -17,17 +18,16 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 @router.get("", response_class=HTMLResponse)
 async def projects_index(request: Request, session: SessionDependency) -> HTMLResponse:
     projects = await list_public_projects(session)
-    featured_projects = [project for project in projects if project.featured]
+    featured_projects = await list_public_featured_projects(session)
     return templates.TemplateResponse(
         request=request,
         name="projects/index.html",
         context={
             **build_page_seo(
                 request,
-                title="AI Projects | AI Blog",
+                title="AI 项目 | AI Blog",
                 description=(
-                    "A portfolio of AI engineering projects covering agents, retrieval, "
-                    "automation, developer tooling, and production FastAPI systems."
+                    "AI 工程项目作品集，覆盖智能体、检索、自动化、开发者工具和生产级 FastAPI 系统。"
                 ),
                 path="/projects",
             ),
@@ -41,7 +41,7 @@ async def projects_index(request: Request, session: SessionDependency) -> HTMLRe
 async def project_detail(request: Request, slug: str, session: SessionDependency) -> HTMLResponse:
     project = await get_public_project_by_slug(session, slug)
     if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+        raise HTTPException(status_code=404, detail="项目不存在")
 
     return templates.TemplateResponse(
         request=request,
@@ -49,7 +49,7 @@ async def project_detail(request: Request, slug: str, session: SessionDependency
         context={
             **build_page_seo(
                 request,
-                title=f"{project.title} | AI Projects",
+                title=f"{project.title} | AI 项目",
                 description=project.description,
                 path=f"/projects/{project.slug}",
                 og_type="article",

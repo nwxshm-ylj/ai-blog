@@ -13,6 +13,7 @@
     <div class="flex items-center justify-between px-5 py-4">
       <a href="{{ url_with_lang(request, '/admin') }}" class="text-base font-semibold tracking-tight text-white">{{ t(request, "admin.brand") }}</a>
       <form action="/auth/logout" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
         <button type="submit" class="btn-secondary px-3 py-2">{{ t(request, "nav.sign_out") }}</button>
       </form>
     </div>
@@ -60,6 +61,7 @@
           <div class="flex items-center justify-between gap-4">
             <a href="{{ url_with_lang(request, '/') }}" class="text-sm font-medium text-zinc-400 transition hover:text-white">{{ t(request, "nav.view_site") }}</a>
             <form action="/auth/logout" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
               <button type="submit" class="text-sm font-medium text-zinc-400 transition hover:text-white">{{ t(request, "nav.sign_out") }}</button>
             </form>
           </div>

@@ -17,7 +17,9 @@
             <span aria-hidden="true">/</span>
             <span>{{ post.reading_time_minutes }} {{ t(request, "blog.min_read") }}</span>
             <span aria-hidden="true">/</span>
-            <span>{{ post.view_count }} views</span>
+            <span>{{ post.view_count }} 次浏览</span>
+            <span aria-hidden="true">/</span>
+            <a href="#comments" class="text-cyan-200 transition hover:text-cyan-100">{{ post.comment_count }} 条评论</a>
           </div>
           <h1 class="page-title text-balance mt-4 max-w-4xl">{{ post.title }}</h1>
           <p class="mt-5 max-w-3xl text-lg leading-8 text-zinc-400">{{ post.description }}</p>
@@ -38,17 +40,11 @@
           <section id="comments" class="mt-8 premium-panel p-5 sm:p-8">
             <div class="flex flex-col gap-2 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p class="eyebrow text-blue-200">Discussion</p>
-                <h2 class="mt-2 text-2xl font-semibold tracking-tight text-white">Comments</h2>
+                <p class="eyebrow text-blue-200">讨论</p>
+                <h2 class="mt-2 text-2xl font-semibold tracking-tight text-white">评论</h2>
               </div>
-              <span class="text-sm text-zinc-500">{{ comments | length }} approved</span>
+              <span class="text-sm text-zinc-500">{{ comments | length }} 条已通过</span>
             </div>
-
-            {% if comment_message == "submitted" %}
-              <div class="mt-5 rounded-md border border-emerald-300/20 bg-emerald-400/10 px-4 py-3 text-sm font-medium text-emerald-100">
-                Comment submitted for review.
-              </div>
-            {% endif %}
 
             <div class="mt-6 space-y-4">
               {% for comment in comments %}
@@ -60,15 +56,16 @@
                   <p class="mt-3 whitespace-pre-line text-sm leading-6 text-zinc-300">{{ comment.content }}</p>
                 </article>
               {% else %}
-                <p class="rounded-lg border border-dashed border-white/10 bg-white/[0.02] px-4 py-5 text-sm text-zinc-500">No approved comments yet.</p>
+                <p class="rounded-lg border border-dashed border-white/10 bg-white/[0.02] px-4 py-5 text-sm text-zinc-500">暂无已通过评论。</p>
               {% endfor %}
             </div>
 
             <div class="mt-7 border-t border-white/10 pt-6">
               {% if request.session.get("user_id") %}
                 <form action="{{ url_with_lang(request, '/blog/' ~ post.slug ~ '/comments') }}" method="post" class="space-y-4">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
                   <div>
-                    <label for="comment-content" class="text-sm font-medium text-zinc-200">Add a comment</label>
+                    <label for="comment-content" class="text-sm font-medium text-zinc-200">发表评论</label>
                     <textarea id="comment-content" name="content" rows="5" maxlength="2000" class="field mt-2 min-h-32" required>{{ comment_content }}</textarea>
                   </div>
                   {% if comment_errors %}
@@ -78,16 +75,21 @@
                       {% endfor %}
                     </div>
                   {% endif %}
-                  <button type="submit" class="btn-primary">Submit for review</button>
+                  <button type="submit" class="btn-primary">提交审核</button>
                 </form>
               {% else %}
                 <div class="rounded-lg border border-white/10 bg-white/[0.025] p-5">
-                  <h3 class="font-semibold text-white">Join the discussion</h3>
-                  <p class="mt-2 text-sm leading-6 text-zinc-400">Sign in or create an account before commenting.</p>
+                  <h3 class="font-semibold text-white">参与讨论</h3>
+                  <p class="mt-2 text-sm leading-6 text-zinc-400">请先登录或注册账号后再发表评论。</p>
                   <div class="mt-4 flex flex-wrap gap-3">
-                    <a href="{{ url_with_lang(request, '/auth/login', {'next': '/blog/' ~ post.slug}) }}" class="btn-primary">Sign in</a>
-                    <a href="{{ url_with_lang(request, '/auth/register', {'next': '/blog/' ~ post.slug}) }}" class="btn-secondary">Register</a>
+                    <a href="{{ url_with_lang(request, '/auth/login', {'next': '/blog/' ~ post.slug}) }}" class="btn-primary">登录</a>
+                    <a href="{{ url_with_lang(request, '/auth/register', {'next': '/blog/' ~ post.slug}) }}" class="btn-secondary">注册</a>
                   </div>
+                </div>
+              {% endif %}
+              {% if request.session.get("is_admin") %}
+                <div class="mt-4 border-t border-white/10 pt-4">
+                  <a href="{{ url_with_lang(request, '/admin/comments') }}" class="text-sm font-medium text-cyan-200 transition hover:text-cyan-100">管理评论</a>
                 </div>
               {% endif %}
             </div>

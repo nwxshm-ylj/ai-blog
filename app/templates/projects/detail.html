@@ -15,7 +15,7 @@
             <span aria-hidden="true">/</span>
             <span>{{ project.status }}</span>
             <span aria-hidden="true">/</span>
-            <span>{{ project.view_count }} views</span>
+            <span>{{ project.view_count }} 次浏览</span>
           </div>
           <h1 class="page-title text-balance mt-4 max-w-4xl">{{ project.title }}</h1>
           <p class="mt-5 max-w-3xl text-lg leading-8 text-zinc-400">{{ project.description }}</p>
@@ -40,6 +40,8 @@
                 <div class="rounded-lg border border-white/10 bg-black/25 p-5 transition hover:border-cyan-300/30 hover:bg-white/[0.045]">
                   <p class="leading-7 text-zinc-300">{{ highlight }}</p>
                 </div>
+              {% else %}
+                <p class="empty-state">暂无工程亮点。</p>
               {% endfor %}
             </div>
           </section>

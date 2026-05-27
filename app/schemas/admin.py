@@ -24,6 +24,11 @@ class AdminProject(BaseModel):
     title: str
     slug: str
     description: str
+    summary: str
+    category: str
+    status: str
+    impact: str
+    highlights: str
     tech_stack: str
     github_url: str
     demo_url: str

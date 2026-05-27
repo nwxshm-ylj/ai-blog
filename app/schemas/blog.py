@@ -16,3 +16,4 @@ class BlogPost(BaseModel):
     reading_time_minutes: int
     content_markdown: str
     view_count: int = 0
+    comment_count: int = 0
