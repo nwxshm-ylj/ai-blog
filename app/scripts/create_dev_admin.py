@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
-from app.db.database import async_session_factory
+from app.db.database import async_session_factory, engine
 from app.services.auth import (
     LOCAL_DEV_ADMIN_EMAIL,
     LOCAL_DEV_ADMIN_PASSWORD,
@@ -12,8 +12,11 @@ from app.services.auth import (
 
 
 async def main() -> None:
-    async with async_session_factory() as session:
-        await create_local_development_admin(session)
+    try:
+        async with async_session_factory() as session:
+            await create_local_development_admin(session)
+    finally:
+        await engine.dispose()
 
     print("Local development admin user is ready.")
     print("This helper is only for local development.")

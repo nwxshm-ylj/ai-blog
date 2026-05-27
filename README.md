@@ -28,8 +28,13 @@ alembic/             database migration environment
 cp .env.example .env
 python -m venv .venv
 pip install -r requirements.txt
+python -m alembic upgrade head
 uvicorn app.main:app --reload
 ```
+
+The default `.env.example` is for local host development and points to
+PostgreSQL on `localhost:15432`. Docker Compose overrides the API container's
+`DATABASE_URL` so the container connects to `db:5432`.
 
 Health check:
 
@@ -57,11 +62,29 @@ cp .env.example .env
 docker compose up --build
 ```
 
+Before starting a freshly provisioned database, run migrations:
+
+```bash
+python -m alembic upgrade head
+```
+
+For production, create a real env file and set strong private values:
+
+```bash
+cp .env.production.example .env.production
+# edit .env.production and replace POSTGRES_PASSWORD, DATABASE_URL, SECRET_KEY
+docker compose -f docker-compose.prod.yml --env-file .env.production config
+docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+```
+
+`SECRET_KEY` must be a long random value in production. Do not reuse the local
+development value.
+
 ## Alembic
 
 ```bash
 alembic revision --autogenerate -m "initial"
-alembic upgrade head
+python -m alembic upgrade head
 ```
 
 ## Local Development Admin
@@ -78,4 +101,10 @@ Credentials:
 email: admin@example.com
 username: admin
 password: admin123
+```
+
+Login test URL:
+
+```text
+http://127.0.0.1:8000/auth/login
 ```
