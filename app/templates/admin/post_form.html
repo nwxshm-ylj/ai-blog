@@ -75,8 +75,9 @@
   </div>
 </form>
 
-{% if post.slug %}
-  <form action="/admin/posts/{{ post.slug }}/delete" method="post" class="mt-4 flex justify-end">
+{% set has_valid_slug = post.slug and "/" not in post.slug and ":" not in post.slug %}
+{% if has_valid_slug %}
+  <form action="/admin/posts/{{ post.slug }}/delete" method="post" class="mt-4 flex justify-end" onsubmit="return confirm('确定要删除这篇文章吗？此操作不可撤销。');">
     <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
     <button type="submit" class="btn-danger">删除文章</button>
   </form>

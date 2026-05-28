@@ -99,8 +99,9 @@
   </div>
 </form>
 
-{% if project.slug %}
-  <form action="/admin/projects/{{ project.slug }}/delete" method="post" class="mt-4 flex justify-end">
+{% set has_valid_slug = project.slug and "/" not in project.slug and ":" not in project.slug %}
+{% if has_valid_slug %}
+  <form action="/admin/projects/{{ project.slug }}/delete" method="post" class="mt-4 flex justify-end" onsubmit="return confirm('确定要删除这个项目吗？此操作不可撤销。');">
     <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
     <button type="submit" class="btn-danger">删除项目</button>
   </form>

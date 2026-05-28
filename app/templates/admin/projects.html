@@ -27,6 +27,7 @@
   </div>
   <div class="divide-y divide-white/10">
     {% for project in projects %}
+      {% set has_valid_slug = project.slug and "/" not in project.slug and ":" not in project.slug %}
       <article class="grid gap-4 px-5 py-4 transition hover:bg-white/[0.025] md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_8rem_9rem] md:items-center">
         <div>
           <h2 class="font-medium text-white">{{ project.title }}</h2>
@@ -39,11 +40,15 @@
           </span>
         </div>
         <div class="flex items-center gap-3 md:justify-end">
-          <a href="{{ url_with_lang(request, '/admin/projects/' ~ project.slug ~ '/edit') }}" class="text-sm font-medium text-cyan-200 transition hover:text-cyan-100">编辑</a>
-          <form action="/admin/projects/{{ project.slug }}/delete" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
-            <button type="submit" class="text-sm font-medium text-rose-200 transition hover:text-rose-100">删除</button>
-          </form>
+          {% if has_valid_slug %}
+            <a href="{{ url_with_lang(request, '/admin/projects/' ~ project.slug ~ '/edit') }}" class="text-sm font-medium text-cyan-200 transition hover:text-cyan-100">编辑</a>
+            <form action="/admin/projects/{{ project.slug }}/delete" method="post" onsubmit="return confirm('确定要删除这个项目吗？此操作不可撤销。');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+              <button type="submit" class="text-sm font-medium text-rose-200 transition hover:text-rose-100">删除</button>
+            </form>
+          {% else %}
+            <span class="text-sm text-zinc-500">invalid slug</span>
+          {% endif %}
         </div>
       </article>
     {% else %}

@@ -53,7 +53,7 @@
               <button type="submit" class="text-sm font-medium text-emerald-200 transition hover:text-emerald-100">通过</button>
             </form>
           {% endif %}
-          <form action="/admin/comments/{{ comment.id }}/delete" method="post">
+          <form action="/admin/comments/{{ comment.id }}/delete" method="post" onsubmit="return confirm('确定要删除这条评论吗？此操作不可撤销。');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
             <button type="submit" class="text-sm font-medium text-rose-200 transition hover:text-rose-100">删除</button>
           </form>

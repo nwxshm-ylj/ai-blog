@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from re import fullmatch
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,6 +15,7 @@ from app.schemas.admin import AdminDashboardStat, AdminPost, AdminProject
 from app.services.auth import LOCAL_DEV_ADMIN_EMAIL
 
 DEFAULT_AUTHOR_EMAIL = LOCAL_DEV_ADMIN_EMAIL
+SLUG_PATTERN = r"[A-Za-z0-9][A-Za-z0-9_-]*"
 
 
 async def get_dashboard_stats(session: AsyncSession) -> list[AdminDashboardStat]:
@@ -116,6 +119,8 @@ async def validate_admin_post(
         errors.append("请输入标题。")
     if not post.slug.strip():
         errors.append("请输入链接标识。")
+    elif fullmatch(SLUG_PATTERN, post.slug.strip()) is None:
+        errors.append("链接标识只能包含字母、数字、下划线和连字符。")
     if not post.summary.strip():
         errors.append("请输入摘要。")
     if not post.markdown_content.strip():
@@ -228,6 +233,8 @@ async def validate_admin_project(
         errors.append("请输入标题。")
     if not project.slug.strip():
         errors.append("请输入链接标识。")
+    elif fullmatch(SLUG_PATTERN, project.slug.strip()) is None:
+        errors.append("链接标识只能包含字母、数字、下划线和连字符。")
     if not project.description.strip():
         errors.append("请输入描述。")
     if not project.category.strip():

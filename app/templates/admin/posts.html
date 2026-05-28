@@ -27,23 +27,28 @@
   </div>
   <div class="divide-y divide-white/10">
     {% for post in posts %}
+      {% set has_valid_slug = post.slug and "/" not in post.slug and ":" not in post.slug %}
       <article class="grid gap-4 px-5 py-4 transition hover:bg-white/[0.025] md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_8rem_9rem] md:items-center">
         <div>
           <h2 class="font-medium text-white">{{ post.title }}</h2>
           <p class="mt-1 text-sm leading-6 text-zinc-400">{{ post.summary }}</p>
         </div>
-        <p class="text-sm text-zinc-400 md:truncate">{{ post.slug }}</p>
+        <p class="text-sm text-zinc-400 md:truncate">{{ post.slug or "missing-slug" }}</p>
         <div>
           <span class="inline-flex rounded-md px-2.5 py-1 text-xs font-medium {% if post.is_published %}bg-emerald-400/10 text-emerald-200 ring-1 ring-inset ring-emerald-300/20{% else %}bg-amber-400/10 text-amber-200 ring-1 ring-inset ring-amber-300/20{% endif %}">
             {{ "已发布" if post.is_published else "草稿" }}
           </span>
         </div>
         <div class="flex items-center gap-3 md:justify-end">
-          <a href="{{ url_with_lang(request, '/admin/posts/' ~ post.slug ~ '/edit') }}" class="text-sm font-medium text-cyan-200 transition hover:text-cyan-100">编辑</a>
-          <form action="/admin/posts/{{ post.slug }}/delete" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
-            <button type="submit" class="text-sm font-medium text-rose-200 transition hover:text-rose-100">删除</button>
-          </form>
+          {% if has_valid_slug %}
+            <a href="{{ url_with_lang(request, '/admin/posts/' ~ post.slug ~ '/edit') }}" class="text-sm font-medium text-cyan-200 transition hover:text-cyan-100">编辑</a>
+            <form action="/admin/posts/{{ post.slug }}/delete" method="post" onsubmit="return confirm('确定要删除这篇文章吗？此操作不可撤销。');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+              <button type="submit" class="text-sm font-medium text-rose-200 transition hover:text-rose-100">删除</button>
+            </form>
+          {% else %}
+            <span class="text-sm text-zinc-500">invalid slug</span>
+          {% endif %}
         </div>
       </article>
     {% else %}
