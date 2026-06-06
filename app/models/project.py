@@ -12,6 +12,7 @@ from app.models.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
 class Project(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "projects"
     __table_args__ = (
+        Index("ix_projects_category", "category"),
         Index("ix_projects_featured", "featured"),
         Index("ix_projects_created_at", "created_at"),
     )
