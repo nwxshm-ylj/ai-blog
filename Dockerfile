@@ -7,7 +7,8 @@ COPY tailwind.config.js ./
 COPY app ./app
 RUN npm run build:css
 
-FROM python:3.12-slim AS runtime
+FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/library/node:22-alpine AS assets
+FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/library/python:3.12-slim AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1

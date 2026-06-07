@@ -13,7 +13,7 @@ services:
       SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-ai_blog_session}
       SESSION_MAX_AGE_SECONDS: ${SESSION_MAX_AGE_SECONDS:-1209600}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -27,7 +27,7 @@ services:
       retries: 3
 
   db:
-    image: postgres:16-alpine
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/library/postgres:16-alpine
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-ai_blog}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
