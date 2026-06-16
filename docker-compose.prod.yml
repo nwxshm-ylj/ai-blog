@@ -2,7 +2,7 @@ services:
   api:
     build: .
     environment:
-      APP_NAME: ${APP_NAME:-AI Blog}
+      APP_NAME: "${APP_NAME:-李宝帅 | 工业AI与制造数字化作品集}"
       APP_ENV: ${APP_ENV:-production}
       APP_DEBUG: ${APP_DEBUG:-false}
       APP_HOST: ${APP_HOST:-0.0.0.0}

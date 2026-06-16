@@ -31,7 +31,7 @@ async def login_page(request: Request) -> HTMLResponse:
         request=request,
         name="auth/login.html",
         context={
-            "title": "登录 | AI Blog",
+            "title": "登录 | 李宝帅作品集",
             "error": None,
             "identifier": "",
             "next_url": _safe_next_url(request.query_params.get("next"), default="/"),
@@ -55,7 +55,7 @@ async def login_action(request: Request, session: SessionDependency) -> Response
             request=request,
             name="auth/login.html",
             context={
-                "title": "登录 | AI Blog",
+                "title": "登录 | 李宝帅作品集",
                 "error": result.error,
                 "identifier": identifier,
                 "next_url": next_url,
@@ -74,7 +74,7 @@ async def register_page(request: Request) -> HTMLResponse:
         request=request,
         name="auth/register.html",
         context={
-            "title": "创建账号 | AI Blog",
+            "title": "创建账号 | 李宝帅作品集",
             "errors": [],
             "email": "",
             "username": "",
@@ -104,7 +104,7 @@ async def register_action(request: Request, session: SessionDependency) -> Respo
             request=request,
             name="auth/register.html",
             context={
-                "title": "创建账号 | AI Blog",
+                "title": "创建账号 | 李宝帅作品集",
                 "errors": result.errors,
                 "email": email,
                 "username": username,

@@ -46,36 +46,34 @@
 
         <div class="mt-5 grid grid-cols-2 gap-3">
           <div class="console-tile">
-            <p class="text-xs text-zinc-500">Latency</p>
-            <p class="mt-1 text-2xl font-medium text-white">84ms</p>
+            <p class="text-xs text-zinc-500">{{ t(request, "home.metric.configs") }}</p>
+            <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.configs_value") }}</p>
           </div>
           <div class="console-tile">
-            <p class="text-xs text-zinc-500">Eval pass</p>
-            <p class="mt-1 text-2xl font-medium text-white">98%</p>
+            <p class="text-xs text-zinc-500">{{ t(request, "home.metric.lines") }}</p>
+            <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.lines_value") }}</p>
           </div>
           <div class="console-tile">
-            <p class="text-xs text-zinc-500">{{ t(request, "home.metric.posts") }}</p>
-            <p class="mt-1 text-2xl font-medium text-white">05</p>
+            <p class="text-xs text-zinc-500">{{ t(request, "home.metric.ocr") }}</p>
+            <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.ocr_value") }}</p>
           </div>
           <div class="console-tile">
             <p class="text-xs text-zinc-500">{{ t(request, "home.metric.projects") }}</p>
-            <p class="mt-1 text-2xl font-medium text-white">04</p>
+            <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.projects_value") }}</p>
           </div>
         </div>
 
         <div class="mt-5 space-y-2 border-t border-white/10 pt-4">
           <div class="flex items-center justify-between gap-3 text-sm">
             <span class="text-zinc-400">{{ t(request, "home.pipeline") }}</span>
-            <span class="text-cyan-100">online</span>
+            <span class="text-cyan-100">{{ t(request, "home.pipeline_status") }}</span>
           </div>
-          <div class="flex items-center justify-between gap-3 text-sm">
-            <span class="text-zinc-400">{{ t(request, "home.signal.1") }}</span>
-            <span class="h-2 w-2 shrink-0 rounded-full bg-emerald-300"></span>
-          </div>
-          <div class="flex items-center justify-between gap-3 text-sm">
-            <span class="text-zinc-400">{{ t(request, "home.signal.2") }}</span>
-            <span class="h-2 w-2 shrink-0 rounded-full bg-cyan-300"></span>
-          </div>
+          {% for index in range(1, 6) %}
+            <div class="flex items-center justify-between gap-3 text-sm">
+              <span class="text-zinc-400">{{ t(request, "home.signal." ~ index) }}</span>
+              <span class="h-2 w-2 shrink-0 rounded-full {% if index is odd %}bg-emerald-300{% else %}bg-cyan-300{% endif %}"></span>
+            </div>
+          {% endfor %}
         </div>
       </aside>
     </section>
@@ -108,11 +106,11 @@
         {% include "components/section_header.html" %}
 
         <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {% for title in ["工业 AI 视觉笔记", "生产级 AI 基础设施", "半导体分析系统"] %}
+          {% for index in range(1, 6) %}
             <article class="panel card-hover flex h-full flex-col p-6">
-              <p class="text-xs font-medium uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.posts.eyebrow") }}</p>
-              <h3 class="mt-4 text-xl font-medium leading-snug text-white">{{ title }}</h3>
-              <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.posts.note") }}</p>
+              <p class="text-xs font-medium uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.post_preview." ~ index ~ ".category") }}</p>
+              <h3 class="mt-4 text-xl font-medium leading-snug text-white">{{ t(request, "home.post_preview." ~ index ~ ".title") }}</h3>
+              <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.post_preview." ~ index ~ ".summary") }}</p>
             </article>
           {% endfor %}
         </div>

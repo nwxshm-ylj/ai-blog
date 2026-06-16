@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = Field(default="AI Blog", alias="APP_NAME")
+    app_name: str = Field(default="李宝帅 | 工业AI与制造数字化作品集", alias="APP_NAME")
     app_env: str = Field(default="local", alias="APP_ENV")
     app_debug: bool = Field(default=False, alias="APP_DEBUG")
     app_host: str = Field(default="0.0.0.0", alias="APP_HOST")

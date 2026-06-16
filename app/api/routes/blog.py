@@ -20,6 +20,7 @@ from app.services.blog import (
 from app.services.comments import list_approved_comments_for_post, submit_blog_comment
 from app.services.seo import build_page_seo
 from app.web.flash import flash
+from app.web.i18n import get_lang
 from app.web.markdown import render_markdown
 from app.web.security import verify_csrf_token
 from app.web.templating import templates
@@ -30,14 +31,25 @@ router = APIRouter(prefix="/blog", tags=["blog"])
 @router.get("", response_class=HTMLResponse)
 async def blog_index(request: Request, session: SessionDependency) -> HTMLResponse:
     posts = await list_public_posts(session)
+    is_en = get_lang(request) == "en"
     return templates.TemplateResponse(
         request=request,
         name="blog/index.html",
         context={
             **build_page_seo(
                 request,
-                title="博客 | AI Blog",
-                description="关于 AI 系统、FastAPI、架构和产品工程的开发笔记。",
+                title=(
+                    "Blog | Li Baoshuai Industrial AI Portfolio"
+                    if is_en
+                    else "博客 | 李宝帅工业AI与制造数字化作品集"
+                ),
+                description=(
+                    "Notes on industrial vision inspection, manufacturing quality metrics, "
+                    "SECOM semiconductor analytics, RAG industrial knowledge bases, and "
+                    "FastAPI portfolio development."
+                    if is_en
+                    else "围绕工业视觉检测、制造质量指标、SECOM 半导体数据分析、RAG 工业知识库和 FastAPI 作品集建设的技术文章。"
+                ),
                 path="/blog",
             ),
             "posts": posts,
@@ -118,7 +130,11 @@ async def _build_blog_detail_context(
     return {
         **build_page_seo(
             request,
-                title=f"{post.title} | AI Blog",
+            title=(
+                f"{post.title} | Li Baoshuai Industrial AI Portfolio"
+                if get_lang(request) == "en"
+                else f"{post.title} | 李宝帅工业AI作品集"
+            ),
             description=post.description,
             path=f"/blog/{post.slug}",
             og_type="article",

@@ -52,7 +52,7 @@ async def admin_dashboard(request: Request, session: SessionDependency) -> HTMLR
         request=request,
         name="admin/index.html",
         context={
-            "title": "后台仪表盘 | AI Blog",
+            "title": "后台仪表盘 | 作品集后台",
             "active_admin_nav": "dashboard",
             "dashboard_stats": await get_dashboard_stats(session),
         },
@@ -66,7 +66,7 @@ async def admin_comments(request: Request, session: SessionDependency) -> HTMLRe
         request=request,
         name="admin/comments.html",
         context={
-            "title": "评论审核 | AI Blog",
+            "title": "评论审核 | 作品集后台",
             "active_admin_nav": "comments",
             "comments": await list_admin_comments(session),
             "message": message,
@@ -135,7 +135,7 @@ async def admin_posts(request: Request, session: SessionDependency) -> HTMLRespo
         request=request,
         name="admin/posts.html",
         context={
-            "title": "文章管理 | AI Blog",
+            "title": "文章管理 | 作品集后台",
             "active_admin_nav": "posts",
             "posts": await get_admin_posts(session),
             "message": message,
@@ -149,7 +149,7 @@ async def admin_new_post(request: Request) -> HTMLResponse:
         request=request,
         name="admin/post_form.html",
         context={
-            "title": "新建文章 | AI Blog",
+            "title": "新建文章 | 作品集后台",
             "active_admin_nav": "posts",
             "form_title": "新建文章",
             "form_action": "/admin/posts",
@@ -174,7 +174,7 @@ async def admin_edit_post(
         request=request,
         name="admin/post_form.html",
         context={
-            "title": f"编辑 {post.title or slug} | AI Blog",
+            "title": f"编辑 {post.title or slug} | 作品集后台",
             "active_admin_nav": "posts",
             "form_title": "编辑文章",
             "form_action": f"/admin/posts/{slug}",
@@ -198,7 +198,7 @@ async def admin_create_post(
             request=request,
             name="admin/post_form.html",
             context={
-                "title": "新建文章 | AI Blog",
+                "title": "新建文章 | 作品集后台",
                 "active_admin_nav": "posts",
                 "form_title": "新建文章",
                 "form_action": "/admin/posts",
@@ -241,7 +241,7 @@ async def admin_update_post(
             request=request,
             name="admin/post_form.html",
             context={
-                "title": f"编辑 {post.title or slug} | AI Blog",
+                "title": f"编辑 {post.title or slug} | 作品集后台",
                 "active_admin_nav": "posts",
                 "form_title": "编辑文章",
                 "form_action": f"/admin/posts/{slug}",
@@ -279,7 +279,7 @@ async def admin_projects(request: Request, session: SessionDependency) -> HTMLRe
         request=request,
         name="admin/projects.html",
         context={
-            "title": "项目管理 | AI Blog",
+            "title": "项目管理 | 作品集后台",
             "active_admin_nav": "projects",
             "projects": await get_admin_projects(session),
             "message": message,
@@ -293,7 +293,7 @@ async def admin_new_project(request: Request) -> HTMLResponse:
         request=request,
         name="admin/project_form.html",
         context={
-            "title": "新建项目 | AI Blog",
+            "title": "新建项目 | 作品集后台",
             "active_admin_nav": "projects",
             "form_title": "新建项目",
             "form_action": "/admin/projects",
@@ -318,7 +318,7 @@ async def admin_edit_project(
         request=request,
         name="admin/project_form.html",
         context={
-            "title": f"编辑 {project.title or slug} | AI Blog",
+            "title": f"编辑 {project.title or slug} | 作品集后台",
             "active_admin_nav": "projects",
             "form_title": "编辑项目",
             "form_action": f"/admin/projects/{slug}",
@@ -342,7 +342,7 @@ async def admin_create_project(
             request=request,
             name="admin/project_form.html",
             context={
-                "title": "新建项目 | AI Blog",
+                "title": "新建项目 | 作品集后台",
                 "active_admin_nav": "projects",
                 "form_title": "新建项目",
                 "form_action": "/admin/projects",
@@ -385,7 +385,7 @@ async def admin_update_project(
             request=request,
             name="admin/project_form.html",
             context={
-                "title": f"编辑 {project.title or slug} | AI Blog",
+                "title": f"编辑 {project.title or slug} | 作品集后台",
                 "active_admin_nav": "projects",
                 "form_title": "编辑项目",
                 "form_action": f"/admin/projects/{slug}",

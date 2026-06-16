@@ -13,8 +13,8 @@ from fastapi import Request
 from app.schemas.blog import BlogPost
 from app.schemas.projects import Project
 
-DEFAULT_OG_IMAGE = "https://placehold.co/1200x630/0f172a/99f6e4.png?text=AI+Blog"
-DEFAULT_DESCRIPTION = "AI Blog：AI 系统、软件架构与产品工程笔记。"
+DEFAULT_OG_IMAGE = "https://placehold.co/1200x630/0f172a/99f6e4.png?text=Industrial+AI+Portfolio"
+DEFAULT_DESCRIPTION = "李宝帅的工业 AI 与制造数字化作品集，覆盖工业视觉检测、制造质量数据分析、Python 后端系统、半导体数据分析实践和 RAG / Agent 应用探索。"
 
 
 @dataclass(frozen=True)
@@ -67,7 +67,7 @@ def build_rss_feed(base_url: str, posts: list[BlogPost]) -> str:
     rss = Element("rss", version="2.0")
     channel = SubElement(rss, "channel")
 
-    SubElement(channel, "title").text = "AI Blog"
+    SubElement(channel, "title").text = "李宝帅 | 工业AI与制造数字化作品集"
     SubElement(channel, "link").text = absolute_url(base_url, "/blog")
     SubElement(channel, "description").text = DEFAULT_DESCRIPTION
     SubElement(channel, "language").text = "zh-cn"
