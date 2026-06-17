@@ -5,9 +5,13 @@
       <p class="mt-2 max-w-2xl leading-6">{{ t(request, "footer.focus") }}</p>
     </div>
     <div class="flex flex-wrap items-center gap-4">
-      <a href="{{ url_with_lang(request, '/blog') }}" class="transition hover:text-white">{{ t(request, "nav.blog") }}</a>
       <a href="{{ url_with_lang(request, '/projects') }}" class="transition hover:text-white">{{ t(request, "nav.projects") }}</a>
-      <a href="{{ url_with_lang(request, '/admin') }}" class="transition hover:text-white">{{ t(request, "nav.admin") }}</a>
+      <a href="{{ url_with_lang(request, '/blog') }}" class="transition hover:text-white">{{ t(request, "nav.blog") }}</a>
+      <a href="{{ url_with_lang(request, '/about') }}" class="transition hover:text-white">{{ t(request, "nav.about") }}</a>
+      <a href="{{ url_with_lang(request, '/contact') }}" class="transition hover:text-white">{{ t(request, "nav.contact") }}</a>
+      {% if request.session.get("is_admin") %}
+        <a href="{{ url_with_lang(request, '/admin') }}" class="transition hover:text-white">{{ t(request, "nav.admin") }}</a>
+      {% endif %}
       {% include "components/language_switcher.html" %}
     </div>
   </div>

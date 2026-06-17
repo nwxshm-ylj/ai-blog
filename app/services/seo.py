@@ -94,6 +94,8 @@ def build_sitemap(base_url: str, posts: list[BlogPost], projects: list[Project])
     _add_sitemap_url(urlset, absolute_url(base_url, "/"), priority="1.0")
     _add_sitemap_url(urlset, absolute_url(base_url, "/blog"), priority="0.9")
     _add_sitemap_url(urlset, absolute_url(base_url, "/projects"), priority="0.8")
+    _add_sitemap_url(urlset, absolute_url(base_url, "/about"), priority="0.7")
+    _add_sitemap_url(urlset, absolute_url(base_url, "/contact"), priority="0.6")
 
     for post in posts:
         _add_sitemap_url(
