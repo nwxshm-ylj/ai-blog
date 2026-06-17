@@ -86,11 +86,11 @@
   }
 
   .panel {
-    @apply rounded-2xl border border-white/10 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.055),0_24px_90px_rgba(0,0,0,0.28)] backdrop-blur-xl;
+    @apply rounded-lg border border-white/10 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.055),0_24px_90px_rgba(0,0,0,0.28)] backdrop-blur-xl;
   }
 
   .premium-panel {
-    @apply rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.075),rgba(255,255,255,0.026)_48%,rgba(34,211,238,0.03))] shadow-[inset_0_1px_0_rgba(255,255,255,0.075),0_30px_100px_rgba(0,0,0,0.42)] backdrop-blur-2xl;
+    @apply rounded-lg border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.075),rgba(255,255,255,0.026)_48%,rgba(34,211,238,0.03))] shadow-[inset_0_1px_0_rgba(255,255,255,0.075),0_30px_100px_rgba(0,0,0,0.42)] backdrop-blur-2xl;
   }
 
   .metric-panel {
@@ -182,7 +182,7 @@
   }
 
   .operations-console {
-    @apply overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.075),rgba(255,255,255,0.026)_52%,rgba(34,211,238,0.032))] shadow-[inset_0_1px_0_rgba(255,255,255,0.075),0_28px_90px_rgba(0,0,0,0.40),0_0_70px_rgba(34,211,238,0.10)] backdrop-blur-2xl;
+    @apply overflow-hidden rounded-lg border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.075),rgba(255,255,255,0.026)_52%,rgba(34,211,238,0.032))] shadow-[inset_0_1px_0_rgba(255,255,255,0.075),0_28px_90px_rgba(0,0,0,0.40),0_0_70px_rgba(34,211,238,0.10)] backdrop-blur-2xl;
   }
 
   .console-header {
