@@ -28,9 +28,9 @@ async def projects_index(request: Request, session: SessionDependency) -> HTMLRe
             **build_page_seo(
                 request,
                 title=(
-                    "Projects | Li Baoshuai Industrial AI Portfolio"
+                    "Projects | IndusAI Lab"
                     if is_en
-                    else "项目案例 | 李宝帅工业AI与制造数字化作品集"
+                    else "项目案例 | IndusAI Lab"
                 ),
                 description=(
                     "Case studies across industrial vision inspection, certificate OCR "
@@ -61,7 +61,7 @@ async def project_detail(request: Request, slug: str, session: SessionDependency
             **build_page_seo(
                 request,
                 title=(
-                    f"{project.title} | Li Baoshuai Industrial AI Portfolio"
+                    f"{project.title} | IndusAI Lab"
                     if is_en
                     else f"{project.title} | 工业AI项目案例"
                 ),

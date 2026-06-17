@@ -22,16 +22,16 @@ async def homepage(request: Request, session: SessionDependency) -> HTMLResponse
             **build_page_seo(
                 request,
                 title=(
-                    "Li Baoshuai | Industrial AI & Manufacturing Analytics Portfolio"
+                    "IndusAI Lab | Industrial AI & Manufacturing Intelligence Tech Site"
                     if is_en
-                    else "李宝帅 | 工业AI与制造数字化作品集"
+                    else "IndusAI Lab | 工业 AI 与制造数字化技术站"
                 ),
                 description=(
-                    "Li Baoshuai's portfolio covering industrial AI vision, manufacturing "
+                    "IndusAI Lab is a technical site covering industrial AI vision, manufacturing "
                     "quality analytics, Python backend systems, semiconductor analytics, "
                     "and RAG / Agent application exploration."
                     if is_en
-                    else "李宝帅的工业 AI 与制造数字化作品集，覆盖工业视觉检测、制造质量数据分析、Python 后端系统、半导体数据分析实践和 RAG / Agent 应用探索。"
+                    else "IndusAI Lab 是一个聚焦工业 AI 与制造数字化实践的技术站，覆盖工业视觉检测、制造质量数据分析、Python 后端系统、半导体数据分析实践和 RAG / Agent 应用探索。"
                 ),
                 path="/",
             ),
@@ -50,16 +50,16 @@ async def about_page(request: Request) -> HTMLResponse:
             **build_page_seo(
                 request,
                 title=(
-                    "About | Li Baoshuai Industrial AI Portfolio"
+                    "About | IndusAI Lab"
                     if is_en
-                    else "关于我 | 李宝帅工业AI与制造数字化作品集"
+                    else "关于我 | IndusAI Lab"
                 ),
                 description=(
-                    "A professional technical profile for Li Baoshuai, covering industrial "
+                    "A professional technical profile for IndusAI Lab, covering industrial "
                     "AI positioning, technical directions, project methodology, focus areas, "
                     "and current exploration topics."
                     if is_en
-                    else "李宝帅的职业技术 Profile，介绍工业 AI 定位、技术方向、项目方法论、关注领域与正在探索的方向。"
+                    else "IndusAI Lab 的职业技术 Profile，介绍工业 AI 定位、技术方向、项目方法论、关注领域与正在探索的方向。"
                 ),
                 path="/about",
             ),
@@ -77,9 +77,9 @@ async def contact_page(request: Request) -> HTMLResponse:
             **build_page_seo(
                 request,
                 title=(
-                    "Contact | Li Baoshuai Industrial AI Portfolio"
+                    "Contact | IndusAI Lab"
                     if is_en
-                    else "联系方式 | 李宝帅工业AI与制造数字化作品集"
+                    else "联系方式 | IndusAI Lab"
                 ),
                 description=(
                     "Contact information for technical discussions about industrial AI, "

@@ -39,9 +39,9 @@ async def blog_index(request: Request, session: SessionDependency) -> HTMLRespon
             **build_page_seo(
                 request,
                 title=(
-                    "Blog | Li Baoshuai Industrial AI Portfolio"
+                    "Blog | IndusAI Lab"
                     if is_en
-                    else "博客 | 李宝帅工业AI与制造数字化作品集"
+                    else "博客 | IndusAI Lab"
                 ),
                 description=(
                     "Notes on industrial vision inspection, manufacturing quality metrics, "
@@ -131,9 +131,9 @@ async def _build_blog_detail_context(
         **build_page_seo(
             request,
             title=(
-                f"{post.title} | Li Baoshuai Industrial AI Portfolio"
+                f"{post.title} | IndusAI Lab"
                 if get_lang(request) == "en"
-                else f"{post.title} | 李宝帅工业AI作品集"
+                else f"{post.title} | IndusAI Lab"
             ),
             description=post.description,
             path=f"/blog/{post.slug}",
