@@ -1,215 +1,181 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block content %}
 <div class="site-shell">
   {% include "components/site_header.html" %}
 
   <main>
-    <section class="relative mx-auto max-w-6xl px-6 py-20 sm:py-24 lg:px-8">
-      <div class="ambient-glow -left-24 top-16 h-72 w-72 bg-cyan-300/10"></div>
-      <div class="ambient-glow right-0 top-20 h-80 w-80 bg-blue-400/10"></div>
-
-      <div class="relative max-w-4xl">
-        <div class="pointer-events-none absolute -inset-x-8 -top-10 h-72 rounded-full bg-gradient-to-br from-cyan-300/10 via-blue-400/5 to-transparent blur-3xl"></div>
-        <p class="relative inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-          {{ t(request, "home.eyebrow") }}
-        </p>
-        <h1 class="relative mt-6 text-4xl font-medium leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-          {{ t(request, "home.title") }}
-        </h1>
-        <p class="relative mt-6 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
-          {{ t(request, "home.subtitle") }}
-        </p>
-        <div class="relative mt-8 flex flex-wrap gap-3">
-          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary h-11 px-5 py-0">
-            {{ t(request, "home.cta.projects") }}
-          </a>
-          <a href="{{ url_with_lang(request, '/blog') }}" class="btn-secondary h-11 px-5 py-0">
-            {{ t(request, "home.cta.posts") }}
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="border-y border-white/10 bg-white/[0.025]">
-      <div class="mx-auto max-w-6xl px-6 py-12 lg:px-8">
-        <aside class="operations-console relative p-5 sm:p-6">
-        <div class="pointer-events-none absolute -inset-12 -z-10 rounded-full bg-cyan-300/10 blur-3xl"></div>
-        <div class="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">{{ t(request, "home.workspace") }}</p>
-            <h2 class="mt-2 text-2xl font-medium tracking-tight text-white">{{ t(request, "home.focus_label") }}</h2>
-          </div>
-          <span class="w-fit rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-1 text-xs font-medium text-emerald-100">
-            {{ t(request, "home.live") }}
-          </span>
-        </div>
-
-        <div class="grid gap-6 pt-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
-          <div>
-            <p class="text-sm leading-7 text-zinc-300">{{ t(request, "home.focus") }}</p>
-            <div class="mt-5 flex items-center justify-between gap-3 rounded-lg border border-cyan-300/15 bg-cyan-300/[0.035] px-4 py-3 text-sm">
-              <span class="text-zinc-400">{{ t(request, "home.pipeline") }}</span>
-              <span class="font-medium text-cyan-100">{{ t(request, "home.pipeline_status") }}</span>
-            </div>
-          </div>
-
-          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="console-tile">
-              <p class="text-xs text-zinc-500">{{ t(request, "home.metric.configs") }}</p>
-              <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.configs_value") }}</p>
-            </div>
-            <div class="console-tile">
-              <p class="text-xs text-zinc-500">{{ t(request, "home.metric.lines") }}</p>
-              <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.lines_value") }}</p>
-            </div>
-            <div class="console-tile">
-              <p class="text-xs text-zinc-500">{{ t(request, "home.metric.ocr") }}</p>
-              <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.ocr_value") }}</p>
-            </div>
-            <div class="console-tile">
-              <p class="text-xs text-zinc-500">{{ t(request, "home.metric.projects") }}</p>
-              <p class="mt-1 text-2xl font-medium text-white">{{ t(request, "home.metric.projects_value") }}</p>
-            </div>
+    <section class="container-page flex min-h-[calc(100vh-4rem)] items-center section-pad">
+      <div class="grid w-full gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center">
+        <div class="max-w-4xl">
+          <p class="text-sm font-medium text-zinc-400">{{ t(request, 'home.person') }}</p>
+          <h1 class="mt-6 max-w-5xl hero-title">
+            {{ t(request, 'home.hero.title') }}
+          </h1>
+          <p class="mt-6 max-w-3xl text-2xl leading-tight tracking-tight text-zinc-200 sm:text-3xl">
+            {{ t(request, 'home.hero.subtitle') }}
+          </p>
+          <p class="mt-6 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+            {{ t(request, 'home.hero.copy') }}
+          </p>
+          <p class="mt-3 max-w-2xl text-sm leading-7 text-zinc-500 sm:text-base">
+            {{ t(request, 'home.hero.experience') }}
+          </p>
+          <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+            <a href="{{ url_with_lang(request, '/projects') }}" class="btn-primary h-12 px-6 py-0">
+              {{ t(request, 'common.view_projects') }}
+            </a>
+            <a href="{{ url_with_lang(request, '/ai-lab') }}" class="btn-secondary h-12 px-6 py-0">
+              {{ t(request, 'common.explore_ai_lab') }}
+            </a>
           </div>
         </div>
 
-        <div class="mt-5 grid gap-2 border-t border-white/10 pt-5 sm:grid-cols-2 lg:grid-cols-5">
-          {% for index in range(1, 6) %}
-            <div class="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm">
-              <span class="text-zinc-400">{{ t(request, "home.signal." ~ index) }}</span>
-              <span class="h-2 w-2 shrink-0 rounded-full {% if index is odd %}bg-emerald-300{% else %}bg-cyan-300{% endif %}"></span>
-            </div>
-          {% endfor %}
-        </div>
-      </aside>
-      </div>
-    </section>
-
-    <section>
-      <div class="mx-auto grid max-w-6xl gap-8 px-6 py-20 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-8">
-        <div>
-          <p class="eyebrow">{{ t(request, "home.profile.eyebrow") }}</p>
-          <h2 class="section-title mt-3">{{ t(request, "home.profile.title") }}</h2>
-        </div>
-        <div class="grid gap-5">
-          <p class="text-base leading-8 text-zinc-300">{{ t(request, "home.profile.copy") }}</p>
-          <div class="grid gap-4 sm:grid-cols-3">
-            {% for index in range(1, 4) %}
-              <div class="metric-panel">
-                <p class="text-xs font-medium uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.profile.point." ~ index ~ ".label") }}</p>
-                <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.profile.point." ~ index ~ ".copy") }}</p>
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="border-y border-white/10 bg-zinc-950/30 backdrop-blur-sm">
-      <div class="mx-auto max-w-6xl px-6 py-20 lg:px-8">
-        {% set eyebrow = t(request, "home.capabilities.eyebrow") %}
-        {% set heading = t(request, "home.capabilities.title") %}
-        {% set description = t(request, "home.capabilities.note") %}
-        {% set meta = "" %}
-        {% include "components/section_header.html" %}
-
-        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {% for index in range(1, 5) %}
-            <article class="panel card-hover h-full p-6">
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-300/20 bg-cyan-300/10 text-sm font-semibold text-cyan-100">
-                0{{ index }}
-              </div>
-              <h3 class="mt-5 text-lg font-medium leading-snug text-white">{{ t(request, "home.capability." ~ index ~ ".title") }}</h3>
-              <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.capability." ~ index ~ ".copy") }}</p>
-            </article>
-          {% endfor %}
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="mx-auto max-w-6xl px-6 py-20 lg:px-8">
-        {% set eyebrow = t(request, "home.projects.eyebrow") %}
-        {% set heading = t(request, "home.projects.title") %}
-        {% set description = t(request, "home.projects.note") %}
-        {% set action_href = url_with_lang(request, "/projects") %}
-        {% set action_label = t(request, "home.projects.link") %}
-        {% include "components/section_header.html" %}
-
-        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {% for project in featured_projects %}
-            {% include "components/project_card.html" %}
-          {% else %}
-            <div class="empty-state md:col-span-2 lg:col-span-3">{{ t(request, "home.projects.empty") }}</div>
-          {% endfor %}
-        </div>
-      </div>
-    </section>
-
-    <section class="border-y border-white/10 bg-white/[0.025]">
-      <div class="mx-auto max-w-6xl px-6 py-20 lg:px-8">
-        <div class="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)]">
-          <div>
-            <p class="eyebrow">{{ t(request, "home.stack.eyebrow") }}</p>
-            <h2 class="section-title mt-3">{{ t(request, "home.stack.title") }}</h2>
-            <p class="mt-4 text-sm leading-6 text-zinc-400">{{ t(request, "home.stack.note") }}</p>
-          </div>
-          <div class="grid gap-4 md:grid-cols-2">
-            {% set stack_groups = [
-              {"key": "ai_vision", "count": 4},
-              {"key": "backend", "count": 4},
-              {"key": "data", "count": 4},
-              {"key": "llm", "count": 3}
-            ] %}
-            {% for group in stack_groups %}
-              <article class="panel p-5">
-                <h3 class="text-sm font-semibold uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.stack.group." ~ group.key ~ ".title") }}</h3>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  {% for index in range(1, group.count + 1) %}
-                    <span class="rounded-md border border-white/10 bg-black/25 px-3 py-2 text-sm font-medium text-zinc-200">
-                      {{ t(request, "home.stack.group." ~ group.key ~ ".item." ~ index) }}
-                    </span>
-                  {% endfor %}
+        <div class="relative hidden lg:block">
+          <div class="card-surface-lg p-4">
+            <div class="rounded-3xl border border-white/10 bg-[#070707] p-5">
+              <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.18em] text-zinc-500">{{ t(request, 'home.console.kicker') }}</p>
+                  <p class="mt-2 text-lg font-medium text-white">{{ t(request, 'home.console.title') }}</p>
                 </div>
-              </article>
-            {% endfor %}
+                <span class="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-400">{{ t(request, 'home.console.status') }}</span>
+              </div>
+
+              <div class="mt-5 grid gap-3">
+                <div class="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                  <div class="flex items-center justify-between gap-4">
+                    <span class="text-sm text-zinc-300">{{ t(request, 'home.console.vision') }}</span>
+                    <span class="text-sm text-white">{{ t(request, 'home.console.checks') }}</span>
+                  </div>
+                  <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <div class="h-full w-4/5 rounded-full bg-zinc-200"></div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="card-surface p-5">
+                    <p class="text-xs text-zinc-500">{{ t(request, 'home.console.workflow') }}</p>
+                    <p class="mt-2 text-2xl font-semibold text-white">30s → 5s</p>
+                  </div>
+                  <div class="card-surface p-5">
+                    <p class="text-xs text-zinc-500">{{ t(request, 'home.console.lines') }}</p>
+                    <p class="mt-2 text-2xl font-semibold text-white">3</p>
+                  </div>
+                </div>
+                <div class="card-surface p-5">
+                  <p class="text-xs text-zinc-500">{{ t(request, 'home.console.domains') }}</p>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    <span class="tag-neutral">Industrial AI</span>
+                    <span class="tag-neutral">Computer Vision</span>
+                    <span class="tag-neutral">RAG</span>
+                    <span class="tag-neutral">Backend</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section>
-      <div class="mx-auto max-w-6xl px-6 py-20 lg:px-8">
-        {% set eyebrow = t(request, "home.posts.eyebrow") %}
-        {% set heading = t(request, "home.posts.title") %}
-        {% set description = t(request, "home.posts.note") %}
-        {% set meta = "" %}
-        {% include "components/section_header.html" %}
-
-        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {% for index in range(1, 6) %}
-            <article class="panel card-hover flex h-full flex-col p-6">
-              <p class="text-xs font-medium uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.post_preview." ~ index ~ ".category") }}</p>
-              <h3 class="mt-4 text-xl font-medium leading-snug text-white">{{ t(request, "home.post_preview." ~ index ~ ".title") }}</h3>
-              <p class="mt-3 text-sm leading-6 text-zinc-400">{{ t(request, "home.post_preview." ~ index ~ ".summary") }}</p>
-            </article>
-          {% endfor %}
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="mx-auto max-w-6xl px-6 pb-20 lg:px-8">
-        <div class="premium-panel flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between">
+    <section class="border-y border-white/10 bg-white/[0.018]">
+      <div class="container-page grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-4 lg:py-10">
+        {% for proof in [
+          {'value': 'home.proof.lines.value', 'label': 'home.proof.lines.label'},
+          {'value': 'home.proof.items.value', 'label': 'home.proof.items.label'},
+          {'value': 'home.proof.efficiency.value', 'label': 'home.proof.efficiency.label'},
+          {'value': 'home.proof.cases.value', 'label': 'home.proof.cases.label'}
+        ] %}
           <div>
-            <p class="text-xs font-medium uppercase tracking-[0.14em] text-cyan-100">{{ t(request, "home.cta.eyebrow") }}</p>
-            <h2 class="mt-3 text-2xl font-medium tracking-tight text-white sm:text-3xl">{{ t(request, "home.cta.title") }}</h2>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{{ t(request, "home.cta.copy") }}</p>
+            <p class="text-3xl font-semibold tracking-tight text-white">{{ t(request, proof.value) }}</p>
+            <p class="mt-2 text-sm leading-6 text-zinc-500">{{ t(request, proof.label) }}</p>
           </div>
-          <a href="{{ url_with_lang(request, '/contact') }}" class="btn-primary h-11 shrink-0 px-5 py-0">
-            {{ t(request, "home.cta.contact") }}
-          </a>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="featured-work" class="container-page section-pad">
+      <div class="max-w-3xl">
+        <p class="text-sm font-medium text-zinc-500">{{ t(request, 'home.featured_work.label') }}</p>
+        <h2 class="mt-4 section-title">{{ t(request, 'home.featured_work.title') }}</h2>
+      </div>
+
+      {% set work_items = [
+        {"title": "work.vehicle.title", "value": "work.vehicle.value", "result": "work.vehicle.result", "tags": ["Computer Vision", "FastAPI", "Manufacturing"], "href": "/projects/vehicle-configuration-vision-inspection", "size": "large"},
+        {"title": "work.ocr.title", "value": "work.ocr.value", "result": "work.ocr.result", "tags": ["OCR", "Rules", "Backend"], "href": "/projects/certificate-ocr-validation", "size": "small"},
+        {"title": "work.quality.title", "value": "work.quality.value", "result": "work.quality.result", "tags": ["SQL", "Power BI", "Analytics"], "href": "/projects/manufacturing-quality-analytics-platform", "size": "small"},
+        {"title": "work.rag.title", "value": "work.rag.value", "result": "work.rag.result", "tags": ["RAG", "LLM", "Search"], "href": "/projects/rag-industrial-knowledge-base-qa", "size": "wide"},
+        {"title": "work.secom.title", "value": "work.secom.value", "result": "work.secom.result", "tags": ["SECOM", "ML", "Yield"], "href": "/projects/secom-semiconductor-defect-yield-analysis", "size": "wide"}
+      ] %}
+
+      <div class="mt-12 grid gap-4 lg:grid-cols-4">
+        {% for item in work_items %}
+          <article class="group card-surface flex min-h-72 flex-col {% if item.size == 'large' %}lg:col-span-2 lg:row-span-2 lg:min-h-[34rem] lg:p-8{% elif item.size == 'wide' %}lg:col-span-2{% endif %}">
+            <div class="flex items-start justify-between gap-6">
+              <p class="max-w-sm text-xl font-semibold leading-tight tracking-tight text-white {% if item.size == 'large' %}sm:text-3xl{% endif %}">{{ t(request, item.title) }}</p>
+              <span class="text-sm text-zinc-600 transition group-hover:text-zinc-300">↗</span>
+            </div>
+            <p class="mt-5 max-w-md text-sm leading-7 text-zinc-400 {% if item.size == 'large' %}sm:text-base sm:leading-8{% endif %}">{{ t(request, item.value) }}</p>
+            <div class="mt-auto pt-10">
+              <p class="text-sm font-medium text-zinc-200">{{ t(request, item.result) }}</p>
+              <div class="mt-4 flex flex-wrap gap-2">
+                {% for tag in item.tags %}<span class="tag-neutral">{{ tag }}</span>{% endfor %}
+              </div>
+              <a href="{{ url_with_lang(request, item.href) }}" class="mt-6 btn-ghost">
+                {{ t(request, 'common.view_case') }}
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="border-t border-white/10 bg-white/[0.015]">
+      <div class="container-page section-pad">
+        <div class="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+          <div class="lg:sticky lg:top-24">
+            <p class="text-sm font-medium text-zinc-500">{{ t(request, 'home.case.label') }}</p>
+            <h2 class="mt-4 section-title">{{ t(request, 'home.case.title') }}</h2>
+            <p class="mt-6 text-base leading-8 text-zinc-400">{{ t(request, 'home.case.copy') }}</p>
+            <a href="{{ url_with_lang(request, '/projects/vehicle-configuration-vision-inspection') }}" class="mt-8 btn-ghost">
+              {{ t(request, 'common.view_full_case') }}
+            </a>
+          </div>
+
+          <div class="card-surface-lg">
+            <div class="grid gap-5 sm:grid-cols-2">
+              {% for block in [
+                {'title': 'home.case.problem', 'copy': 'home.case.problem.copy'},
+                {'title': 'home.case.solution', 'copy': 'home.case.solution.copy'},
+                {'title': 'home.case.role', 'copy': 'home.case.role.copy'},
+                {'title': 'home.case.impact', 'copy': 'home.case.impact.copy'}
+              ] %}
+                <div class="card-surface">
+                  <p class="text-sm font-medium text-white">{{ t(request, block.title) }}</p>
+                  <p class="mt-3 text-sm leading-7 text-zinc-400">{{ t(request, block.copy) }}</p>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="mt-5 card-surface">
+              <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p class="text-sm font-medium text-white">{{ t(request, 'home.case.architecture') }}</p>
+                  <p class="mt-3 max-w-xl text-sm leading-7 text-zinc-400">{{ t(request, 'home.case.architecture.copy') }}</p>
+                </div>
+                <div class="flex flex-wrap gap-2 sm:justify-end">
+                  {% for tech in ["Python", "OpenCV", "YOLO", "FastAPI", "PostgreSQL"] %}<span class="tag-neutral">{{ tech }}</span>{% endfor %}
+                </div>
+              </div>
+              <div class="mt-8 grid gap-3 sm:grid-cols-5">
+                {% for step in ["capture", "infer", "validate", "review", "feedback"] %}
+                  <div class="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-center text-xs font-medium text-zinc-300">
+                    {{ t(request, "home.case.step." ~ step) }}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -218,3 +184,5 @@
   {% include "components/site_footer.html" %}
 </div>
 {% endblock %}
+
+

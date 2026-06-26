@@ -1,0 +1,83 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="site-shell">
+  {% include "components/site_header.html" %}
+
+  <main class="relative z-10">
+    <section class="container-page section-pad">
+      <div class="max-w-4xl">
+        <p class="text-sm font-medium text-zinc-500">{{ t(request, 'lab.kicker') }}</p>
+        <h1 class="mt-5 page-title">{{ t(request, 'lab.title') }}</h1>
+        <p class="mt-6 max-w-3xl text-base leading-8 text-zinc-400 sm:text-lg">
+          {{ t(request, 'lab.subtitle') }}
+        </p>
+        <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+          <a href="#experiments" class="btn-primary h-12 px-6 py-0">{{ t(request, 'lab.cta.experiments') }}</a>
+          <a href="{{ url_with_lang(request, '/blog') }}" class="btn-secondary h-12 px-6 py-0">{{ t(request, 'lab.cta.notes') }}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-white/10 bg-white/[0.015]">
+      <div class="container-page grid gap-4 py-8 sm:grid-cols-2 lg:grid-cols-4">
+        {% for category in ["lab.category.rag", "lab.category.agent", "lab.category.semiconductor", "lab.category.evaluation"] %}
+          <div class="card-surface">
+            <p class="text-sm font-medium text-white">{{ t(request, category) }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="experiments" class="container-page section-pad">
+      <div class="max-w-3xl">
+        <p class="text-sm font-medium text-zinc-500">{{ t(request, 'lab.experiments.label') }}</p>
+        <h2 class="mt-4 section-title">{{ t(request, 'lab.experiments.title') }}</h2>
+      </div>
+
+      {% set experiments = [
+        {"title": "lab.rag.title", "question": "lab.rag.question", "approach": "lab.rag.approach", "tools": ["FastAPI", "Qdrant", "BGE", "LangChain"], "status": "lab.status.prototype", "size": "large"},
+        {"title": "lab.agent.title", "question": "lab.agent.question", "approach": "lab.agent.approach", "tools": ["LangGraph", "LangChain", "Python"], "status": "lab.status.research", "size": "small"},
+        {"title": "lab.secom.title", "question": "lab.secom.question", "approach": "lab.secom.approach", "tools": ["Pandas", "scikit-learn", "LightGBM", "Optuna"], "status": "lab.status.case_study", "size": "small"},
+        {"title": "lab.defect.title", "question": "lab.defect.question", "approach": "lab.defect.approach", "tools": ["Python", "PyTorch", "OpenCV"], "status": "lab.status.in_progress", "size": "large"}
+      ] %}
+
+      <div class="mt-12 grid gap-4 lg:grid-cols-4">
+        {% for experiment in experiments %}
+          {% include "components/lab_experiment_card.html" %}
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="border-t border-white/10 bg-white/[0.012]">
+      <div class="container-page section-pad">
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start">
+          <div>
+            <p class="text-sm font-medium text-zinc-500">{{ t(request, 'lab.methods.label') }}</p>
+            <h2 class="mt-4 section-title">{{ t(request, 'lab.methods.title') }}</h2>
+            <p class="mt-5 text-base leading-8 text-zinc-400">{{ t(request, 'lab.methods.copy') }}</p>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            {% set methods = [
+              {"title": "lab.method.retrieval.title", "copy": "lab.method.retrieval.copy"},
+              {"title": "lab.method.agent.title", "copy": "lab.method.agent.copy"},
+              {"title": "lab.method.source.title", "copy": "lab.method.source.copy"},
+              {"title": "lab.method.human.title", "copy": "lab.method.human.copy"}
+            ] %}
+            {% for method in methods %}
+              <article class="card-surface">
+                <h3 class="text-xl font-semibold tracking-tight text-white">{{ t(request, method.title) }}</h3>
+                <p class="mt-3 text-sm leading-7 text-zinc-400">{{ t(request, method.copy) }}</p>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {% include "components/site_footer.html" %}
+</div>
+{% endblock %}
+
+

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import uuid
 from typing import Any
@@ -20,7 +20,7 @@ from app.services.blog import (
 from app.services.comments import list_approved_comments_for_post, submit_blog_comment
 from app.services.seo import build_page_seo
 from app.web.flash import flash
-from app.web.i18n import get_lang
+from app.web.i18n import translate as t
 from app.web.markdown import render_markdown
 from app.web.security import verify_csrf_token
 from app.web.templating import templates
@@ -31,25 +31,14 @@ router = APIRouter(prefix="/blog", tags=["blog"])
 @router.get("", response_class=HTMLResponse)
 async def blog_index(request: Request, session: SessionDependency) -> HTMLResponse:
     posts = await list_public_posts(session)
-    is_en = get_lang(request) == "en"
     return templates.TemplateResponse(
         request=request,
         name="blog/index.html",
         context={
             **build_page_seo(
                 request,
-                title=(
-                    "Blog | IndusAI Lab"
-                    if is_en
-                    else "博客 | IndusAI Lab"
-                ),
-                description=(
-                    "Notes on industrial vision inspection, manufacturing quality metrics, "
-                    "SECOM semiconductor analytics, RAG industrial knowledge bases, and "
-                    "FastAPI portfolio development."
-                    if is_en
-                    else "围绕工业视觉检测、制造质量指标、SECOM 半导体数据分析、RAG 工业知识库和 FastAPI 作品集建设的技术文章。"
-                ),
+                title=t(request, "seo.blog.title"),
+                description=t(request, "seo.blog.description"),
                 path="/blog",
             ),
             "posts": posts,
@@ -64,7 +53,7 @@ async def blog_index(request: Request, session: SessionDependency) -> HTMLRespon
 async def blog_detail(request: Request, slug: str, session: SessionDependency) -> HTMLResponse:
     post = await get_public_post_by_slug(session, slug)
     if post is None:
-        raise HTTPException(status_code=404, detail="文章不存在")
+        raise HTTPException(status_code=404, detail="Post not found")
 
     return templates.TemplateResponse(
         request=request,
@@ -81,7 +70,7 @@ async def submit_comment(
 ) -> Response:
     post = await get_public_post_by_slug(session, slug)
     if post is None:
-        raise HTTPException(status_code=404, detail="文章不存在")
+        raise HTTPException(status_code=404, detail="Post not found")
 
     form = await request.form()
     csrf_value = form.get("csrf_token")
@@ -99,7 +88,7 @@ async def submit_comment(
     submitted_content = content if isinstance(content, str) else ""
     result = await submit_blog_comment(session, post, user_id, submitted_content)
     if result.created:
-        flash(request, "评论已提交，等待审核。", "success")
+        flash(request, "Comment submitted and pending review.", "success")
         return RedirectResponse(
             url=f"/blog/{post.slug}",
             status_code=status.HTTP_303_SEE_OTHER,
@@ -130,11 +119,7 @@ async def _build_blog_detail_context(
     return {
         **build_page_seo(
             request,
-            title=(
-                f"{post.title} | IndusAI Lab"
-                if get_lang(request) == "en"
-                else f"{post.title} | IndusAI Lab"
-            ),
+            title=f"{post.title} | libaoshuai",
             description=post.description,
             path=f"/blog/{post.slug}",
             og_type="article",

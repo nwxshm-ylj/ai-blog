@@ -1,12 +1,12 @@
-<div class="flex flex-wrap gap-3">
+﻿<div class="flex flex-wrap gap-3">
   {% if project.github_url %}
     <a href="{{ project.github_url }}" class="btn-secondary px-3 py-2" rel="noreferrer" target="_blank">
-      {{ t(request, "projects.github") if current_lang(request) == "zh" else "GitHub" }}
+      {{ t(request, 'common.github') }}
     </a>
   {% endif %}
   {% if project.demo_url %}
     <a href="{{ project.demo_url }}" class="btn-primary px-3 py-2" rel="noreferrer" target="_blank">
-      {{ t(request, "projects.demo") if current_lang(request) == "zh" else "Live demo" }}
+      {{ t(request, 'common.live_demo') }}
     </a>
   {% endif %}
 </div>

@@ -1,50 +1,120 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block content %}
 <div class="site-shell">
   {% include "components/site_header.html" %}
 
   <main class="relative z-10">
-    {% set eyebrow = t(request, "projects.eyebrow") %}
-    {% set heading = t(request, "projects.title") %}
-    {% set description = t(request, "projects.subtitle") %}
-    {% set back_href = "" %}
-    {% set back_label = "" %}
-    {% include "components/page_header.html" %}
-
-    <section class="container-page py-10 lg:py-12">
-      {% set eyebrow = t(request, "projects.featured") %}
-      {% set heading = t(request, "projects.featured_title") %}
-      {% set description = "" %}
-      {% set action_href = "" %}
-      {% set action_label = "" %}
-      {% set meta = (featured_projects | length) ~ " " ~ t(request, "projects.highlighted") %}
-      {% include "components/section_header.html" %}
-
-      <div class="grid gap-5 lg:grid-cols-2">
-        {% for project in featured_projects %}
-          {% include "components/project_card.html" %}
-        {% else %}
-          <div class="empty-state lg:col-span-2">{{ t(request, "projects.empty_featured") }}</div>
-        {% endfor %}
+    <section class="container-page section-pad">
+      <div class="max-w-4xl">
+        <p class="text-sm font-medium text-zinc-500">{{ t(request, 'projects.hero.kicker') }}</p>
+        <h1 class="mt-5 page-title">
+          {{ t(request, 'projects.hero.title') }}
+        </h1>
+        <p class="mt-6 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+          {{ t(request, 'projects.hero.copy') }}
+        </p>
+        <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+          <a href="#featured-case" class="btn-primary h-12 px-6 py-0">{{ t(request, 'projects.cta.featured') }}</a>
+          <a href="#all-cases" class="btn-secondary h-12 px-6 py-0">{{ t(request, 'projects.cta.all') }}</a>
+        </div>
       </div>
     </section>
 
-    <section class="border-t border-white/10 bg-white/[0.025]">
-      <div class="container-page py-10 lg:py-12">
-        {% set eyebrow = t(request, "projects.all") %}
-        {% set heading = t(request, "projects.index") %}
-        {% set description = "" %}
-        {% set action_href = "" %}
-        {% set action_label = "" %}
-        {% set meta = "" %}
-        {% include "components/section_header.html" %}
+    <section class="border-y border-white/10 bg-white/[0.015]">
+      <div class="container-page overflow-x-auto py-4">
+        <div class="flex min-w-max gap-2 text-sm">
+          {% for filter_key in ["all", "vision", "ocr", "analytics", "rag", "agent", "semiconductor"] %}
+            <button type="button" class="tag-neutral px-4 py-2 font-medium transition hover:border-white/25 hover:bg-white/[0.04] hover:text-white {% if loop.first %}bg-white text-black hover:bg-zinc-200 hover:text-black{% endif %}">
+              {{ t(request, 'projects.filter.' ~ filter_key) }}
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
 
-        <div class="grid gap-5 md:grid-cols-2">
-          {% for project in projects %}
+    <section id="featured-case" class="container-page section-pad">
+      <div class="grid gap-8 card-surface-lg lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <div>
+          <p class="text-sm font-medium text-zinc-500">{{ t(request, 'projects.featured_case') }}</p>
+          <h2 class="mt-4 max-w-3xl section-title">
+            {{ t(request, 'work.vehicle.title') }}
+          </h2>
+          <p class="mt-5 max-w-2xl text-base leading-8 text-zinc-400">
+            {{ t(request, 'projects.value.vehicle') }}
+          </p>
+
+          <div class="mt-10 grid gap-5 sm:grid-cols-3">
+            <div>
+              <p class="text-sm font-medium text-white">{{ t(request, 'projects.problem') }}</p>
+              <p class="mt-2 text-sm leading-6 text-zinc-500">{{ t(request, 'case.vehicle.problem') }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">{{ t(request, 'projects.solution') }}</p>
+              <p class="mt-2 text-sm leading-6 text-zinc-500">{{ t(request, 'case.vehicle.solution') }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">{{ t(request, 'projects.key_impact') }}</p>
+              <p class="mt-2 text-sm leading-6 text-zinc-500">{{ t(request, 'projects.result.vehicle') }}</p>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-2">
+            {% for tech in ["Python", "OpenCV", "YOLO", "ONNXRuntime", "FastAPI"] %}
+              <span class="tag-neutral">{{ tech }}</span>
+            {% endfor %}
+          </div>
+
+          <a href="{{ url_with_lang(request, '/projects/vehicle-configuration-vision-inspection') }}" class="mt-10 btn-ghost">
+            {{ t(request, 'common.view_case') }}
+          </a>
+        </div>
+
+        <aside class="rounded-3xl border border-white/10 bg-[#080808] p-5">
+          <div class="border-b border-white/10 pb-5">
+            <p class="text-xs uppercase tracking-[0.18em] text-zinc-600">{{ t(request, 'projects.architecture_preview') }}</p>
+            <p class="mt-2 text-lg font-medium text-white">{{ t(request, 'projects.inspection_pipeline') }}</p>
+          </div>
+          <div class="mt-5 space-y-3">
+            {% for step in ["capture", "infer", "validate", "review", "feedback"] %}
+              <div class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <span class="text-sm text-zinc-300">{{ t(request, 'home.case.step.' ~ step) }}</span>
+                <span class="h-1.5 w-1.5 rounded-full bg-zinc-300"></span>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            <div class="card-surface p-5">
+              <p class="text-xs text-zinc-500">{{ t(request, 'projects.metric.lines') }}</p>
+              <p class="mt-2 text-2xl font-semibold text-white">3+</p>
+            </div>
+            <div class="card-surface p-5">
+              <p class="text-xs text-zinc-500">{{ t(request, 'projects.metric.items') }}</p>
+              <p class="mt-2 text-2xl font-semibold text-white">20+</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="all-cases" class="border-t border-white/10 bg-white/[0.012]">
+      <div class="container-page section-pad">
+        <div class="max-w-3xl">
+          <p class="text-sm font-medium text-zinc-500">{{ t(request, 'projects.all_cases') }}</p>
+          <h2 class="mt-4 section-title">{{ t(request, 'projects.all_cases.title') }}</h2>
+        </div>
+
+        {% set case_items = [
+          {"slug": "certificate-ocr-validation", "title": "work.ocr.title", "value": "projects.value.ocr", "result": "projects.result.ocr", "domain": "OCR", "tags": ["OCR", "OpenCV", "FastAPI", "Rule Validation"]},
+          {"slug": "manufacturing-quality-analytics-platform", "title": "work.quality.title", "value": "projects.value.quality", "result": "projects.result.quality", "domain": "projects.domain.analytics", "tags": ["Power BI", "SQL", "Python", "Pandas"]},
+          {"slug": "rag-industrial-knowledge-base-qa", "title": "work.rag.title", "value": "projects.value.rag", "result": "projects.result.rag", "domain": "projects.domain.rag_agent", "tags": ["FastAPI", "LangChain", "Qdrant", "RAG"]},
+          {"slug": "secom-semiconductor-defect-yield-analysis", "title": "work.secom.title", "value": "projects.value.secom", "result": "projects.result.secom", "domain": "projects.domain.semiconductor", "tags": ["SECOM", "Pandas", "LightGBM", "Optuna"]},
+          {"slug": "bolt-torque-status-monitoring", "title": "Torque Monitoring System", "value": "projects.value.torque", "result": "projects.result.torque", "domain": "projects.domain.manufacturing_system", "tags": ["Python", "SQL", "FastAPI", "Monitoring"]}
+        ] %}
+
+        <div class="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {% for item in case_items %}
             {% include "components/project_card.html" %}
-          {% else %}
-            <div class="empty-state md:col-span-2">{{ t(request, "projects.empty") }}</div>
           {% endfor %}
         </div>
       </div>
@@ -53,3 +123,5 @@
   {% include "components/site_footer.html" %}
 </div>
 {% endblock %}
+
+
