@@ -1,5 +1,5 @@
-﻿{% set lang = current_lang(request) %}
-<div class="inline-flex h-9 items-center rounded-full border border-white/10 bg-white/[0.03] p-1 text-xs font-medium text-zinc-400" aria-label="Language switcher">
-  <a href="{{ switch_lang_url(request, 'zh') }}" class="inline-flex h-7 items-center rounded-full px-2.5 transition {% if lang == 'zh' %}bg-white text-zinc-950{% else %}hover:bg-white/[0.07] hover:text-white{% endif %}">{{ t(request, 'lang.zh') }}</a>
-  <a href="{{ switch_lang_url(request, 'en') }}" class="inline-flex h-7 items-center rounded-full px-2.5 transition {% if lang == 'en' %}bg-white text-zinc-950{% else %}hover:bg-white/[0.07] hover:text-white{% endif %}">{{ t(request, 'lang.en') }}</a>
+{% set lang = current_lang(request) %}
+<div class="inline-flex h-8 items-center rounded-full border border-black/10 bg-neutral-100 p-1 text-xs font-medium text-neutral-600" aria-label="Language switcher">
+  <a href="{{ switch_lang_url(request, 'zh') }}" class="inline-flex h-6 items-center rounded-full px-2 transition {% if lang == 'zh' %}bg-white text-neutral-950 shadow-sm shadow-black/5{% else %}hover:bg-white hover:text-neutral-950{% endif %}">{{ t(request, 'lang.zh') }}</a>
+  <a href="{{ switch_lang_url(request, 'en') }}" class="inline-flex h-6 items-center rounded-full px-2 transition {% if lang == 'en' %}bg-white text-neutral-950 shadow-sm shadow-black/5{% else %}hover:bg-white hover:text-neutral-950{% endif %}">{{ t(request, 'lang.en') }}</a>
 </div>

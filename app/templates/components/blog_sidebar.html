@@ -1,54 +1,54 @@
 <aside class="space-y-5 lg:sticky lg:top-24">
   <section class="panel p-5">
-    <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-300">{{ t(request, "blog.toc") }}</h2>
-    <div class="mt-4 space-y-3 text-sm text-zinc-500">
-      <a href="#content" class="block transition hover:translate-x-0.5 hover:text-cyan-100">{{ t(request, "blog.title") }}</a>
-      <a href="#related-context" class="block transition hover:translate-x-0.5 hover:text-cyan-100">{{ t(request, "blog.categories") }}</a>
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-700">{{ t(request, "blog.toc") }}</h2>
+    <div class="mt-4 space-y-3 text-sm text-neutral-500">
+      <a href="#content" class="block transition hover:translate-x-0.5 hover:text-blue-700">{{ t(request, "blog.title") }}</a>
+      <a href="#related-context" class="block transition hover:translate-x-0.5 hover:text-blue-700">{{ t(request, "blog.categories") }}</a>
     </div>
   </section>
 
   <section class="panel p-5">
-    <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-300">{{ t(request, "blog.search") }}</h2>
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-700">{{ t(request, "blog.search") }}</h2>
     <form class="mt-4" action="{{ url_with_lang(request, '/blog') }}" method="get" role="search">
       {% if current_lang(request) != "en" %}<input type="hidden" name="lang" value="{{ current_lang(request) }}">{% endif %}
       <label for="blog-search" class="sr-only">{{ t(request, "blog.search_label") }}</label>
       <input id="blog-search" name="q" type="search" placeholder="{{ t(request, 'blog.search_placeholder') }}" disabled class="field cursor-not-allowed opacity-70">
-      <p class="mt-3 text-xs leading-5 text-zinc-500">{{ t(request, "blog.search_note") }}</p>
+      <p class="mt-3 text-xs leading-5 text-neutral-500">{{ t(request, "blog.search_note") }}</p>
     </form>
   </section>
 
   <section id="related-context" class="panel p-5">
-    <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-300">{{ t(request, "blog.recent") }}</h2>
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-700">{{ t(request, "blog.recent") }}</h2>
     <div class="mt-4 space-y-4">
       {% for recent_post in recent_posts %}
-      <a href="{{ url_with_lang(request, '/blog/' ~ recent_post.slug) }}" class="block border-b border-white/10 pb-4 transition last:border-0 last:pb-0 hover:translate-x-0.5">
-        <span class="text-sm font-medium leading-6 text-white transition hover:text-cyan-100">{{ recent_post.title }}</span>
-        <span class="mt-1 block text-xs text-zinc-500">{{ recent_post.published_at.strftime("%b %d, %Y") }}</span>
+      <a href="{{ url_with_lang(request, '/blog/' ~ recent_post.slug) }}" class="block border-b border-black/10 pb-4 transition last:border-0 last:pb-0 hover:translate-x-0.5">
+        <span class="text-sm font-medium leading-6 text-neutral-950 transition hover:text-blue-700">{{ recent_post.title }}</span>
+        <span class="mt-1 block text-xs text-neutral-500">{{ recent_post.published_at.strftime("%b %d, %Y") }}</span>
       </a>
       {% else %}
-      <p class="text-sm text-zinc-500">{{ t(request, "blog.no_recent") }}</p>
+      <p class="text-sm text-neutral-500">{{ t(request, "blog.no_recent") }}</p>
       {% endfor %}
     </div>
   </section>
 
   <section class="panel p-5">
-    <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-300">{{ t(request, "blog.categories") }}</h2>
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-700">{{ t(request, "blog.categories") }}</h2>
     <div class="mt-4 flex flex-wrap gap-2">
       {% for category in categories %}
-      <a href="{{ url_with_lang(request, '/blog', {'category': category}) }}" class="rounded-md border border-white/10 bg-white/[0.025] px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-blue-300/50 hover:bg-blue-300/10 hover:text-white">{{ category }}</a>
+      <a href="{{ url_with_lang(request, '/blog', {'category': category}) }}" class="rounded-md border border-black/10 bg-neutral-50 px-3 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-blue-600/25 hover:bg-blue-50 hover:text-neutral-950">{{ category }}</a>
       {% else %}
-      <p class="text-sm text-zinc-500">{{ t(request, "blog.no_categories") }}</p>
+      <p class="text-sm text-neutral-500">{{ t(request, "blog.no_categories") }}</p>
       {% endfor %}
     </div>
   </section>
 
   <section class="panel p-5">
-    <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-300">{{ t(request, "blog.tags") }}</h2>
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-700">{{ t(request, "blog.tags") }}</h2>
     <div class="mt-4 flex flex-wrap gap-2">
       {% for tag in tags %}
         {% include "components/tag_pill.html" %}
       {% else %}
-        <p class="text-sm text-zinc-500">{{ t(request, "blog.no_tags") }}</p>
+        <p class="text-sm text-neutral-500">{{ t(request, "blog.no_tags") }}</p>
       {% endfor %}
     </div>
   </section>

@@ -1,4 +1,4 @@
-﻿<div class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+<div class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
   <div>
     {% if eyebrow %}
       <p class="label-copy">{{ eyebrow }}</p>
@@ -11,6 +11,6 @@
   {% if action_href and action_label %}
     <a href="{{ action_href }}" class="btn-secondary">{{ action_label }}</a>
   {% elif meta %}
-    <span class="text-sm text-zinc-500">{{ meta }}</span>
+    <span class="text-sm text-neutral-500">{{ meta }}</span>
   {% endif %}
 </div>

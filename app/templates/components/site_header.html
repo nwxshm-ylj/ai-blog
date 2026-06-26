@@ -1,4 +1,4 @@
-﻿{% set public_nav_items = [
+{% set public_nav_items = [
   {"label_key": "nav.home", "href": "/"},
   {"label_key": "nav.projects", "href": "/projects"},
   {"label_key": "nav.ai_lab", "href": "/ai-lab"},
@@ -7,37 +7,37 @@
   {"label_key": "nav.about", "href": "/about"}
 ] %}
 
-<header class="sticky top-0 z-40 border-b border-white/10 bg-[#050505]/80 backdrop-blur-xl">
-  <nav class="container-page flex h-16 items-center justify-between gap-4" aria-label="Main navigation">
-    <a href="{{ url_with_lang(request, '/') }}" class="group flex min-w-0 items-center gap-3">
-      <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-white text-xs font-semibold text-black transition group-hover:bg-zinc-200">LB</span>
+<header data-site-header class="sticky top-0 z-40 border-b border-black/10 bg-white/85 backdrop-blur-xl transition-[background-color,border-color,backdrop-filter] duration-300 ease-out">
+  <nav class="container-page flex h-14 items-center justify-between gap-3" aria-label="Main navigation">
+    <a href="{{ url_with_lang(request, '/') }}" class="group flex min-w-0 items-center gap-2.5">
+      <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-neutral-950 text-[11px] font-semibold text-white transition group-hover:bg-neutral-800">LB</span>
       <span class="min-w-0">
-        <span class="block truncate text-sm font-medium tracking-tight text-white">{{ t(request, 'brand.name') }}</span>
-        <span class="hidden truncate text-xs text-zinc-500 sm:block">{{ t(request, 'brand.tagline') }}</span>
+        <span class="block truncate text-sm font-medium tracking-tight text-neutral-950">{{ t(request, 'brand.name') }}</span>
+        <span class="hidden truncate text-[11px] leading-4 text-neutral-500 sm:block">{{ t(request, 'brand.tagline') }}</span>
       </span>
     </a>
 
-    <div class="flex min-w-0 flex-1 items-center justify-end gap-3">
-      <div class="hidden items-center gap-5 text-sm text-zinc-500 lg:gap-7 md:flex">
+    <div class="flex min-w-0 flex-1 items-center justify-end gap-2.5">
+      <div class="hidden items-center gap-1 rounded-full border border-black/10 bg-neutral-100 p-1 text-sm text-neutral-600 shadow-sm shadow-black/[0.03] md:flex">
         {% for item in public_nav_items %}
           {% set is_active = request.url.path == item.href or (item.href != "/" and request.url.path.startswith(item.href)) %}
-          <a href="{{ url_with_lang(request, item.href) }}" class="whitespace-nowrap transition hover:text-white {% if is_active %}text-white{% endif %}">{{ t(request, item.label_key) }}</a>
+          <a href="{{ url_with_lang(request, item.href) }}" class="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-white hover:text-neutral-950 {% if is_active %}bg-white text-neutral-950 shadow-sm shadow-black/5{% endif %}">{{ t(request, item.label_key) }}</a>
         {% endfor %}
       </div>
 
       <div class="flex shrink-0 items-center gap-2">
         {% include "components/language_switcher.html" %}
-        <a href="{{ url_with_lang(request, '/contact') }}" class="btn-secondary hidden sm:inline-flex">{{ t(request, 'nav.contact') }}</a>
+        <a href="{{ url_with_lang(request, '/contact') }}" class="btn-secondary hidden h-9 px-3.5 sm:inline-flex">{{ t(request, 'nav.contact') }}</a>
         {% if request.session.get("is_admin") %}
-          <a href="{{ url_with_lang(request, '/admin') }}" class="btn-secondary hidden md:inline-flex">{{ t(request, 'nav.admin') }}</a>
+          <a href="{{ url_with_lang(request, '/admin') }}" class="btn-secondary hidden h-9 px-3.5 md:inline-flex">{{ t(request, 'nav.admin') }}</a>
         {% endif %}
-        <details class="relative md:hidden">
-          <summary class="btn-secondary flex cursor-pointer list-none">{{ t(request, 'nav.menu') }}</summary>
-          <div class="absolute right-0 mt-3 w-52 rounded-2xl border border-white/10 bg-[#080808] p-2 shadow-2xl shadow-black/40">
+        <details data-mobile-menu class="mobile-menu relative md:hidden">
+          <summary class="btn-secondary flex h-9 cursor-pointer list-none px-3.5" aria-expanded="false">{{ t(request, 'nav.menu') }}</summary>
+          <div class="mobile-menu-panel absolute right-0 mt-2 w-52 rounded-2xl border border-black/10 bg-white p-2 shadow-xl shadow-black/10">
             {% for item in public_nav_items %}
-              <a href="{{ url_with_lang(request, item.href) }}" class="block rounded-xl px-3 py-2 text-sm text-zinc-400 transition hover:bg-white/[0.05] hover:text-white">{{ t(request, item.label_key) }}</a>
+              <a href="{{ url_with_lang(request, item.href) }}" class="block rounded-xl px-3 py-2 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-950">{{ t(request, item.label_key) }}</a>
             {% endfor %}
-            <a href="{{ url_with_lang(request, '/contact') }}" class="block rounded-xl px-3 py-2 text-sm text-zinc-400 transition hover:bg-white/[0.05] hover:text-white">{{ t(request, 'nav.contact') }}</a>
+            <a href="{{ url_with_lang(request, '/contact') }}" class="block rounded-xl px-3 py-2 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-950">{{ t(request, 'nav.contact') }}</a>
           </div>
         </details>
       </div>

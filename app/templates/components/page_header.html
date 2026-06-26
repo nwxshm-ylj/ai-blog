@@ -1,14 +1,14 @@
-﻿<section class="border-b border-white/10 bg-white/[0.012]">
+<section data-reveal class="border-b border-black/10 bg-neutral-50">
   <div class="container-page section-pad">
     {% if back_href and back_label %}
       <a href="{{ back_href }}" class="btn-ghost">{{ back_label }}</a>
     {% endif %}
     {% if eyebrow %}
-      <p class="label-copy {% if back_href and back_label %}mt-6{% endif %}">{{ eyebrow }}</p>
+      <p class="label-copy {% if back_href and back_label %}mt-4{% endif %}">{{ eyebrow }}</p>
     {% endif %}
     <h1 class="page-title text-balance mt-4">{{ heading }}</h1>
     {% if description %}
-      <p class="body-copy mt-6 max-w-3xl">{{ description }}</p>
+      <p class="body-copy mt-4 max-w-3xl">{{ description }}</p>
     {% endif %}
   </div>
 </section>
