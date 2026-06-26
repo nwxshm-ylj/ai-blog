@@ -14,6 +14,7 @@ class Project(BaseModel):
     tech_stack: list[str]
     github_url: Optional[HttpUrl] = None
     demo_url: Optional[HttpUrl] = None
+    cover_image: Optional[str] = None
     featured: bool = False
     status: str
     impact: str

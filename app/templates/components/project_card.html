@@ -5,6 +5,7 @@
   {% set card_domain = t(request, item.domain) if item.domain.startswith('projects.') else item.domain %}
   {% set card_tags = item.tags %}
   {% set card_href = '/projects/' ~ item.slug %}
+  {% set card_cover_image = item.cover_image | default('', true) %}
 {% else %}
   {% set card_title = project.title %}
   {% set card_value = project.summary or project.description %}
@@ -12,9 +13,13 @@
   {% set card_domain = project.category %}
   {% set card_tags = project.tech_stack[:4] %}
   {% set card_href = '/projects/' ~ project.slug %}
+  {% set card_cover_image = project.cover_image or '' %}
 {% endif %}
 
-<article data-reveal class="card-surface flex min-h-64 flex-col card-interactive">
+<article data-reveal class="card-surface flex min-h-64 flex-col overflow-hidden card-interactive">
+  {% if card_cover_image %}
+    <img src="{{ card_cover_image }}" alt="{{ card_title }}" class="mb-5 aspect-[4/3] w-full rounded-xl object-cover">
+  {% endif %}
   <div class="flex items-start justify-between gap-5">
     <div class="min-w-0">
       <p class="label-copy">{{ card_domain }}</p>

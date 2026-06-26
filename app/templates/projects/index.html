@@ -71,6 +71,7 @@
         </div>
 
         <aside class="rounded-2xl border border-black/10 bg-white p-5">
+          <img src="/static/images/project-vision-inspection.png" alt="{{ t(request, 'work.vehicle.title') }}" class="mb-5 aspect-[4/3] w-full rounded-xl object-cover">
           <div class="border-b border-black/10 pb-5">
             <p class="text-xs uppercase tracking-[0.18em] text-neutral-500">{{ t(request, 'projects.architecture_preview') }}</p>
             <p class="mt-2 text-lg font-medium text-neutral-950">{{ t(request, 'projects.inspection_pipeline') }}</p>
@@ -105,11 +106,11 @@
         </div>
 
         {% set case_items = [
-          {"slug": "certificate-ocr-validation", "title": "work.ocr.title", "value": "projects.value.ocr", "result": "projects.result.ocr", "domain": "OCR", "tags": ["OCR", "OpenCV", "FastAPI", "Rule Validation"]},
-          {"slug": "manufacturing-quality-analytics-platform", "title": "work.quality.title", "value": "projects.value.quality", "result": "projects.result.quality", "domain": "projects.domain.analytics", "tags": ["Power BI", "SQL", "Python", "Pandas"]},
-          {"slug": "rag-industrial-knowledge-base-qa", "title": "work.rag.title", "value": "projects.value.rag", "result": "projects.result.rag", "domain": "projects.domain.rag_agent", "tags": ["FastAPI", "LangChain", "Qdrant", "RAG"]},
-          {"slug": "secom-semiconductor-defect-yield-analysis", "title": "work.secom.title", "value": "projects.value.secom", "result": "projects.result.secom", "domain": "projects.domain.semiconductor", "tags": ["SECOM", "Pandas", "LightGBM", "Optuna"]},
-          {"slug": "bolt-torque-status-monitoring", "title": "Torque Monitoring System", "value": "projects.value.torque", "result": "projects.result.torque", "domain": "projects.domain.manufacturing_system", "tags": ["Python", "SQL", "FastAPI", "Monitoring"]}
+          {"slug": "certificate-ocr-validation", "title": "work.ocr.title", "value": "projects.value.ocr", "result": "projects.result.ocr", "domain": "OCR", "tags": ["OCR", "OpenCV", "FastAPI", "Rule Validation"], "cover_image": "/static/images/project-vision-inspection.png"},
+          {"slug": "manufacturing-quality-analytics-platform", "title": "work.quality.title", "value": "projects.value.quality", "result": "projects.result.quality", "domain": "projects.domain.analytics", "tags": ["Power BI", "SQL", "Python", "Pandas"], "cover_image": "/static/images/project-quality-analytics.png"},
+          {"slug": "rag-industrial-knowledge-base-qa", "title": "work.rag.title", "value": "projects.value.rag", "result": "projects.result.rag", "domain": "projects.domain.rag_agent", "tags": ["FastAPI", "LangChain", "Qdrant", "RAG"], "cover_image": "/static/images/project-rag-knowledge.png"},
+          {"slug": "secom-semiconductor-defect-yield-analysis", "title": "work.secom.title", "value": "projects.value.secom", "result": "projects.result.secom", "domain": "projects.domain.semiconductor", "tags": ["SECOM", "Pandas", "LightGBM", "Optuna"], "cover_image": "/static/images/project-quality-analytics.png"},
+          {"slug": "bolt-torque-status-monitoring", "title": "Torque Monitoring System", "value": "projects.value.torque", "result": "projects.result.torque", "domain": "projects.domain.manufacturing_system", "tags": ["Python", "SQL", "FastAPI", "Monitoring"], "cover_image": "/static/images/project-quality-analytics.png"}
         ] %}
 
         <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">

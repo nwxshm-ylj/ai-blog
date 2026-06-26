@@ -95,6 +95,15 @@
 } %}
 {% set case = case_map.get(project.slug) %}
 {% set lang = current_lang(request) %}
+{% set case_cover_map = {
+  "vehicle-configuration-vision-inspection": "/static/images/project-vision-inspection.png",
+  "certificate-ocr-validation": "/static/images/project-vision-inspection.png",
+  "manufacturing-quality-analytics-platform": "/static/images/project-quality-analytics.png",
+  "bolt-torque-status-monitoring": "/static/images/project-quality-analytics.png",
+  "secom-semiconductor-defect-yield-analysis": "/static/images/project-quality-analytics.png",
+  "rag-industrial-knowledge-base-qa": "/static/images/project-rag-knowledge.png"
+} %}
+{% set project_cover_image = project.cover_image or case_cover_map.get(project.slug, "/static/images/industrial-ai-hero.png") %}
 {% if case %}
   {% set case_title = t(request, case.title) %}
   {% set case_metrics = case.metrics_zh if lang == 'zh' else case.metrics %}
@@ -123,6 +132,7 @@
           <p class="mt-4 max-w-3xl text-lg leading-7 text-neutral-600">
             {{ t(request, case.value) if case else (project.summary or project.description) }}
           </p>
+          <img src="{{ project_cover_image }}" alt="{{ case_title }}" class="mt-7 aspect-[16/7] w-full rounded-2xl border border-black/10 object-cover">
           <div class="mt-7 grid gap-4 sm:grid-cols-3">
             {% for metric in case_metrics %}
               <div class="card-surface p-5">
@@ -211,7 +221,11 @@
           <div class="mt-7 grid gap-4 md:grid-cols-2">
             {% for related in related_projects %}
               {% set related_case = case_map.get(related.slug) %}
-              <a href="{{ url_with_lang(request, '/projects/' ~ related.slug) }}" class="card-surface transition hover:-translate-y-0.5 hover:border-black/15 hover:bg-neutral-50">
+              <a href="{{ url_with_lang(request, '/projects/' ~ related.slug) }}" class="card-surface block overflow-hidden transition hover:-translate-y-0.5 hover:border-black/15 hover:bg-neutral-50">
+                {% set related_cover_image = related.cover_image or case_cover_map.get(related.slug, '') %}
+                {% if related_cover_image %}
+                  <img src="{{ related_cover_image }}" alt="{{ t(request, related_case.title) if related_case else related.title }}" class="mb-4 aspect-[16/9] w-full rounded-xl object-cover">
+                {% endif %}
                 <span class="text-sm text-neutral-500">{{ related.category }}</span>
                 <span class="mt-3 block card-title text-xl">{{ t(request, related_case.title) if related_case else related.title }}</span>
               </a>

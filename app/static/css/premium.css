@@ -40,7 +40,14 @@ body {
 
 .site-shell > * {
   position: relative;
+}
+
+.site-shell > :not([data-site-header]) {
   z-index: 1;
+}
+
+.site-shell > [data-site-header] {
+  z-index: 50;
 }
 
 .panel,
