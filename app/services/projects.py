@@ -1,148 +1,65 @@
 from __future__ import annotations
 
-from sqlalchemy import select, update
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.project import Project as ProjectModel
 from app.repositories.projects import ProjectRepository
 from app.schemas.projects import Project
+from app.services.db_guard import run_optional_db_operation
+
 
 DEFAULT_PORTFOLIO_PROJECTS: tuple[Project, ...] = (
     Project(
         slug="vehicle-configuration-vision-inspection",
-        title="AI 整车配置视觉检测系统",
+        title="基于AI的整车视觉检测系统",
         description=(
-            "面向汽车制造下线检查场景，使用工业相机、视觉识别和配置规则校验，辅助识别车辆外观件与配置项是否匹配生产订单。"
+            "使用 AI 算法与海康工业相机，对产线上运动车辆的轮毂、尾标等 20 余项零件配置进行实时检测，"
+            "并将识别结果与 MES 订单配置自动比对。"
         ),
-        summary="工业视觉检测系统，覆盖 20+ 配置项检测，并在 3 条产线落地使用。",
+        summary="覆盖 20+ 配置项的整车视觉检测系统，已在 3 条产线落地，整车识别合格率达到 95% 以上。",
         category="工业视觉检测",
-        tech_stack=["Python", "OpenCV", "YOLO", "FastAPI", "PostgreSQL", "MES 集成"],
+        tech_stack=["Python", "PyTorch", "YOLO", "海康 MVS SDK", "ONNX", "Flask", "MES API"],
         cover_image="/static/images/project-vision-inspection.png",
         featured=True,
-        status="产线实践",
-        impact=(
-            "系统将人工配置核对转为视觉识别加规则校验的流程，覆盖 20+ 配置项检测，并支持 3 条产线的现场使用。"
-        ),
+        status="已落地 · 3 条产线",
+        impact="替代 3 名检验员的重复目视检查工作，整车识别合格率达到 95% 以上。",
         highlights=[
-            "项目背景：整车配置项多、人工核对容易受节拍和经验影响，需要在不干扰产线的前提下提升检查一致性。",
-            "解决的问题：识别外观配置与订单配置不一致、漏检和复核成本高的问题。",
-            "我的职责：参与检测流程设计、视觉识别结果对接、配置规则梳理、后端接口与现场问题闭环。",
-            "工程难点：现场光照、角度、遮挡和车型差异会影响识别稳定性，需要结合规则校验和异常复核机制。",
-            "结果/影响：覆盖 20+ 配置项检测，并在 3 条产线落地，减少重复人工核对工作。",
-        ],
-        view_count=0,
-    ),
-    Project(
-        slug="certificate-ocr-validation",
-        title="证书 OCR 信息提取与自动校验系统",
-        description=(
-            "针对制造业务中的证书、合格证和随车文件录入场景，构建 OCR 信息提取、字段结构化和业务规则自动校验流程。"
-        ),
-        summary="将证书信息人工核对流程自动化，典型操作时间从约 30s 缩短到约 5s。",
-        category="OCR 自动化",
-        tech_stack=["Python", "OCR", "FastAPI", "SQL", "Jinja2", "规则校验"],
-        cover_image="/static/images/project-vision-inspection.png",
-        featured=True,
-        status="业务实践",
-        impact="通过 OCR 提取和规则校验减少重复录入，典型操作时间从约 30s 缩短到约 5s。",
-        highlights=[
-            "项目背景：证书信息字段多、人工录入和复核重复度高，且容易出现格式或字段不一致。",
-            "解决的问题：自动提取关键字段，并根据业务规则校验证书信息与系统数据是否一致。",
-            "我的职责：梳理字段映射规则、实现 OCR 结果解析、后端校验接口和异常提示逻辑。",
-            "工程难点：OCR 结果存在错字、漏字和版式差异，需要设计容错解析和人工复核入口。",
-            "结果/影响：将典型人工操作时间从约 30s 降至约 5s，提升了证书核对效率。",
-        ],
-        view_count=0,
-    ),
-    Project(
-        slug="manufacturing-quality-analytics-platform",
-        title="制造质量数据分析平台",
-        description=(
-            "围绕制造质量、缺陷、返修和过程数据，构建 SQL 数据模型、Power BI 看板和分析指标体系，用于质量问题定位和趋势跟踪。"
-        ),
-        summary="制造质量指标体系与数据看板，支持缺陷趋势、返修分布和质量问题追踪。",
-        category="制造数据分析",
-        tech_stack=["SQL", "Power BI", "Python", "PostgreSQL", "DAX", "ETL"],
-        cover_image="/static/images/project-quality-analytics.png",
-        featured=True,
-        status="分析实践",
-        impact="将分散质量数据整理为可追踪指标，帮助识别缺陷分布、返修趋势和重点质量问题。",
-        highlights=[
-            "项目背景：制造质量数据分散在多个业务系统中，现场分析依赖人工导出和临时表格。",
-            "解决的问题：建立质量指标口径，跟踪缺陷类型、责任区域、返修趋势和工艺关联因素。",
-            "我的职责：设计 SQL 查询与数据模型、搭建 Power BI 看板、维护指标口径和分析视图。",
-            "工程难点：不同系统字段口径不一致，需要在清洗、关联和聚合阶段保持可解释性。",
-            "结果/影响：形成可复用的质量分析视图，支持日常质量例会和问题追踪。",
+            "规划设计：依据实时检测需求，规划工业相机部署位置、拍摄角度、触发逻辑和系统整体架构，形成实施方案。",
+            "图像采集：使用海康 MVS 配置相机参数，固定触发方式与进光量，保证不同班次和车辆通过时的图像质量一致性。",
+            "系统链路：使用 Python 完成相机触发、图像传输和边缘端推理，并将推理结果与 MES 配置自动比对。",
+            "模型训练：使用 X-AnyLabel 批量标注图像，基于 PyTorch 训练 YOLO 模型，转换为 ONNX 后部署到边缘端。",
+            "现场交互：使用 Flask 开发检测大屏，通过 API 与 MES 交互，在边缘端和 MES 同步展示检测结果。",
+            "落地成果：系统应用于 3 条产线，覆盖轮毂、尾标等 20 余项配置，替代 3 名检验员重复检查工作。",
         ],
         view_count=0,
     ),
     Project(
         slug="bolt-torque-status-monitoring",
-        title="螺栓扭矩状态自动监控系统",
+        title="螺栓扭矩质量预测系统",
         description=(
-            "针对装配过程中的关键扭矩数据，构建状态采集、异常识别和可视化监控流程，辅助现场及时发现漏拧、错拧和参数异常。"
+            "基于螺栓拧紧记录与扭矩曲线，使用机器学习和多层感知机进行质量风险预测，"
+            "实时识别四类质量风险并将异常推送给现场工程师。"
         ),
-        summary="自动监控关键螺栓扭矩状态，支持异常发现、追溯和现场质量闭环。",
-        category="制造系统集成",
-        tech_stack=["Python", "SQL", "FastAPI", "PostgreSQL", "工业数据采集", "可视化"],
-        cover_image="/static/images/project-quality-analytics.png",
-        featured=False,
-        status="工程实践",
-        impact="将关键扭矩状态从事后抽查推进到过程监控，提升异常发现和追溯效率。",
-        highlights=[
-            "项目背景：关键装配扭矩影响质量安全，人工抽查难以及时覆盖所有异常状态。",
-            "解决的问题：自动采集和分析扭矩状态，识别漏拧、错拧、超限和数据缺失等问题。",
-            "我的职责：设计数据状态规则、实现后端查询与异常聚合、对接现场追溯需求。",
-            "工程难点：设备数据、工位节拍和质量规则需要统一到可维护的数据模型中。",
-            "结果/影响：提升关键工序异常发现速度，为现场质量闭环提供数据依据。",
-        ],
-        view_count=0,
-    ),
-    Project(
-        slug="secom-semiconductor-defect-yield-analysis",
-        title="SECOM 半导体缺陷检测 / 良率分析项目",
-        description=(
-            "基于公开 SECOM 半导体制造数据集，进行高维传感器数据清洗、特征筛选、缺陷预测和良率分析方法验证。"
-        ),
-        summary="半导体数据分析学习项目，聚焦高维传感器数据、缺陷预测和良率分析。",
-        category="半导体数据分析",
-        tech_stack=["Python", "pandas", "scikit-learn", "XGBoost", "特征工程", "数据可视化"],
+        summary="从生产数据库自动抽取扭矩数据，完成特征处理、风险分级预测和异常预警，支撑质量追溯闭环。",
+        category="制造质量预测",
+        tech_stack=["Python", "TensorFlow", "NumPy", "Pandas", "MySQL", "MLP", "定时任务", "邮件预警"],
         cover_image="/static/images/project-quality-analytics.png",
         featured=True,
-        status="学习项目",
-        impact="形成面向半导体智能制造岗位的缺陷检测和良率分析项目复盘材料。",
+        status="已落地 · 实时监控",
+        impact="实现小时级自动推理与四类质量风险识别，将 Risk 记录实时推送给工程师进行追溯和闭环处理。",
         highlights=[
-            "项目背景：半导体制造数据维度高、缺失值多、类别不平衡，适合作为良率分析和缺陷预测练习场景。",
-            "解决的问题：探索如何从高维传感器数据中筛选有效特征，并建立缺陷预测基线模型。",
-            "我的职责：完成数据清洗、缺失值处理、特征选择、模型训练和结果复盘。",
-            "工程难点：特征数量远高于样本量，需要控制过拟合并解释特征对预测结果的影响。",
-            "结果/影响：沉淀半导体数据分析实践方法，为转向 AOI、良率和工艺数据分析岗位做准备。",
-        ],
-        view_count=0,
-    ),
-    Project(
-        slug="rag-industrial-knowledge-base-qa",
-        title="RAG 工业知识库问答应用",
-        description=(
-            "面向设备手册、工艺规范、质量问题记录等工业文档，探索基于向量检索和 LLM 的知识库问答应用。"
-        ),
-        summary="RAG / Agent 应用探索项目，用于工业文档检索、问答和知识复用。",
-        category="RAG / Agent 应用",
-        tech_stack=["Python", "FastAPI", "LLM", "RAG", "Vector Search", "PostgreSQL"],
-        cover_image="/static/images/project-rag-knowledge.png",
-        featured=False,
-        status="探索项目",
-        impact="验证工业文档问答的基本链路，为后续设备知识库和质量经验库应用积累方案。",
-        highlights=[
-            "项目背景：工业现场知识分散在手册、规范、邮件和问题记录中，检索和复用成本较高。",
-            "解决的问题：将文档切分、向量化并建立问答入口，辅助快速定位设备、工艺和质量相关知识。",
-            "我的职责：设计 RAG 流程、实现文档解析与检索接口、评估回答引用和可追溯性。",
-            "工程难点：工业文档术语密集，答案需要可追溯来源，不能只依赖模型生成。",
-            "结果/影响：完成工业知识库问答链路探索，为 RAG 与制造系统结合提供原型基础。",
+            "数据采集：使用 Python 定时任务，每小时从生产 MySQL 数据库抽取螺栓拧紧记录和扭矩曲线明细，写入中间表。",
+            "特征工程：使用 NumPy、Pandas 清洗数据，提取曲线波动次数、掉底异常、拧紧状态和扭矩类别等业务特征。",
+            "训练数据：完成特征编码、归一化和统一训练数据集构建，保证训练与线上推理使用一致的数据处理流程。",
+            "模型训练：对比多种机器学习方法，并使用 TensorFlow 构建多层感知机，完成四类质量风险分级预测。",
+            "在线推理：模型部署后对小时级扭矩数据自动推理，输出质量风险类别和对应的异常记录。",
+            "预警闭环：筛选预测为 Risk 的记录，自动发送邮件给工程师，支撑异常追溯和质量闭环管理。",
         ],
         view_count=0,
     ),
 )
+CORE_PROJECT_SLUGS = tuple(project.slug for project in DEFAULT_PORTFOLIO_PROJECTS)
 
 
 async def list_public_projects(
@@ -151,27 +68,36 @@ async def list_public_projects(
     offset: int = 0,
     limit: int = 12,
 ) -> list[Project]:
-    projects = await ProjectRepository(session).list_public(offset=offset, limit=limit)
-    public_projects = [_to_public_project(project) for project in projects]
-    if public_projects:
-        return public_projects
-    return _fallback_projects(offset=offset, limit=limit)
+    projects = await run_optional_db_operation(
+        lambda: ProjectRepository(session).list_public(offset=0, limit=500),
+        [],
+    )
+    public_projects = _merge_core_projects(projects)
+    return public_projects[offset : offset + limit]
 
 
 async def list_public_featured_projects(session: AsyncSession, *, limit: int = 4) -> list[Project]:
-    projects = await ProjectRepository(session).list_featured(limit=limit)
-    public_projects = [_to_public_project(project) for project in projects]
-    if public_projects:
-        return public_projects
-    return [project for project in _fallback_projects(offset=0, limit=len(DEFAULT_PORTFOLIO_PROJECTS)) if project.featured][:limit]
+    projects = await run_optional_db_operation(
+        lambda: ProjectRepository(session).list_public(offset=0, limit=500),
+        [],
+    )
+    return _merge_core_projects(projects)[:limit]
 
 
 async def get_public_project_by_slug(session: AsyncSession, slug: str) -> Project | None:
-    project = await ProjectRepository(session).get_by_slug(slug)
+    if slug not in CORE_PROJECT_SLUGS:
+        return None
+    project = await run_optional_db_operation(
+        lambda: ProjectRepository(session).get_by_slug(slug),
+        None,
+    )
     if project is None:
-        return next((fallback for fallback in _fallback_projects(offset=0, limit=len(DEFAULT_PORTFOLIO_PROJECTS)) if fallback.slug == slug), None)
+        return next((item.model_copy(deep=True) for item in DEFAULT_PORTFOLIO_PROJECTS if item.slug == slug), None)
 
-    view_count = await increment_project_view_count(session, slug)
+    view_count = await run_optional_db_operation(
+        lambda: increment_project_view_count(session, slug),
+        project.view_count,
+    )
     return _to_public_project(project, view_count=view_count or project.view_count)
 
 
@@ -190,9 +116,11 @@ async def increment_project_view_count(session: AsyncSession, slug: str) -> int 
 
 
 async def list_projects_for_seo(session: AsyncSession) -> list[Project]:
-    projects = await ProjectRepository(session).list_public(offset=0, limit=500)
-    public_projects = [_to_public_project(project) for project in projects]
-    return public_projects or _fallback_projects(offset=0, limit=len(DEFAULT_PORTFOLIO_PROJECTS))
+    projects = await run_optional_db_operation(
+        lambda: ProjectRepository(session).list_public(offset=0, limit=500),
+        [],
+    )
+    return _merge_core_projects(projects)
 
 
 def _to_public_project(project: ProjectModel, *, view_count: int | None = None) -> Project:
@@ -218,3 +146,15 @@ def _to_public_project(project: ProjectModel, *, view_count: int | None = None) 
 
 def _fallback_projects(*, offset: int, limit: int) -> list[Project]:
     return [project.model_copy(deep=True) for project in DEFAULT_PORTFOLIO_PROJECTS[offset : offset + limit]]
+
+
+def _merge_core_projects(projects: list[ProjectModel]) -> list[Project]:
+    database_projects = {
+        project.slug: _to_public_project(project)
+        for project in projects
+        if project.slug in CORE_PROJECT_SLUGS
+    }
+    return [
+        database_projects.get(project.slug, project.model_copy(deep=True))
+        for project in DEFAULT_PORTFOLIO_PROJECTS
+    ]

@@ -8,121 +8,67 @@
     <section data-reveal class="container-page section-pad">
       <div class="max-w-4xl">
         <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.hero.kicker') }}</p>
-        <h1 class="mt-4 page-title">
-          {{ t(request, 'projects.hero.title') }}
-        </h1>
-        <p class="mt-4 max-w-2xl text-base leading-7 text-neutral-600 sm:text-lg">
-          {{ t(request, 'projects.hero.copy') }}
-        </p>
+        <h1 class="mt-4 page-title">{{ t(request, 'projects.hero.title') }}</h1>
+        <p class="mt-4 max-w-2xl text-base leading-7 text-neutral-600 sm:text-lg">{{ t(request, 'projects.hero.copy') }}</p>
         <div class="mt-7 flex flex-col gap-3 sm:flex-row">
-          <a href="#featured-case" class="btn-primary h-10 px-4 py-0">{{ t(request, 'projects.cta.featured') }}</a>
-          <a href="#all-cases" class="btn-secondary h-10 px-4 py-0">{{ t(request, 'projects.cta.all') }}</a>
+          <a href="#core-projects" class="btn-primary h-10 px-4 py-0">{{ t(request, 'projects.cta.all') }}</a>
+          <a href="{{ url_with_lang(request, '/contact') }}" class="btn-secondary h-10 px-4 py-0">{{ t(request, 'common.contact') }}</a>
         </div>
       </div>
     </section>
 
-    <section data-reveal class="border-y border-black/10 bg-neutral-50">
-      <div class="container-page overflow-x-auto py-4">
-        <div data-project-filters class="flex min-w-max gap-2 text-sm">
-          {% for filter_key in ["all", "vision", "ocr", "analytics", "rag", "agent", "semiconductor"] %}
-            <button type="button" data-filter="{{ filter_key }}" aria-pressed="{% if loop.first %}true{% else %}false{% endif %}" class="tag-neutral project-filter px-4 py-2 font-medium transition hover:border-black/15 hover:bg-neutral-50 hover:text-neutral-950 {% if loop.first %}filter-active bg-neutral-950 text-white hover:bg-neutral-800 hover:text-white{% endif %}">
-              {{ t(request, 'projects.filter.' ~ filter_key) }}
-            </button>
-          {% endfor %}
-        </div>
-      </div>
-    </section>
-
-    <section data-reveal id="featured-case" class="container-page section-pad">
-      <div class="grid gap-6 card-surface-lg lg:grid-cols-[minmax(0,1fr)_24rem]">
+    <section class="border-y border-black/10 bg-neutral-50">
+      <div class="container-page grid gap-5 py-6 sm:grid-cols-2 lg:py-7">
         <div>
-          <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.featured_case') }}</p>
-          <h2 class="mt-4 max-w-3xl section-title">
-            {{ t(request, 'work.vehicle.title') }}
-          </h2>
-          <p class="mt-4 max-w-2xl text-base leading-7 text-neutral-600">
-            {{ t(request, 'projects.value.vehicle') }}
-          </p>
-
-          <div class="mt-7 grid gap-5 sm:grid-cols-3">
-            <div>
-              <p class="text-sm font-medium text-neutral-950">{{ t(request, 'projects.problem') }}</p>
-              <p class="mt-2 text-sm leading-6 text-neutral-500">{{ t(request, 'case.vehicle.problem') }}</p>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-neutral-950">{{ t(request, 'projects.solution') }}</p>
-              <p class="mt-2 text-sm leading-6 text-neutral-500">{{ t(request, 'case.vehicle.solution') }}</p>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-neutral-950">{{ t(request, 'projects.key_impact') }}</p>
-              <p class="mt-2 text-sm leading-6 text-neutral-500">{{ t(request, 'projects.result.vehicle') }}</p>
-            </div>
-          </div>
-
-          <div class="mt-6 flex flex-wrap gap-2">
-            {% for tech in ["Python", "OpenCV", "YOLO", "ONNXRuntime", "FastAPI"] %}
-              <span class="tag-neutral">{{ tech }}</span>
-            {% endfor %}
-          </div>
-
-          <a href="{{ url_with_lang(request, '/projects/vehicle-configuration-vision-inspection') }}" class="mt-7 btn-ghost">
-            {{ t(request, 'common.view_case') }}
-          </a>
+          <p class="text-2xl font-semibold tracking-tight text-neutral-950">2</p>
+          <p class="mt-2 text-sm text-neutral-500">{{ t(request, 'home.proof.cases.label') }}</p>
         </div>
-
-        <aside class="rounded-2xl border border-black/10 bg-white p-5">
-          <img src="/static/images/project-vision-inspection.png" alt="{{ t(request, 'work.vehicle.title') }}" class="mb-5 aspect-[4/3] w-full rounded-xl object-cover">
-          <div class="border-b border-black/10 pb-5">
-            <p class="text-xs uppercase tracking-[0.18em] text-neutral-500">{{ t(request, 'projects.architecture_preview') }}</p>
-            <p class="mt-2 text-lg font-medium text-neutral-950">{{ t(request, 'projects.inspection_pipeline') }}</p>
-          </div>
-          <div class="mt-4 space-y-3">
-            {% for step in ["capture", "infer", "validate", "review", "feedback"] %}
-              <div class="flex items-center justify-between rounded-2xl border border-black/10 bg-neutral-50 px-4 py-3">
-                <span class="text-sm text-neutral-700">{{ t(request, 'home.case.step.' ~ step) }}</span>
-                <span class="h-1.5 w-1.5 rounded-full bg-zinc-300"></span>
-              </div>
-            {% endfor %}
-          </div>
-          <div class="mt-4 grid grid-cols-2 gap-3">
-            <div class="card-surface p-5">
-              <p class="text-xs text-neutral-500">{{ t(request, 'projects.metric.lines') }}</p>
-              <p class="mt-2 text-2xl font-semibold text-neutral-950">3+</p>
-            </div>
-            <div class="card-surface p-5">
-              <p class="text-xs text-neutral-500">{{ t(request, 'projects.metric.items') }}</p>
-              <p class="mt-2 text-2xl font-semibold text-neutral-950">20+</p>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <section data-reveal id="all-cases" class="border-t border-black/10 bg-neutral-50">
-      <div class="container-page section-pad">
-        <div class="max-w-3xl">
-          <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.all_cases') }}</p>
-          <h2 class="mt-4 section-title">{{ t(request, 'projects.all_cases.title') }}</h2>
-        </div>
-
-        {% set case_items = [
-          {"slug": "certificate-ocr-validation", "title": "work.ocr.title", "value": "projects.value.ocr", "result": "projects.result.ocr", "domain": "OCR", "tags": ["OCR", "OpenCV", "FastAPI", "Rule Validation"], "cover_image": "/static/images/project-vision-inspection.png"},
-          {"slug": "manufacturing-quality-analytics-platform", "title": "work.quality.title", "value": "projects.value.quality", "result": "projects.result.quality", "domain": "projects.domain.analytics", "tags": ["Power BI", "SQL", "Python", "Pandas"], "cover_image": "/static/images/project-quality-analytics.png"},
-          {"slug": "rag-industrial-knowledge-base-qa", "title": "work.rag.title", "value": "projects.value.rag", "result": "projects.result.rag", "domain": "projects.domain.rag_agent", "tags": ["FastAPI", "LangChain", "Qdrant", "RAG"], "cover_image": "/static/images/project-rag-knowledge.png"},
-          {"slug": "secom-semiconductor-defect-yield-analysis", "title": "work.secom.title", "value": "projects.value.secom", "result": "projects.result.secom", "domain": "projects.domain.semiconductor", "tags": ["SECOM", "Pandas", "LightGBM", "Optuna"], "cover_image": "/static/images/project-quality-analytics.png"},
-          {"slug": "bolt-torque-status-monitoring", "title": "Torque Monitoring System", "value": "projects.value.torque", "result": "projects.result.torque", "domain": "projects.domain.manufacturing_system", "tags": ["Python", "SQL", "FastAPI", "Monitoring"], "cover_image": "/static/images/project-quality-analytics.png"}
-        ] %}
-
-        <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {% for item in case_items %}
-            {% include "components/project_card.html" %}
-          {% endfor %}
+        <div>
+          <p class="text-2xl font-semibold tracking-tight text-neutral-950">Production AI</p>
+          <p class="mt-2 text-sm text-neutral-500">{{ t(request, 'projects.production_focus') }}</p>
         </div>
       </div>
     </section>
+
+    <section data-reveal id="core-projects" class="container-page section-pad">
+      <div class="max-w-3xl">
+        <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.all_cases') }}</p>
+        <h2 class="mt-4 section-title">{{ t(request, 'projects.core_title') }}</h2>
+      </div>
+
+      <div class="mt-8 grid gap-5 lg:grid-cols-2">
+        {% for project in projects %}
+          {% include "components/project_card.html" %}
+        {% else %}
+          <p class="empty-state lg:col-span-2">{{ t(request, 'projects.empty') }}</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% if projects %}
+      <section data-reveal class="border-t border-black/10 bg-neutral-50">
+        <div class="container-page section-pad-compact">
+          <div class="grid gap-6 lg:grid-cols-2">
+            {% for project in projects %}
+              <article class="card-surface-lg">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="tag-neutral">{{ project.category }}</span>
+                  <span class="tag-neutral">{{ project.status }}</span>
+                </div>
+                <h2 class="mt-5 card-title">{{ project.title }}</h2>
+                <p class="mt-4 text-sm leading-7 text-neutral-600">{{ project.impact }}</p>
+                <div class="mt-5 flex flex-wrap gap-2">
+                  {% for tech in project.tech_stack[:6] %}<span class="tag-neutral">{{ tech }}</span>{% endfor %}
+                </div>
+                <a href="{{ url_with_lang(request, '/projects/' ~ project.slug) }}" class="mt-6 btn-ghost">{{ t(request, 'common.view_case') }}</a>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
   </main>
+
   {% include "components/site_footer.html" %}
 </div>
 {% endblock %}
-
-

@@ -52,12 +52,13 @@ async def project_detail(request: Request, slug: str, session: SessionDependency
                 description=project.description,
                 path=f"/projects/{project.slug}",
                 og_type="article",
+                image=project.cover_image or "/static/images/industrial-ai-hero.png",
             ),
             "project": project,
             "related_projects": [
                 related
                 for related in await list_public_projects(session)
-                if related.slug != project.slug and related.category == project.category
+                if related.slug != project.slug
             ][:2],
         },
     )

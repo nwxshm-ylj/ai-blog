@@ -13,7 +13,7 @@
         <p class="mt-4 max-w-3xl text-base leading-7 text-neutral-600 sm:text-lg">{{ t(request, 'resume.scope_line') }}</p>
         <div class="mt-7 flex flex-col gap-3 sm:flex-row">
           <a href="{{ url_with_lang(request, '/contact') }}" class="btn-primary h-10 px-4 py-0">{{ t(request, 'common.contact') }}</a>
-          <a href="#" class="btn-secondary h-10 px-4 py-0" aria-disabled="true">{{ t(request, 'common.download_pdf') }}</a>
+          <a href="{{ url_with_lang(request, '/projects') }}" class="btn-secondary h-10 px-4 py-0">{{ t(request, 'common.view_projects') }}</a>
         </div>
       </div>
     </section>
@@ -47,10 +47,8 @@
         </div>
 
         {% set selected_projects = [
-          {"title": "work.vehicle.title", "role": "resume.vehicle.role", "result": "resume.vehicle.result", "tech": ["Python", "OpenCV", "YOLO", "FastAPI", "PostgreSQL"]},
-          {"title": "work.ocr.title", "role": "resume.ocr.role", "result": "resume.ocr.result", "tech": ["OCR", "FastAPI", "SQL", "Rules"]},
-          {"title": "work.quality.title", "role": "resume.quality.role", "result": "resume.quality.result", "tech": ["SQL", "Power BI", "Python", "ETL"]},
-          {"title": "work.rag.title", "role": "resume.rag.role", "result": "resume.rag.result", "tech": ["RAG", "LangChain", "FastAPI", "Vector Search"]}
+          {"title": "work.vehicle.title", "role": "resume.vehicle.role", "result": "resume.vehicle.result", "tech": ["Python", "PyTorch", "YOLO", "海康 MVS SDK", "ONNX", "MES API"]},
+          {"title": "case.torque.title", "role": "resume.torque.role", "result": "resume.torque.result", "tech": ["Python", "TensorFlow", "Pandas", "MySQL", "MLP", "邮件预警"]}
         ] %}
 
         <div class="mt-8 grid gap-4 md:grid-cols-2">

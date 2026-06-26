@@ -11,13 +11,13 @@
     <meta property="og:description" content="{{ og_description | default(meta_description | default(t(request, 'site.description'))) }}">
     <meta property="og:type" content="{{ og_type | default('website') }}">
     <meta property="og:url" content="{{ og_url | default(canonical_url | default('')) }}">
-    <meta property="og:image" content="{{ og_image | default('https://placehold.co/1200x630/ffffff/111111.png?text=Industrial+AI+Portfolio') }}">
+    <meta property="og:image" content="{{ og_image | default(request.url_for('static', path='/images/industrial-ai-hero.png')) }}">
     <meta name="twitter:card" content="{{ twitter_card | default('summary_large_image') }}">
     <meta name="twitter:title" content="{{ twitter_title | default(og_title | default(title | default(t(request, 'site.title')))) }}">
     <meta name="twitter:description" content="{{ twitter_description | default(og_description | default(meta_description | default(t(request, 'site.description')))) }}">
-    <meta name="twitter:image" content="{{ twitter_image | default(og_image | default('https://placehold.co/1200x630/ffffff/111111.png?text=Industrial+AI+Portfolio')) }}">
+    <meta name="twitter:image" content="{{ twitter_image | default(og_image | default(request.url_for('static', path='/images/industrial-ai-hero.png'))) }}">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111111'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Arial,sans-serif' font-size='24' font-weight='700' fill='white'%3ELB%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/app.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/premium.css') }}">
     {% block extra_head %}{% endblock %}
   </head>
   <body class="min-h-screen bg-white text-neutral-950 antialiased">

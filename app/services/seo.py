@@ -13,8 +13,8 @@ from fastapi import Request
 from app.schemas.blog import BlogPost
 from app.schemas.projects import Project
 
-DEFAULT_OG_IMAGE = "https://placehold.co/1200x630/0f172a/99f6e4.png?text=Industrial+AI+Portfolio"
-DEFAULT_DESCRIPTION = "IndusAI Lab 是一个聚焦工业 AI 与制造数字化实践的技术站，覆盖工业视觉检测、制造质量数据分析、Python 后端系统、半导体数据分析实践和 RAG / Agent 应用探索。"
+DEFAULT_OG_IMAGE = "/static/images/industrial-ai-hero.png"
+DEFAULT_DESCRIPTION = "libaoshuai 的工业 AI 作品集，聚焦整车视觉检测与螺栓扭矩质量预测两个生产级项目。"
 
 
 @dataclass(frozen=True)
@@ -40,11 +40,12 @@ def build_page_seo(
     image: str = DEFAULT_OG_IMAGE,
 ) -> dict[str, str]:
     page_url = absolute_url(str(request.base_url), path or request.url.path)
+    image_url = absolute_url(str(request.base_url), image) if image.startswith("/") else image
     seo = PageSeo(
         title=title,
         description=description,
         url=page_url,
-        image=image,
+        image=image_url,
         og_type=og_type,
     )
     return {

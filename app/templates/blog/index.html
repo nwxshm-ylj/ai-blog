@@ -12,7 +12,7 @@
     {% set back_label = "" %}
     {% include "components/page_header.html" %}
 
-    <section data-reveal class="container-page grid gap-6 section-pad-compact lg:grid-cols-[minmax(0,1fr)_19rem]">
+    <section data-reveal id="content" class="container-page grid gap-6 section-pad-compact lg:grid-cols-[minmax(0,1fr)_19rem]">
       <div class="space-y-5">
         {% for post in posts %}
           {% include "components/post_card.html" %}
@@ -20,11 +20,21 @@
           <div class="empty-state">{{ t(request, "blog.empty") }}</div>
         {% endfor %}
 
-        <nav class="flex items-center justify-between rounded-2xl border border-black/10 bg-neutral-50 px-5 py-4 text-sm text-neutral-500" aria-label="Pagination">
-          <span>{{ t(request, "blog.previous") }}</span>
-          <span>{{ t(request, "blog.pagination") }}</span>
-          <span>{{ t(request, "blog.next") }}</span>
-        </nav>
+        {% if total_pages > 1 %}
+          <nav class="flex items-center justify-between rounded-2xl border border-black/10 bg-neutral-50 px-5 py-4 text-sm text-neutral-500" aria-label="Pagination">
+            {% if has_previous %}
+              <a href="{{ url_with_lang(request, '/blog', {'q': search_query, 'category': selected_category, 'page': page - 1}) }}" class="font-medium text-neutral-950 transition hover:text-blue-700">{{ t(request, "blog.previous") }}</a>
+            {% else %}
+              <span aria-disabled="true">{{ t(request, "blog.previous") }}</span>
+            {% endif %}
+            <span>{{ page }} / {{ total_pages }}</span>
+            {% if has_next %}
+              <a href="{{ url_with_lang(request, '/blog', {'q': search_query, 'category': selected_category, 'page': page + 1}) }}" class="font-medium text-neutral-950 transition hover:text-blue-700">{{ t(request, "blog.next") }}</a>
+            {% else %}
+              <span aria-disabled="true">{{ t(request, "blog.next") }}</span>
+            {% endif %}
+          </nav>
+        {% endif %}
       </div>
 
       {% include "components/blog_sidebar.html" %}

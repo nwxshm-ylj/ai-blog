@@ -26,11 +26,35 @@ from app.web.security import verify_csrf_token
 from app.web.templating import templates
 
 router = APIRouter(prefix="/blog", tags=["blog"])
+BLOG_PAGE_SIZE = 6
 
 
 @router.get("", response_class=HTMLResponse)
 async def blog_index(request: Request, session: SessionDependency) -> HTMLResponse:
-    posts = await list_public_posts(session)
+    all_posts = await list_public_posts(session, limit=500)
+    search_query = request.query_params.get("q", "").strip()
+    selected_category = request.query_params.get("category", "").strip()
+
+    filtered_posts = all_posts
+    if selected_category:
+        filtered_posts = [post for post in filtered_posts if post.category == selected_category]
+    if search_query:
+        needle = search_query.casefold()
+        filtered_posts = [
+            post
+            for post in filtered_posts
+            if needle
+            in " ".join(
+                [post.title, post.description, post.category, *post.tags]
+            ).casefold()
+        ]
+
+    page = _positive_int(request.query_params.get("page"), default=1)
+    total_pages = max(1, (len(filtered_posts) + BLOG_PAGE_SIZE - 1) // BLOG_PAGE_SIZE)
+    page = min(page, total_pages)
+    offset = (page - 1) * BLOG_PAGE_SIZE
+    posts = filtered_posts[offset : offset + BLOG_PAGE_SIZE]
+
     return templates.TemplateResponse(
         request=request,
         name="blog/index.html",
@@ -42,11 +66,25 @@ async def blog_index(request: Request, session: SessionDependency) -> HTMLRespon
                 path="/blog",
             ),
             "posts": posts,
-            "recent_posts": await list_recent_posts(session),
+            "recent_posts": all_posts[:4],
             "categories": await list_categories(session),
             "tags": await list_tags(session),
+            "search_query": search_query,
+            "selected_category": selected_category,
+            "page": page,
+            "total_pages": total_pages,
+            "has_previous": page > 1,
+            "has_next": page < total_pages,
         },
     )
+
+
+def _positive_int(raw_value: str | None, *, default: int) -> int:
+    try:
+        value = int(raw_value or "")
+    except ValueError:
+        return default
+    return max(value, 1)
 
 
 @router.get("/{slug}", response_class=HTMLResponse)

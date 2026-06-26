@@ -1,118 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% set case_map = {
-  "vehicle-configuration-vision-inspection": {
-    "title": "work.vehicle.title",
-    "value": "projects.value.vehicle",
-    "metrics": ["3+ production lines", "20+ inspection items", "95%+ recognition pass rate"],
-    "metrics_zh": ["3+条产线应用", "20+配置项检测", "识别合格率95%+"],
-    "context": "case.vehicle.context",
-    "problem": "case.vehicle.problem",
-    "role": "case.vehicle.role",
-    "solution": "case.vehicle.solution",
-    "architecture": "case.vehicle.architecture",
-    "architecture_steps": ["case.vehicle.step.camera", "case.vehicle.step.inference", "case.vehicle.step.rule", "case.vehicle.step.recording", "case.vehicle.step.feedback"],
-    "implementation": "case.vehicle.implementation",
-    "impact": "case.vehicle.impact",
-    "tech_stack": ["Python", "OpenCV", "YOLO", "ONNXRuntime", "Flask", "FastAPI", "SQL", "Industrial Camera"]
-  },
-  "certificate-ocr-validation": {
-    "title": "work.ocr.title",
-    "value": "projects.value.ocr",
-    "metrics": ["~30s to ~5s workflow", "Lower manual input risk", "Extraction and validation flow"],
-    "metrics_zh": ["约30秒缩短到约5秒", "降低人工录入错误风险", "支持提取、校验和流程提交"],
-    "context": "case.ocr.context",
-    "problem": "case.ocr.problem",
-    "role": "case.ocr.role",
-    "solution": "case.ocr.solution",
-    "architecture": "case.ocr.architecture",
-    "architecture_steps": ["case.ocr.step.capture", "case.ocr.step.preprocessing", "case.ocr.step.extraction", "case.ocr.step.parsing", "case.ocr.step.validation", "case.ocr.step.submission"],
-    "implementation": "case.ocr.implementation",
-    "impact": "case.ocr.impact",
-    "tech_stack": ["Python", "OCR", "OpenCV", "FastAPI", "Rule Validation", "Workflow Automation"]
-  },
-  "manufacturing-quality-analytics-platform": {
-    "title": "work.quality.title",
-    "value": "projects.value.quality",
-    "metrics": ["Cross-source quality data", "Quality metric system", "Traceable analytics views"],
-    "metrics_zh": ["整合多来源质量数据", "建立质量监控指标体系", "支持趋势、分布和追溯分析"],
-    "context": "case.quality.context",
-    "problem": "case.quality.problem",
-    "role": "case.quality.role",
-    "solution": "case.quality.solution",
-    "architecture": "case.quality.architecture",
-    "architecture_steps": ["case.quality.step.sources", "case.quality.step.modeling", "case.quality.step.metrics", "case.quality.step.dashboard", "case.quality.step.review"],
-    "implementation": "case.quality.implementation",
-    "impact": "case.quality.impact",
-    "tech_stack": ["Power BI", "SQL", "Python", "Pandas", "Data Modeling", "Dashboard"]
-  },
-  "rag-industrial-knowledge-base-qa": {
-    "title": "work.rag.title",
-    "value": "projects.value.rag",
-    "metrics": ["Industrial document Q&A prototype", "Source traceability", "Expandable knowledge base flow"],
-    "metrics_zh": ["工业文档问答原型", "支持来源引用和可追溯回答", "可扩展到质量和设备知识库"],
-    "context": "case.rag.context",
-    "problem": "case.rag.problem",
-    "role": "case.rag.role",
-    "solution": "case.rag.solution",
-    "architecture": "case.rag.architecture",
-    "architecture_steps": ["case.rag.step.documents", "case.rag.step.chunking", "case.rag.step.embedding", "case.rag.step.vector", "case.rag.step.retriever", "case.rag.step.answer"],
-    "implementation": "case.rag.implementation",
-    "impact": "case.rag.impact",
-    "tech_stack": ["FastAPI", "LangChain", "Qdrant", "Embedding Model", "RAG", "Python"]
-  },
-  "secom-semiconductor-defect-yield-analysis": {
-    "title": "work.secom.title",
-    "value": "projects.value.secom",
-    "metrics": ["High-dimensional feature cleaning", "Missing-value and correlation handling", "Defect risk modeling"],
-    "metrics_zh": ["高维特征清洗与筛选", "处理缺失、低方差和高相关特征", "缺陷风险建模"],
-    "context": "case.secom.context",
-    "problem": "case.secom.problem",
-    "role": "case.secom.role",
-    "solution": "case.secom.solution",
-    "architecture": "case.secom.architecture",
-    "architecture_steps": ["case.secom.step.data", "case.secom.step.cleaning", "case.secom.step.selection", "case.secom.step.modeling", "case.secom.step.evaluation"],
-    "implementation": "case.secom.implementation",
-    "impact": "case.secom.impact",
-    "tech_stack": ["Python", "Pandas", "scikit-learn", "LightGBM", "Optuna", "Feature Selection"]
-  },
-  "bolt-torque-status-monitoring": {
-    "title": "case.torque.title",
-    "value": "projects.value.torque",
-    "metrics": ["Abnormal-state detection", "Traceability", "Quality closure"],
-    "metrics_zh": ["异常状态发现", "质量追溯", "问题闭环"],
-    "context": "case.torque.context",
-    "problem": "case.torque.problem",
-    "role": "case.torque.role",
-    "solution": "case.torque.solution",
-    "architecture": "case.torque.architecture",
-    "architecture_steps": ["case.torque.step.device", "case.torque.step.rules", "case.torque.step.aggregate", "case.torque.step.monitor", "case.torque.step.feedback"],
-    "implementation": "case.torque.implementation",
-    "impact": "case.torque.impact",
-    "tech_stack": ["Python", "SQL", "FastAPI", "Monitoring"]
-  }
-} %}
-{% set case = case_map.get(project.slug) %}
-{% set lang = current_lang(request) %}
-{% set case_cover_map = {
-  "vehicle-configuration-vision-inspection": "/static/images/project-vision-inspection.png",
-  "certificate-ocr-validation": "/static/images/project-vision-inspection.png",
-  "manufacturing-quality-analytics-platform": "/static/images/project-quality-analytics.png",
-  "bolt-torque-status-monitoring": "/static/images/project-quality-analytics.png",
-  "secom-semiconductor-defect-yield-analysis": "/static/images/project-quality-analytics.png",
-  "rag-industrial-knowledge-base-qa": "/static/images/project-rag-knowledge.png"
-} %}
-{% set project_cover_image = project.cover_image or case_cover_map.get(project.slug, "/static/images/industrial-ai-hero.png") %}
-{% if case %}
-  {% set case_title = t(request, case.title) %}
-  {% set case_metrics = case.metrics_zh if lang == 'zh' else case.metrics %}
-  {% set case_tech_stack = case.tech_stack %}
-{% else %}
-  {% set case_title = project.title %}
-  {% set case_metrics = [project.status, project.category, project.view_count ~ " views"] %}
-  {% set case_tech_stack = project.tech_stack %}
-{% endif %}
+{% set project_cover_image = project.cover_image or '/static/images/industrial-ai-hero.png' %}
 
 <div class="site-shell">
   {% include "components/site_header.html" %}
@@ -122,64 +11,61 @@
       <header class="border-b border-black/10">
         <div class="container-page section-pad">
           <a href="{{ url_with_lang(request, '/projects') }}" class="btn-ghost">{{ t(request, 'projects.back_case_studies') }}</a>
-          <div class="mt-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
+          <div class="mt-6 flex flex-wrap items-center gap-2">
             <span class="tag-neutral">{{ project.category }}</span>
             <span class="tag-neutral">{{ project.status }}</span>
           </div>
-          <h1 class="mt-4 max-w-5xl page-title">
-            {{ case_title }}
-          </h1>
-          <p class="mt-4 max-w-3xl text-lg leading-7 text-neutral-600">
-            {{ t(request, case.value) if case else (project.summary or project.description) }}
-          </p>
-          <img src="{{ project_cover_image }}" alt="{{ case_title }}" class="mt-7 aspect-[16/7] w-full rounded-2xl border border-black/10 object-cover">
+          <h1 class="mt-4 max-w-5xl page-title">{{ project.title }}</h1>
+          <p class="mt-4 max-w-3xl text-lg leading-8 text-neutral-600">{{ project.summary or project.description }}</p>
+          <img src="{{ project_cover_image }}" alt="{{ project.title }}" width="1448" height="1086" decoding="async" class="mt-7 aspect-[16/7] w-full rounded-2xl border border-black/10 object-cover">
+
           <div class="mt-7 grid gap-4 sm:grid-cols-3">
-            {% for metric in case_metrics %}
-              <div class="card-surface p-5">
-                <p class="text-sm font-medium leading-6 text-neutral-950">{{ metric }}</p>
-              </div>
-            {% endfor %}
-          </div>
-          <div class="mt-6 flex flex-wrap items-center gap-4">
-            <a href="#related-cases" class="btn-secondary h-11 px-5 py-0">{{ t(request, 'common.view_related_cases') }}</a>
-            {% include "components/project_links.html" %}
+            <div class="card-surface p-5">
+              <p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.domain') }}</p>
+              <p class="mt-2 text-sm font-medium text-neutral-950">{{ project.category }}</p>
+            </div>
+            <div class="card-surface p-5">
+              <p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.status') }}</p>
+              <p class="mt-2 text-sm font-medium text-neutral-950">{{ project.status }}</p>
+            </div>
+            <div class="card-surface p-5">
+              <p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.tech_stack') }}</p>
+              <p class="mt-2 text-sm font-medium text-neutral-950">{{ project.tech_stack | length }} {{ t(request, 'projects.technologies') }}</p>
+            </div>
           </div>
         </div>
       </header>
 
       <div class="container-page grid gap-6 section-pad-compact lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div class="min-w-0 space-y-5">
-          {% set sections = [
-            {"label": "projects.business_context", "copy": case.context if case else ""},
-            {"label": "projects.problem", "copy": case.problem if case else ""},
-            {"label": "projects.my_role", "copy": case.role if case else ""},
-            {"label": "projects.solution", "copy": case.solution if case else ""},
-            {"label": "projects.architecture", "copy": case.architecture if case else ""},
-            {"label": "projects.implementation_notes", "copy": case.implementation if case else ""},
-            {"label": "projects.impact", "copy": case.impact if case else ""}
-          ] %}
-          {% for section in sections %}
-            <section class="card-surface">
-              <p class="text-sm font-medium text-neutral-500">{{ t(request, section.label) }}</p>
-              <p class="mt-4 text-base leading-7 text-neutral-700">{{ t(request, section.copy) if section.copy else project.description }}</p>
-              {% if section.label == 'projects.architecture' and case and case.architecture_steps %}
-                <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                  {% for step in case.architecture_steps %}
-                    <div class="rounded-2xl border border-black/10 bg-neutral-50 px-4 py-3 text-sm font-medium text-neutral-700">
-                      {{ t(request, step) }}
-                    </div>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </section>
-          {% endfor %}
+          <section class="card-surface-lg">
+            <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.business_context') }}</p>
+            <h2 class="mt-3 card-title">{{ t(request, 'projects.overview_title') }}</h2>
+            <p class="mt-4 text-base leading-8 text-neutral-700">{{ project.description }}</p>
+          </section>
 
-          <section class="card-surface">
+          <section class="card-surface-lg">
+            <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.implementation_notes') }}</p>
+            <h2 class="mt-3 card-title">{{ t(request, 'projects.delivery_title') }}</h2>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              {% for highlight in project.highlights %}
+                <div class="rounded-2xl border border-black/10 bg-neutral-50 p-5">
+                  <p class="text-sm leading-7 text-neutral-700">{{ highlight }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          </section>
+
+          <section class="card-surface-lg">
+            <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.impact') }}</p>
+            <h2 class="mt-3 card-title">{{ t(request, 'projects.result_title') }}</h2>
+            <p class="mt-4 text-base leading-8 text-neutral-700">{{ project.impact }}</p>
+          </section>
+
+          <section class="card-surface-lg">
             <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.tech_stack') }}</p>
             <div class="mt-4 flex flex-wrap gap-2">
-              {% for tech in case_tech_stack %}
-                <span class="tag-neutral">{{ tech }}</span>
-              {% endfor %}
+              {% for tech in project.tech_stack %}<span class="tag-neutral">{{ tech }}</span>{% endfor %}
             </div>
           </section>
         </div>
@@ -187,56 +73,37 @@
         <aside class="lg:sticky lg:top-24 lg:self-start">
           <div class="card-surface">
             <p class="text-sm font-medium text-neutral-950">{{ t(request, 'projects.case_summary') }}</p>
-            <div class="mt-4 space-y-5">
-              <div><p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.domain') }}</p><p class="mt-2 text-sm text-neutral-700">{{ project.category }}</p></div>
-              <div><p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.status') }}</p><p class="mt-2 text-sm text-neutral-700">{{ project.status }}</p></div>
-              <div>
-                <p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.key_metrics') }}</p>
-                <div class="mt-2 space-y-2">
-                  {% for metric in case_metrics %}<p class="rounded-xl border border-black/10 bg-neutral-50 px-3 py-2 text-sm text-neutral-700">{{ metric }}</p>{% endfor %}
-                </div>
-              </div>
-              <div>
-                <p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.tech_stack') }}</p>
-                <div class="mt-3 flex flex-wrap gap-2">
-                  {% for tech in case_tech_stack[:5] %}<span class="tag-neutral">{{ tech }}</span>{% endfor %}
-                </div>
-              </div>
-              <div>{% include "components/project_links.html" %}</div>
+            <p class="mt-4 text-sm leading-7 text-neutral-600">{{ project.summary }}</p>
+            <div class="mt-5 border-t border-black/10 pt-5">
+              <p class="text-xs uppercase tracking-[0.16em] text-neutral-500">{{ t(request, 'projects.key_impact') }}</p>
+              <p class="mt-3 text-sm leading-7 text-neutral-700">{{ project.impact }}</p>
             </div>
+            <div class="mt-5">{% include "components/project_links.html" %}</div>
           </div>
         </aside>
       </div>
 
-      <section id="related-cases" class="border-t border-black/10 bg-neutral-50">
-        <div class="container-page section-pad-compact">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.related_cases') }}</p>
-              <h2 class="mt-3 section-title">{{ t(request, 'projects.related_title') }}</h2>
+      {% if related_projects %}
+        <section class="border-t border-black/10 bg-neutral-50">
+          <div class="container-page section-pad-compact">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-sm font-medium text-neutral-500">{{ t(request, 'projects.related_cases') }}</p>
+                <h2 class="mt-3 section-title">{{ t(request, 'projects.related_title') }}</h2>
+              </div>
+              <a href="{{ url_with_lang(request, '/projects') }}" class="btn-ghost">{{ t(request, 'common.all_case_studies') }}</a>
             </div>
-            <a href="{{ url_with_lang(request, '/projects') }}" class="btn-ghost">{{ t(request, 'common.all_case_studies') }}</a>
+            <div class="mt-7 grid gap-5 md:grid-cols-2">
+              {% for project in related_projects %}
+                {% include "components/project_card.html" %}
+              {% endfor %}
+            </div>
           </div>
-
-          <div class="mt-7 grid gap-4 md:grid-cols-2">
-            {% for related in related_projects %}
-              {% set related_case = case_map.get(related.slug) %}
-              <a href="{{ url_with_lang(request, '/projects/' ~ related.slug) }}" class="card-surface block overflow-hidden transition hover:-translate-y-0.5 hover:border-black/15 hover:bg-neutral-50">
-                {% set related_cover_image = related.cover_image or case_cover_map.get(related.slug, '') %}
-                {% if related_cover_image %}
-                  <img src="{{ related_cover_image }}" alt="{{ t(request, related_case.title) if related_case else related.title }}" class="mb-4 aspect-[16/9] w-full rounded-xl object-cover">
-                {% endif %}
-                <span class="text-sm text-neutral-500">{{ related.category }}</span>
-                <span class="mt-3 block card-title text-xl">{{ t(request, related_case.title) if related_case else related.title }}</span>
-              </a>
-            {% else %}
-              <div class="empty-state md:col-span-2">{{ t(request, 'projects.no_related') }}</div>
-            {% endfor %}
-          </div>
-        </div>
-      </section>
+        </section>
+      {% endif %}
     </article>
   </main>
+
   {% include "components/site_footer.html" %}
 </div>
 {% endblock %}
