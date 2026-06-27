@@ -88,11 +88,32 @@
     });
   }
 
+  function initPointerGlow() {
+    if (prefersReducedMotion()) return;
+
+    var items = Array.prototype.slice.call(document.querySelectorAll(".card-interactive, [data-float]"));
+    items.forEach(function (item) {
+      item.addEventListener("pointermove", function (event) {
+        var rect = item.getBoundingClientRect();
+        var x = ((event.clientX - rect.left) / rect.width) * 100;
+        var y = ((event.clientY - rect.top) / rect.height) * 100;
+        item.style.setProperty("--pointer-x", x.toFixed(2) + "%");
+        item.style.setProperty("--pointer-y", y.toFixed(2) + "%");
+      }, { passive: true });
+
+      item.addEventListener("pointerleave", function () {
+        item.style.removeProperty("--pointer-x");
+        item.style.removeProperty("--pointer-y");
+      }, { passive: true });
+    });
+  }
+
   function init() {
     initReveal();
     initHeaderScroll();
     initMobileMenu();
     initProjectFilters();
+    initPointerGlow();
   }
 
   if (document.readyState === "loading") {

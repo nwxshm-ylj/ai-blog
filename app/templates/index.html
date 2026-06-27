@@ -26,25 +26,36 @@
         </div>
 
         <div class="relative hidden lg:block">
-          <div class="overflow-hidden rounded-2xl border border-black/10 bg-white">
-            <img src="/static/images/industrial-ai-hero.png" alt="Industrial AI inspection station" width="1672" height="941" fetchpriority="high" decoding="async" class="aspect-[16/10] w-full object-cover">
-            <div class="border-t border-black/10 bg-white p-5">
-              <div class="flex items-center justify-between gap-4">
-                <div>
-                  <p class="text-xs uppercase tracking-[0.18em] text-neutral-500">{{ t(request, 'home.console.kicker') }}</p>
-                  <p class="mt-2 text-lg font-medium text-neutral-950">{{ t(request, 'home.console.title') }}</p>
-                </div>
-                <span class="rounded-full border border-black/10 px-3 py-1 text-xs text-neutral-600">{{ t(request, 'home.console.status') }}</span>
+          <div data-float class="hero-glass-panel floating-panel">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-xs uppercase tracking-[0.18em] text-neutral-500">{{ t(request, 'home.console.kicker') }}</p>
+                <p class="mt-2 text-xl font-semibold text-neutral-950">{{ t(request, 'home.console.title') }}</p>
               </div>
-              <div class="mt-5 grid grid-cols-2 gap-3">
-                <div class="rounded-xl border border-black/10 bg-neutral-50 p-4">
-                  <p class="text-xs text-neutral-500">{{ t(request, 'home.console.workflow') }}</p>
-                  <p class="mt-2 text-2xl font-semibold text-neutral-950">20+</p>
-                </div>
-                <div class="rounded-xl border border-black/10 bg-neutral-50 p-4">
-                  <p class="text-xs text-neutral-500">{{ t(request, 'home.console.lines') }}</p>
-                  <p class="mt-2 text-2xl font-semibold text-neutral-950">3</p>
-                </div>
+              <span class="status-pill">{{ t(request, 'home.console.status') }}</span>
+            </div>
+
+            <div class="mt-7 space-y-3">
+              {% for project in featured_projects[:2] %}
+                <a href="{{ url_with_lang(request, '/projects/' ~ project.slug) }}" class="glass-list-item group">
+                  <span class="glass-list-index">0{{ loop.index }}</span>
+                  <span class="min-w-0 flex-1">
+                    <span class="block truncate text-sm font-semibold text-neutral-950">{{ project.title }}</span>
+                    <span class="mt-1 block truncate text-xs text-neutral-500">{{ project.category }}</span>
+                  </span>
+                  <span class="text-neutral-500 transition group-hover:translate-x-1 group-hover:text-neutral-950">→</span>
+                </a>
+              {% endfor %}
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="glass-metric">
+                <p class="text-xs text-neutral-500">{{ t(request, 'home.console.workflow') }}</p>
+                <p class="mt-2 text-2xl font-semibold text-neutral-950">20+</p>
+              </div>
+              <div class="glass-metric">
+                <p class="text-xs text-neutral-500">{{ t(request, 'home.console.lines') }}</p>
+                <p class="mt-2 text-2xl font-semibold text-neutral-950">3</p>
               </div>
             </div>
           </div>

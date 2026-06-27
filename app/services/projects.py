@@ -18,7 +18,7 @@ DEFAULT_PORTFOLIO_PROJECTS: tuple[Project, ...] = (
             "并将识别结果与 MES 订单配置自动比对。"
         ),
         summary="覆盖 20+ 配置项的整车视觉检测系统，已在 3 条产线落地，整车识别合格率达到 95% 以上。",
-        category="工业视觉检测",
+        category="整车视觉检测",
         tech_stack=["Python", "PyTorch", "YOLO", "海康 MVS SDK", "ONNX", "Flask", "MES API"],
         cover_image="/static/images/project-vision-inspection.png",
         featured=True,

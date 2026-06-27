@@ -21,6 +21,16 @@
     {% block extra_head %}{% endblock %}
   </head>
   <body class="min-h-screen bg-white text-neutral-950 antialiased">
+    <div class="ambient-scene" aria-hidden="true">
+      <span class="ambient-cloud ambient-cloud-one"></span>
+      <span class="ambient-cloud ambient-cloud-two"></span>
+      <span class="ambient-petal ambient-petal-one"></span>
+      <span class="ambient-petal ambient-petal-two"></span>
+      <span class="ambient-petal ambient-petal-three"></span>
+      <span class="ambient-petal ambient-petal-four"></span>
+      <span class="ambient-petal ambient-petal-five"></span>
+      <span class="ambient-petal ambient-petal-six"></span>
+    </div>
     {% include "components/flash_messages.html" %}
     {% block content %}{% endblock %}
     <script src="{{ url_for('static', path='/js/site-interactions.js') }}" defer></script>

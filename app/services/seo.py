@@ -14,7 +14,7 @@ from app.schemas.blog import BlogPost
 from app.schemas.projects import Project
 
 DEFAULT_OG_IMAGE = "/static/images/industrial-ai-hero.png"
-DEFAULT_DESCRIPTION = "libaoshuai 的工业 AI 作品集，聚焦整车视觉检测与螺栓扭矩质量预测两个生产级项目。"
+DEFAULT_DESCRIPTION = "libaoshuai 的 AI 作品集，聚焦整车视觉检测与螺栓扭矩质量预测两个生产级项目。"
 
 
 @dataclass(frozen=True)
@@ -68,7 +68,7 @@ def build_rss_feed(base_url: str, posts: list[BlogPost]) -> str:
     rss = Element("rss", version="2.0")
     channel = SubElement(rss, "channel")
 
-    SubElement(channel, "title").text = "IndusAI Lab | 工业 AI 与制造数字化技术站"
+    SubElement(channel, "title").text = "libaoshuai | AI 与制造数字化"
     SubElement(channel, "link").text = absolute_url(base_url, "/blog")
     SubElement(channel, "description").text = DEFAULT_DESCRIPTION
     SubElement(channel, "language").text = "zh-cn"
